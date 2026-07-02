@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>CPU simulation</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        /* ===== Global Styles===== */
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+
+            background: #111;
+            color: #ddd;
+
+            font-family: monospace;
+        }
+
+        /* ===== Panels ===== */
+
+        .panel {
+            min-height: 0;
+
+            padding: 14px;
+
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+
+            background:
+                linear-gradient(to bottom,
+                    #1b1b1b,
+                    #151515);
+
+            border-right: 2px solid #2c2c2c;
+
+            box-shadow:
+                inset 0 0 20px rgba(255, 255, 255, 0.02);
+        }
+
+        #left,
+        #center,
+        #right {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #left {
+            max-width: 500px;
+            min-width: 350px;
+
+            gap: 16px;
+        }
+
+        #center {
+            max-width: 500px;
+            min-width: 350px;
+
+            gap: 16px;
+        }
+
+        #right {
+            max-width: 500px;
+            min-width: 350px;
+
+            gap: 16px;
+        }
+
+        /* ===== Sections ===== */
+        .section {
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .section-header {
+            font-size: 11px;
+
+            letter-spacing: 2px;
+
+            color: #777;
+
+            padding: 6px 2px;
+
+            border-bottom: 1px solid #2a2a2a;
+
+            text-transform: uppercase;
+        }
+
+        /* ===== I/O Display ===== */
+        /* Output */
+        #output-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            /* Added to allow output area to scroll if needed */
+            flex-shrink: 0;
+        }
+
+        /* Shared display style */
+        #text-display,
+        #num-display,
+        #grid-display {
+            background:
+                linear-gradient(to bottom,
+                    #050505,
+                    #101010);
+
+            border:
+                2px solid #444;
+
+            border-radius: 10px;
+
+            padding: 12px;
+
+            box-shadow:
+                inset 0 0 12px rgba(0, 0, 0, 0.9),
+                0 0 12px rgba(0, 255, 120, 0.08);
+
+            position: relative;
+        }
+
+        #output-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        #text-display,
+        #num-display {
+            flex: 1;
+            height: 40px;
+            color: #00ff66;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Grid display */
+        #grid-display {
+            aspect-ratio: 1;
+
+            background-color: #050505;
+
+            position: relative;
+
+            max-height: 350px;
+            max-width: 350px;
+            overflow: auto;
+        }
+
+        #pixel-grid {
+            width: 100%;
+            height: 100%;
+
+            display: grid;
+
+            grid-template-columns: repeat(32, 1fr);
+            grid-template-rows: repeat(32, 1fr);
+
+            gap: 1px;
+        }
+
+        .pixel {
+            background: #111;
+        }
+
+        .pixel.active {
+            background: #eee;
+        }
+
+        /* ===== Input ===== */
+        #input-wrap {
+            display: flex;
+
+            justify-content: space-between;
+            align-items: center;
+
+            margin-top: auto;
+
+            padding: 12px;
+
+            background: #1a1a1a;
+
+            border-radius: 14px;
+
+            border: 2px solid #333;
+            flex-shrink: 0;
+        }
+
+        /* D-Pad */
+        #dpad-wrap {
+            width: 120px;
+            height: 120px;
+
+            position: relative;
+        }
+
+        #dpad-wrap button {
+            position: absolute;
+        }
+
+        /* Positions */
+        #btn-up {
+            top: 0;
+            left: 40px;
+        }
+
+        #btn-dwn {
+            bottom: 0;
+            left: 40px;
+        }
+
+        #btn-lft {
+            left: 0;
+            top: 40px;
+        }
+
+        #btn-rgt {
+            right: 0;
+            top: 40px;
+        }
+
+        /* ===== Center Buttons ===== */
+        #ctr-btns-wrap {
+            display: flex;
+            gap: 12px;
+
+            align-items: center;
+
+            margin-top: 40px;
+            flex-shrink: 0;
+        }
+
+        /* ===== A/B Buttons ===== */
+        #rgt-btns-wrap {
+            position: relative;
+
+            width: 120px;
+            height: 80px;
+            flex-shrink: 0;
+        }
+
+        #ctr-btn-a,
+        #ctr-btn-b {
+            position: absolute;
+
+            width: 52px;
+            height: 52px;
+
+            border-radius: 50%;
+
+            font-weight: bold;
+        }
+
+        #ctr-btn-a {
+            right: 0;
+            top: 0;
+        }
+
+        #ctr-btn-b {
+            left: 0;
+            bottom: 0;
+        }
+
+        /* Position buttons */
+        #btn-up {
+            top: 0;
+            left: 40px;
+        }
+
+        #btn-dwn {
+            bottom: 0;
+            left: 40px;
+        }
+
+        #btn-lft {
+            left: 0;
+            top: 40px;
+        }
+
+        #btn-rgt {
+            right: 0;
+            top: 40px;
+        }
+
+        /* Shared button style */
+        button {
+            width: 42px;
+            height: 42px;
+
+            border: none;
+            border-radius: 10px;
+
+            background:
+                linear-gradient(to bottom,
+                    #4a4a4a,
+                    #2f2f2f);
+
+            color: white;
+
+            font-size: 18px;
+            font-family: monospace;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 4px 0 #222,
+                inset 0 1px 1px rgba(255, 255, 255, 0.15);
+
+            transition:
+                transform 0.05s,
+                background 0.1s;
+        }
+
+        button:hover {
+            background:
+                linear-gradient(to bottom,
+                    #5c5c5c,
+                    #3a3a3a);
+        }
+
+        button:active {
+            transform: translateY(3px);
+
+            box-shadow:
+                0 1px 0 #222,
+                inset 0 1px 3px rgba(0, 0, 0, 0.4);
+        }
+
+        /* ===== Control Panel ===== */
+        #control-wrap {
+            display: flex;
+            flex-direction: column;
+
+            gap: 16px;
+
+            padding: 14px;
+
+            background:
+                linear-gradient(to bottom,
+                    #1d1d1d,
+                    #141414);
+
+            border:
+                2px solid #333;
+
+            border-radius: 12px;
+
+            box-shadow:
+                inset 0 0 10px rgba(255, 255, 255, 0.03);
+
+            flex-shrink: 0;
+        }
+
+        #control-buttons {
+            display: flex;
+
+            gap: 10px;
+        }
+
+        #control-buttons button {
+            flex: 1;
+            min-height: 0;
+
+            height: 46px;
+
+            font-size: 14px;
+
+            letter-spacing: 0.5px;
+        }
+
+        #speed-control {
+            display: flex;
+            flex-direction: column;
+
+            gap: 8px;
+        }
+
+        #speed-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            font-size: 13px;
+
+            color: #aaa;
+        }
+
+        #program-speed-slider {
+            width: 100%;
+
+            appearance: none;
+
+            height: 8px;
+
+            border-radius: 999px;
+
+            background: #ffdd00;
+
+            outline: none;
+        }
+
+        #program-speed-slider::-webkit-slider-thumb {
+            appearance: none;
+
+            width: 18px;
+            height: 18px;
+
+            border-radius: 50%;
+
+            background: white;
+
+            cursor: pointer;
+
+            border: 2px solid #222;
+        }
+
+        #cpu-status-bar {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            padding: 10px;
+
+            background: #101010;
+
+            border: 1px solid #333;
+
+            border-radius: 8px;
+
+            font-size: 12px;
+
+            color: #aaa;
+        }
+
+        #cpu-status-text {
+            font-weight: bold;
+        }
+
+        .status-running {
+            color: #00ff88;
+        }
+
+        #cpu-status-text:not(.status-running) {
+            color: #ff5555;
+        }
+
+        /* Flags Display */
+        #control-wrap,
+        #flags-panel {
+            flex-shrink: 0;
+        }
+
+        #flags-panel {
+            display: flex;
+            flex-direction: column;
+
+            gap: 10px;
+
+            padding: 12px;
+
+            background:
+                linear-gradient(to bottom,
+                    #1c1c1c,
+                    #131313);
+
+            border: 2px solid #333;
+
+            border-radius: 10px;
+
+            box-shadow:
+                inset 0 0 8px rgba(255, 255, 255, 0.03);
+        }
+
+        .flags-title {
+            font-size: 11px;
+
+            letter-spacing: 2px;
+
+            color: #777;
+        }
+
+        #flags-wrap {
+            display: flex;
+
+            gap: 12px;
+        }
+
+        .flag-box {
+            flex: 1;
+            min-height: 0;
+
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+            justify-content: center;
+
+            gap: 4px;
+
+            padding: 10px;
+
+            background:
+                linear-gradient(to bottom,
+                    #101010,
+                    #080808);
+
+            border: 2px solid #333;
+
+            border-radius: 8px;
+
+            transition:
+                border-color 0.15s,
+                box-shadow 0.15s,
+                color 0.15s;
+        }
+
+        .flag-box.active {
+            border-color: #ff9900;
+
+            box-shadow:
+                0 0 10px rgba(0, 255, 136, 0.15);
+
+            color: #ff9900;
+        }
+
+        .flag-box:not(.active) {
+            color: #666;
+        }
+
+        .flag-label {
+            font-size: 12px;
+
+            letter-spacing: 1px;
+        }
+
+        .flag-value {
+            font-size: 20px;
+
+            font-weight: bold;
+        }
+
+        /* Memory Display */
+        #memory-display-wrap {
+            display: flex;
+
+            flex: 1 1 auto;
+            min-height: 0;
+
+            gap: 12px;
+
+            overflow: hidden;
+        }
+
+        #reg-file-display,
+        #data-memory-display {
+            flex: 1;
+
+            min-height: 0;
+
+            overflow-y: auto;
+            max-height: 300px;
+
+            background: #181818;
+
+            border: 2px solid #333;
+
+            border-radius: 8px;
+
+            padding: 10px;
+        }
+
+        #reg-file-display {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 8px;
+
+            align-content: start;
+        }
+
+        #data-memory-display {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 8px;
+
+            align-content: start;
+        }
+
+        .reg-cell,
+        .mem-cell {
+            background:
+                linear-gradient(to bottom,
+                    #101010,
+                    #0a0a0a);
+
+            border: 1px solid #333;
+
+            border-radius: 6px;
+
+            padding: 6px;
+
+            text-align: center;
+
+            box-shadow:
+                inset 0 0 4px rgba(255, 255, 255, 0.03);
+
+            min-width: 0;
+        }
+
+        /* Register cells */
+        .reg-cell {
+            color: #00bbff;
+
+            font-size: 11px;
+        }
+
+        /* Memory cells */
+        .mem-cell {
+            color: #ff4444;
+
+            font-size: 10px;
+        }
+
+        .reg-bin,
+        .mem-bin {
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+
+            line-height: 1;
+            gap: 1px;
+
+            margin-top: 2px;
+        }
+
+        .bin-top,
+        .bin-bottom {
+            font-size: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* ===== Editor Panel ===== */
+        #code-editor {
+            width: 100%;
+            height: 100%;
+
+            resize: none;
+
+            background: #0f0f0f;
+
+            color: #ff88ff;
+
+            border: 2px solid #333;
+            border-radius: 10px;
+
+            outline: none;
+
+            padding: 18px;
+
+            font-family: monospace;
+            font-size: 15px;
+            line-height: 1.6;
+
+            box-shadow:
+                inset 0 0 12px rgba(0, 0, 0, 0.8);
+
+            overflow-y: auto;
+            flex-grow: 1;
+            min-height: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- I/O Panel -->
+    <div class="panel" id="left">
+        <div class="section">
+            <div class="section-header">Output Devices</div>
+            <div id="output-wrap">
+                <div id="output-row">
+                    <div id="text-display">
+                        <!-- Max length - 10 chars -->
+                    </div>
+                    <div id="num-display">
+                        <!-- Max # of digits - 3 -->
+                        <!-- Max # of digits (signed) - 4 -->
+                    </div>
+                </div>
+
+                <div id="grid-display">
+                    <div id="pixel-grid">
+                        <!-- 32x32 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">Input Controller</div>
+            <div id="input-wrap">
+                <div id="dpad-wrap">
+                    <button id="btn-up">⌃</button>
+                    <button id="btn-lft">‹</button>
+                    <button id="btn-rgt">›</button>
+                    <button id="btn-dwn">⌄</button>
+                </div>
+
+                <div id="ctr-btns-wrap">
+                    <button id="ctr-btn-one">1</button>
+                    <button id="ctr-btn-two">2</button>
+                </div>
+
+                <div id="rgt-btns-wrap">
+                    <button id="ctr-btn-a">A</button>
+                    <button id="ctr-btn-b">B</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Control/Memory Panel -->
+    <div class="panel" id="center">
+        <div class="section">
+            <div class="section-header">CONTROL</div>
+            <div id="control-wrap">
+                <div id="control-buttons">
+                    <button id="clock-toggle">▶ Run</button>
+                    <button id="line-step">Step Inst</button>
+                    <button id="reset-program">⟲ Reset</button>
+                </div>
+
+                <div id="speed-control">
+                    <div id="speed-header">
+                        <span>Execution Rate</span>
+                        <span id="speed-value">100 Hz</span>
+                    </div>
+
+                    <input id="program-speed-slider" name="speed" type="range" min="1" max="1000" step="1" value="100"
+                        list="markers">
+
+                    <datalist id="markers">
+                        <option value="1"></option>
+                        <option value="250"></option>
+                        <option value="500"></option>
+                        <option value="750"></option>
+                        <option value="1000"></option>
+                    </datalist>
+                </div>
+
+                <div id="cpu-status-bar">
+                    <div>
+                        STATUS:
+                        <span id="cpu-status-text" class="status-running">
+                            HALTED
+                        </span>
+                    </div>
+
+                    <div>PC: 0000</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">FLAGS</div>
+            <div id="flags-panel">
+
+                <div id="flags-wrap">
+                    <div class="flag-box" id="flag-zero">
+                        <div class="flag-label">Z</div>
+                        <div class="flag-value">0</div>
+                    </div>
+
+                    <div class="flag-box" id="flag-carry">
+                        <div class="flag-label">C</div>
+                        <div class="flag-value">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="section">
+            <div class="section-header">MEMORY</div>
+            <div id="memory-display-wrap">
+                <div id="reg-file-display"></div>
+
+                <div id="data-memory-display"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Program Panel -->
+    <div class="panel" id="right">
+        <div class="section-header">ASSEMBLY EDITOR</div>
+        <textarea id="code-editor">; Write your program
+LDI r2 100
+LDI r3 250
+ADI r1 1
+ADI r2 255
+STR r3 r1
+BRH !Z 1
+
+HLT</textarea>
+    </div>
+
+    <script>
+        /* ===== Setup ===== */
+        const pixelGrid = document.getElementById("pixel-grid");
+        const regDisplay = document.getElementById("reg-file-display");
+        const memoryDisplay = document.getElementById("data-memory-display");
+        const textDisplay = document.getElementById("text-display");
+        const numDisplay = document.getElementById("num-display");
+        const cpuStatusText = document.getElementById("cpu-status-text");
+        const speedSlider = document.getElementById("program-speed-slider");
+        const speedValue = document.getElementById("speed-value");
+        const outputRow = document.getElementById("output-row");
+
+        // Create pixel elements (32x32)
+        for (let i = 0; i < 32 * 32; i++) {
+            const pixel = document.createElement("div");
+            pixel.className = "pixel";
+            pixelGrid.appendChild(pixel);
+        }
+
+        // Create register cells cache
+        const regCells = {};
+        for (let i = 1; i < 16; i++) {
+            const cell = document.createElement("div");
+            cell.className = "reg-cell";
+            cell.innerHTML = `
+                <div>r${i}</div>
+                <div class="reg-dec">0</div>
+                <div class="reg-bin">
+                    <div class="bin-top">0000</div>
+                    <div class="bin-bottom">0000</div>
+                </div>`;
+            regDisplay.appendChild(cell);
+            regCells[i] = {
+                dec: cell.querySelector(".reg-dec"),
+                binTop: cell.querySelector(".bin-top"),
+                binBottom: cell.querySelector(".bin-bottom"),
+            };
+        }
+
+        // Create memory cells cache
+        const memCells = [];
+        for (let i = 0; i < 256; i++) {
+            const cell = document.createElement("div");
+            cell.className = "mem-cell";
+            cell.innerHTML = `
+                <div>${String(i).padStart(3, "0")}</div>
+                <div class="mem-dec">0</div>
+                <div class="mem-bin">
+                    <div class="bin-top">0000</div>
+                    <div class="bin-bottom">0000</div>
+                </div>`;
+            memoryDisplay.appendChild(cell);
+            memCells.push({
+                dec: cell.querySelector(".mem-dec"),
+                binTop: cell.querySelector(".bin-top"),
+                binBottom: cell.querySelector(".bin-bottom"),
+            });
+        }
+
+        /* ===== Assembler and Instruction Classes ===== */
+        class Assembler {
+
+            static assemble(source) {
+                return source
+                    .split("\n")
+                    .map(line => line.split(";")[0].trim())
+                    .filter(Boolean)
+                    .map(line => line.replace(/\s+/g, " "))
+                    .map(line => this.decodeInstruction(line));
+            }
+
+            static decodeInstruction(line) {
+
+                const parts = line.split(" ");
+                return new Instruction(parts[0].toUpperCase(), parts.slice(1));
+
+            }
+
+            static parseImmediate(str) {
+
+                if (typeof str !== "string") return str;
+
+                if (str.startsWith("0b")) return parseInt(str.slice(2), 2);
+                if (str.startsWith("0x")) return parseInt(str.slice(2), 16);
+
+                return Number(str);
+
+            }
+
+        }
+
+        class Instruction {
+
+            constructor(op, args) {
+
+                this.op = op;
+                this.args = args;
+
+            }
+
+        }
+
+        /* ===== CPU Class ===== */
+        class CPU {
+
+            constructor(memory) {
+
+                this.running = false;
+
+                this.pc = 0;
+                this.stack = [];
+                this.flags = {
+                    Z: 0,
+                    C: 0
+                }
+
+                this.registers = new Uint8Array(16);
+                this.memory = memory;
+
+                this.program = [];
+                this.loaded = false;
+
+                this.instructions = {
+
+                    NOP: this.executeNOP.bind(this),
+                    HLT: this.executeHLT.bind(this),
+
+                    ADD: this.executeADD.bind(this),
+                    SUB: this.executeSUB.bind(this),
+                    NOR: this.executeNOR.bind(this),
+                    AND: this.executeAND.bind(this),
+                    XOR: this.executeXOR.bind(this),
+                    RSH: this.executeRSH.bind(this),
+
+                    LDI: this.executeLDI.bind(this),
+                    ADI: this.executeADI.bind(this),
+
+                    JMP: this.executeJMP.bind(this),
+                    BRH: this.executeBRH.bind(this),
+                    CAL: this.executeCAL.bind(this),
+                    RET: this.executeRET.bind(this),
+
+                    LOD: this.executeLOD.bind(this),
+                    STR: this.executeSTR.bind(this),
+
+                }
+
+            }
+
+            setFlags(result) {
+
+                this.flags.Z = (result & 0xff) === 0 ? 1 : 0;
+
+            }
+
+            parseRegister(r) {
+
+                if (typeof r !== "string" || !r.startsWith("r")) throw new Error("Invalid register: " + r);
+
+                return Number(r.slice(1));
+
+            }
+
+            writeRegister(idx, value) {
+
+                if (idx === 0) return;
+
+                this.registers[idx] = value & 0xff;
+
+            }
+
+            step() {
+
+                if (this.pc >= this.program.length) {
+                    this.running = false;
+                    return;
+                }
+
+                this.execute(
+                    this.program[this.pc++]
+                );
+
+                this.registers[0] = 0;
+
+            }
+
+            /* Basic Instructions */
+            executeNOP(args) {
+
+                return;
+
+            }
+
+            executeHLT(args) {
+
+                this.running = false;
+
+            }
+
+            /* Arithmetic-Logic Instructions */
+            executeADD(args) {
+
+                const rA = this.parseRegister(args[0]);
+                const rB = this.parseRegister(args[1]);
+                const rC = this.parseRegister(args[2]);
+                const val = this.registers[rA] + this.registers[rB];
+                this.flags.C = val > 255 ? 1 : 0;
+                this.writeRegister(rC, val);
+                this.setFlags(val);
+
+            }
+
+            executeSUB(args) {
+
+                const rA = this.parseRegister(args[0]);
+                const rB = this.parseRegister(args[1]);
+                const rC = this.parseRegister(args[2]);
+                const val = this.registers[rA] - this.registers[rB];
+                this.flags.C = val < 0 ? 1 : 0;
+                this.writeRegister(rC, val);
+                this.setFlags(val);
+
+            }
+
+            executeNOR(args) {
+
+                const rA = this.parseRegister(args[0]);
+                const rB = this.parseRegister(args[1]);
+                const rC = this.parseRegister(args[2]);
+                const val = ~(this.registers[rA] | this.registers[rB]) & 0xff;
+                this.flags.C = val > 255 ? 1 : 0;
+                this.writeRegister(rC, val);
+                this.setFlags(val);
+
+            }
+
+            executeAND(args) {
+
+                const rA = this.parseRegister(args[0]);
+                const rB = this.parseRegister(args[1]);
+                const rC = this.parseRegister(args[2]);
+                const val = this.registers[rA] & this.registers[rB];
+                this.flags.C = val > 255 ? 1 : 0;
+                this.writeRegister(rC, val);
+                this.setFlags(val);
+
+            }
+
+            executeXOR(args) {
+
+                const rA = this.parseRegister(args[0]);
+                const rB = this.parseRegister(args[1]);
+                const rC = this.parseRegister(args[2]);
+                const val = this.registers[rA] ^ this.registers[rB];
+                this.flags.C = val > 255 ? 1 : 0;
+                this.writeRegister(rC, val);
+                this.setFlags(val);
+
+            }
+
+            executeRSH(args) {
+
+                const rA = this.parseRegister(args[0]);
+                const rC = this.parseRegister(args[1]);
+                this.flags.C = this.registers[rA] & 1;
+                const val = (this.registers[rA] >>> 1) & 0xff;
+                this.writeRegister(rC, val);
+                this.setFlags(val);
+
+            }
+
+            /* Register Manipulation Instructions */
+            executeLDI(args) {
+
+                const rA = this.parseRegister(args[0]);
+                const val = Assembler.parseImmediate(args[1]);
+                this.writeRegister(rA, val);
+
+            }
+
+            executeADI(args) {
+
+                const rA = this.parseRegister(args[0]);
+                const val = Assembler.parseImmediate(args[1]);
+                const res = this.registers[rA] + val;
+                this.flags.C = res > 255 ? 1 : 0;
+                this.writeRegister(rA, res & 0xff);
+                this.setFlags(res);
+
+            }
+
+            /* Branching and Subroutine Instructions */
+            executeJMP(args) {
+
+                const addr = Assembler.parseImmediate(args[0]);
+                this.pc = addr;
+
+            }
+
+            executeBRH(args) {
+
+                const cond = args[0].toUpperCase();
+                const addr = Assembler.parseImmediate(args[1]);
+                const isZero = this.flags.Z === 1;
+                const isCarry = this.flags.C === 1;
+                if (cond === "0" || cond === "Z") {
+                    if (isZero) this.pc = addr;
+                } else if (cond === "!0" || cond === "!Z") {
+                    if (!isZero) this.pc = addr;
+                } else if (cond === "C") {
+                    if (isCarry) this.pc = addr;
+                } else if (cond === "!C") {
+                    if (!isCarry) this.pc = addr;
+                }
+
+            }
+
+            executeCAL(args) {
+
+                const addr = Assembler.parseImmediate(args[0]);
+                this.stack.push(this.pc);
+                this.pc = addr;
+
+            }
+
+            executeRET(args) {
+
+                this.pc = this.stack.length ? this.stack.pop() : 0;
+
+            }
+
+            /* Memory Manipulation Instructions */
+            executeLOD(args) {
+
+                const rA = this.parseRegister(args[0]);
+                let offset;
+                let rB;
+
+                if (args.length === 2) {
+                    offset = 0;
+                    rB = this.parseRegister(args[1]);
+                } else {
+                    offset = Assembler.parseImmediate(args[1]);
+                    rB = this.parseRegister(args[2]);
+                }
+
+                const addr = (this.registers[rA] + offset) & 0xff;
+
+                this.writeRegister(rB, this.memory.read(addr));
+
+            }
+
+            executeSTR(args) {
+
+                const rA = this.parseRegister(args[0]);
+                let offset;
+                let rB;
+
+                if (args.length === 2) {
+                    offset = 0;
+                    rB = this.parseRegister(args[1]);
+                } else {
+                    offset = Assembler.parseImmediate(args[1]);
+                    rB = this.parseRegister(args[2]);
+                }
+
+                const addr = (this.registers[rA] + offset) & 0xff;
+
+                this.memory.write(addr, this.registers[rB]);
+
+            }
+
+            execute({ op, args }) {
+
+                const fn = this.instructions[op];
+
+                if (!fn) throw new Error(`Unknown opcode: "${op}"`);
+
+                fn(args);
+
+            }
+
+        }
+
+        /* ===== Memory Class ===== */
+        class Memory {
+
+            constructor(screen, charsdisplay, numdisplay, controller) {
+
+                this.data = new Uint8Array(256);
+                this.screen = screen;
+                this.chars = charsdisplay;
+                this.number = numdisplay;
+                this.controller = controller;
+
+            }
+
+            read(addr) {
+
+                addr &= 0xff;
+
+                if (addr === 244) return this.screen.getPixel(this.screen.px, this.screen.py);
+                if (addr === 254) return Math.floor(Math.random() * 256);
+                if (addr === 255) return this.controller.read();
+
+                return this.data[addr & 0xff];
+
+            }
+
+            write(addr, value) {
+
+                addr &= 0xff;
+                value &= 0xff;
+
+                switch (addr) {
+                    case 240: this.screen.px = value & 0x1f; break;
+                    case 241: this.screen.py = value & 0x1f; break;
+                    case 242: this.screen.setPixel(clamp(this.screen.px, 32), clamp(this.screen.py, 32), 1); break;
+                    case 243: this.screen.setPixel(clamp(this.screen.px, 32), clamp(this.screen.py, 32), 0); break;
+                    case 245: this.screen.flushScreen(); break;
+                    case 246: this.screen.clearScreen(); break;
+                    case 247: this.chars.writeChar(String.fromCharCode(value)); break;
+                    case 248: this.chars.flushChars(); break;
+                    case 249: this.chars.clearCharsBuffer(); break;
+                    case 250: this.data[250] = value; this.number.setNumber(value); break;
+                    case 251: this.number.clearNumber(); break;
+                    case 252: this.number.setSigned(); break;
+                    case 253: this.number.setUnsigned(); break;
+                    default: this.data[addr] = value;
+                }
+
+            }
+
+        }
+
+        /* ===== UI Class ===== */
+        class UI {
+
+            constructor(cpu, memory) {
+
+                this.cpu = cpu;
+                this.memory = memory;
+
+            }
+
+            setStatus(running) {
+
+                cpuStatusText.textContent = running ? "RUNNING" : "HALTED";
+
+                cpuStatusText.classList.toggle(
+                    "status-running", running
+                );
+
+            }
+
+            updateFlags() {
+
+                const zeroFlag = document.getElementById("flag-zero");
+                const carryFlag = document.getElementById("flag-carry");
+
+                zeroFlag.querySelector(".flag-value").textContent = this.cpu.flags.Z;
+                carryFlag.querySelector(".flag-value").textContent = this.cpu.flags.C;
+
+                zeroFlag.classList.toggle("active", this.cpu.flags.Z === 1);
+                carryFlag.classList.toggle("active", this.cpu.flags.C === 1);
+
+            }
+
+            updateRegisters() {
+
+                for (let i = 1; i < 16; i++) {
+                    const v = this.cpu.registers[i];
+                    regCells[i].dec.textContent = v;
+                    const bin = formatBinaryRows(v);
+                    regCells[i].binTop.textContent = bin.top;
+                    regCells[i].binBottom.textContent = bin.bottom;
+                }
+
+            }
+
+            updateMemory() {
+
+                for (let i = 0; i < 256; i++) {
+                    const v = this.memory.read(i);
+                    memCells[i].dec.textContent = v;
+                    const bin = formatBinaryRows(v);
+                    memCells[i].binTop.textContent = bin.top;
+                    memCells[i].binBottom.textContent = bin.bottom;
+                }
+
+            }
+
+            render() {
+
+                this.setStatus(this.cpu.running);
+
+                this.updateFlags();
+                this.updateRegisters();
+                this.updateMemory();
+
+                document.querySelector(
+                    "#cpu-status-bar div:nth-child(2)"
+                ).textContent =
+                    `PC: ${String(this.cpu.pc).padStart(4, "0")}`;
+
+            }
+
+        }
+
+        /* ===== IO Device Classes */
+        class ScreenDevice {
+
+            constructor(pixelGrid) {
+
+                this.pixelGrid = pixelGrid;
+
+                this.px = 0;
+                this.py = 0;
+
+                this.buffer = new Uint8Array(32 * 32);
+                this.frontBuffer = new Uint8Array(32 * 32);
+
+            }
+
+            setPixel(x, y, v) {
+
+                const idx = y * 32 + x;
+                this.buffer[idx] = v ? 1 : 0;
+
+            }
+
+            getPixel(x, y) {
+
+                return this.buffer[y * 32 + x] || 0;
+
+            }
+
+            flushScreen() {
+                this.frontBuffer.set(this.buffer);
+
+                for (let i = 0; i < 32 * 32; i++) {
+                    this.pixelGrid.children[i]
+                        .classList.toggle("active", this.frontBuffer[i]);
+                }
+            }
+
+            clearScreen() {
+                this.buffer.fill(0);
+                this.frontBuffer.fill(0);
+
+                for (const px of this.pixelGrid.children) {
+                    px.classList.remove("active");
+                }
+            }
+
+        }
+
+        class CharacterDevice {
+
+            constructor() {
+
+                this.buffer = [];
+                this.front = "";
+
+            }
+
+            writeChar(c) {
+
+                if (this.buffer.length >= 10) return;
+                this.buffer.push(c);
+
+            }
+
+            flushChars() {
+
+                this.front = this.buffer.join("");
+                textDisplay.textContent = this.front;
+
+            }
+
+            clearCharsBuffer() {
+
+                this.buffer = [];
+
+            }
+
+        }
+
+        class NumberDevice {
+
+            constructor() {
+
+                this.displayNumber = 0;
+                this.showNumber = false;
+                this.numberMode = "unsigned";
+
+            }
+
+            setNumber(value) {
+
+                this.displayNumber = value;
+                this.showNumber = true;
+                this.updateNumberDisplay();
+
+            }
+
+            clearNumber() {
+
+                this.showNumber = false;
+                this.updateNumberDisplay();
+
+            }
+
+            setUnsigned() {
+
+                this.numberMode = "signed";
+                this.updateNumberDisplay();
+
+            }
+
+            setSigned() {
+
+                this.numberMode = "unsigned";
+                this.updateNumberDisplay();
+
+            }
+
+            updateNumberDisplay() {
+                if (!this.showNumber) return;
+
+                let val = this.displayNumber;
+                if (this.numberMode === "signed" && val & 0x80) val = val - 256;
+                numDisplay.textContent = val;
+            }
+
+        }
+
+        class ControllerDevice {
+
+            constructor() {
+
+                this.state = {
+                    up: 0,
+                    down: 0,
+                    left: 0,
+                    right: 0,
+                    a: 0,
+                    b: 0,
+                    one: 0,
+                    two: 0
+                }
+
+                this.initBtns();
+
+            }
+
+            initBtns() {
+
+                ["btn-up", "btn-dwn", "btn-lft", "btn-rgt"].forEach((id, i) =>
+                    this.bindButton(id, ["up", "down", "left", "right"][i])
+                );
+
+                this.bindButton("ctr-btn-a", "a");
+                this.bindButton("ctr-btn-b", "b");
+
+                this.bindButton("ctr-btn-one", "one");
+                this.bindButton("ctr-btn-two", "two");
+
+                this.setupKeyboard();
+
+            }
+
+            read() {
+
+                let v = 0;
+
+                v |= this.state.up << 0;
+                v |= this.state.down << 1;
+                v |= this.state.left << 2;
+                v |= this.state.right << 3;
+                v |= this.state.a << 4;
+                v |= this.state.b << 5;
+                v |= this.state.one << 6;
+                v |= this.state.two << 7;
+                
+                return v;
+
+            }
+
+            bindButton(id, key) {
+
+                const btn = document.getElementById(id);
+
+                const press = () => this.state[key] = 1;
+                const release = () => this.state[key] = 0;
+
+                btn.addEventListener("mousedown", press);
+                btn.addEventListener("mouseup", release);
+                btn.addEventListener("mouseleave", release);
+
+                btn.addEventListener("touchstart", e => {
+                    e.preventDefault();
+                    press();
+                }, { passive: false });
+
+                btn.addEventListener("touchend", release);
+                btn.addEventListener("touchcancel", release);
+
+            }
+
+            setupKeyboard() {
+
+                window.addEventListener("keydown", e => {
+
+                    switch (e.code) {
+
+                        case "ArrowUp": this.state.up = 1; break;
+                        case "ArrowDown": this.state.down = 1; break;
+                        case "ArrowLeft": this.state.left = 1; break;
+                        case "ArrowRight": this.state.right = 1; break;
+
+                        case "KeyZ": this.state.a = 1; break;
+                        case "KeyX": this.state.b = 1; break;
+
+                    }
+
+                });
+
+                window.addEventListener("keyup", e => {
+
+                    switch (e.code) {
+
+                        case "ArrowUp": this.state.up = 0; break;
+                        case "ArrowDown": this.state.down = 0; break;
+                        case "ArrowLeft": this.state.left = 0; break;
+                        case "ArrowRight": this.state.right = 0; break;
+
+                        case "KeyZ": this.state.a = 0; break;
+                        case "KeyX": this.state.b = 0; break;
+
+                    }
+
+                });
+
+                window.addEventListener("blur", () => {
+
+                    Object.keys(this.state).forEach(key => {
+                        this.state[key] = 0;
+                    });
+
+                });
+
+            }
+
+        }
+
+        const screen = new ScreenDevice(pixelGrid);
+        const charsdisplay = new CharacterDevice();
+        const numdisplay = new NumberDevice();
+        const controller = new ControllerDevice();
+        const memory = new Memory(screen, charsdisplay, numdisplay, controller);
+        const cpu = new CPU(memory);
+        const ui = new UI(cpu, memory);
+
+        let interval = null;
+
+        /* ===== Helpers ===== */
+        const clamp = (v, max) => Math.min(max - 1, Math.max(0, v));
+        const toBin = v => (v & 0xff).toString(2).padStart(8, "0");
+        const formatBinaryRows = v => {
+            const b = toBin(v);
+            return { top: b.slice(0, 4), bottom: b.slice(4) };
+        };
+        const getSpeedDelay = () => Math.max(1, Math.floor(1000 / Number(speedSlider.value)));
+
+        /* ===== UI updates ===== */
+        function updateSpeedUI() {
+            speedValue.textContent = speedSlider.value + " Hz";
+        }
+
+        function loadProgram() {
+            cpu.program = Assembler.assemble(document.getElementById("code-editor").value);
+            cpu.pc = 0;
+            cpu.loaded = true;
+        }
+
+        /* ===== Input Handling ===== */
+        document.getElementById("clock-toggle").onclick = () => {
+            if (cpu.running) {
+                stop();
+                return;
+            }
+
+            if (!cpu.loaded) {
+                loadProgram();
+            }
+
+            start();
+        };
+
+        document.getElementById("line-step").onclick = () => {
+            if (cpu.program.length === 0) loadProgram();
+            cpu.step();
+            ui.render();
+        };
+
+        document.getElementById("reset-program").onclick = () => {
+            stop();
+            loadProgram();
+            cpu.running = false;
+            cpu.loaded = false;
+            cpu.program = [];
+            cpu.pc = 0;
+            cpu.flags.Z = cpu.flags.C = 0;
+            cpu.registers.fill(0);
+            memory.data.fill(0)
+
+            numdisplay.clearNumber();
+            charsdisplay.clearCharsBuffer();
+            screen.clearScreen();
+            ui.render();
+        };
+
+        speedSlider.addEventListener("input", updateSpeedUI);
+
+        /* ===== Start/Stop CPU Loop ===== */
+        function start() {
+            if (interval) return;
+            cpu.running = true;
+            (function tick() {
+                if (!cpu.running) return;
+                cpu.step();
+                ui.render();
+                interval = setTimeout(tick, getSpeedDelay());
+            })();
+        }
+
+        function stop() {
+            cpu.running = false;
+            clearTimeout(interval);
+            interval = null;
+        }
+
+        /* ===== Initialization ===== */
+        function init() {
+            updateSpeedUI();
+            ui.render();
+        }
+
+        init();
+    </script>
+</body>
+
+</html>

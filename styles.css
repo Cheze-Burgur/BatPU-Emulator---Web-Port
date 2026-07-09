@@ -323,10 +323,19 @@ a {
 #program-speed-slider {
     width: 100%;
     appearance: none;
+    height: 18px;
+    border-radius: 999px;
+    background: transparent;
+    outline: none;
+    margin: 0;
+    padding: 0;
+    display: block;
+}
+
+#program-speed-slider::-webkit-slider-runnable-track {
     height: 8px;
     border-radius: 999px;
     background: #ffdd00;
-    outline: none;
 }
 
 #program-speed-slider::-webkit-slider-thumb {
@@ -337,6 +346,46 @@ a {
     background: white;
     cursor: pointer;
     border: 2px solid #222;
+    margin-top: -5px;
+}
+
+#program-speed-slider::-moz-range-track {
+    height: 8px;
+    border-radius: 999px;
+    background: #ffdd00;
+}
+
+#program-speed-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    border: 2px solid #222;
+    margin-top: -5px;
+}
+
+#program-speed-slider::-ms-track {
+    width: 100%;
+    height: 8px;
+    color: transparent;
+    background: transparent;
+    border-color: transparent;
+}
+
+#program-speed-slider::-ms-fill-lower,
+#program-speed-slider::-ms-fill-upper {
+    background: #ffdd00;
+    border-radius: 999px;
+}
+
+#program-speed-slider::-ms-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid #222;
+    margin-top: 0;
 }
 
 #cpu-status-bar {

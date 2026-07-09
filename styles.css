@@ -63,6 +63,20 @@ button:active {
     box-shadow: 0 1px 0 #222, inset 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
+a {
+    color: var(--accent-blue);
+    text-decoration: none;
+}
+
+.code {
+    font-family: monospace;
+    font-size: 13px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 2px 6px;
+}
+
 /* ===== App Shell ===== */
 #app {
     display: flex;
@@ -350,11 +364,13 @@ button:active {
 }
 
 #control-wrap,
-#flags-panel {
+#flags-panel,
+#stack-panel {
     flex-shrink: 0;
 }
 
-#flags-panel {
+#flags-panel,
+#stack-panel {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -365,12 +381,14 @@ button:active {
     box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.03);
 }
 
-#flags-wrap {
+#flags-wrap,
+#stack-display-wrap {
     display: flex;
     gap: 12px;
 }
 
-.flag-box {
+.flag-box,
+.stack-box {
     flex: 1;
     min-height: 0;
     display: flex;
@@ -379,10 +397,13 @@ button:active {
     justify-content: center;
     gap: 4px;
     padding: 10px;
-    background: linear-gradient(to bottom, var(--surface), var(--surface-2));
-    border: 2px solid var(--border);
     border-radius: var(--radius-sm);
     transition: border-color 0.15s, box-shadow 0.15s, color 0.15s;
+}
+
+.flag-box {
+    background: linear-gradient(to bottom, var(--surface), var(--surface-2));
+    border: 2px solid var(--border);
 }
 
 .flag-box.active {
@@ -403,6 +424,14 @@ button:active {
 .flag-value {
     font-size: 20px;
     font-weight: bold;
+}
+
+.stack-box {
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: bold;
+    background: linear-gradient(to bottom, var(--surface), var(--surface-2));
+    border: 2px solid var(--border);
 }
 
 /* ===== Memory and Registers ===== */
@@ -478,24 +507,92 @@ button:active {
 }
 
 /* ===== Editor Panel ===== */
+.editor-shell {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: #0f0f0f;
+    box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.8);
+}
+
+.editor-gutter {
+    flex: 0 0 90px;
+    padding: 18px 2px;
+    color: #6d6d6d;
+    font-family: monospace;
+    font-size: 15px;
+    line-height: 1.6;
+    text-align: right;
+    background: #0b0b0b;
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    overflow-x: auto;
+    scrollbar-width: none;
+    user-select: none;
+    box-sizing: border-box;
+}
+
+.editor-gutter-line {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 8px;
+    align-items: center;
+    height: 1.6em;
+    line-height: 1.6;
+    white-space: nowrap;
+}
+
+.editor-gutter-line .gutter-line-number,
+.editor-gutter-line .gutter-instruction-number {
+    display: block;
+    text-align: right;
+}
+
+.editor-gutter-line .gutter-line-number {
+    color: #7f7f7f;
+}
+
+.editor-gutter-line .gutter-instruction-number {
+    color: #d1d1d1;
+    padding-left: 2px;
+}
+
+.editor-gutter::-webkit-scrollbar {
+    display: none;
+}
+
+.editor-text-area {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
 #code-editor {
     width: 100%;
     height: 100%;
     resize: none;
-    background: #0f0f0f;
+    background: transparent;
     color: #ff88ff;
-    border: 2px solid var(--border);
-    border-radius: var(--radius-md);
+    caret-color: #ff88ff;
     outline: none;
     padding: 18px;
     font-family: monospace;
     font-size: 15px;
     line-height: 1.6;
-    box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.8);
     overflow-y: auto;
     flex-grow: 1;
     min-height: 0;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 2;
+    white-space: pre;
 }
+
+
 
 /* ===== Bottom Panel ===== */
 #bottom-panel {
@@ -552,6 +649,28 @@ button:active {
     overflow: auto;
     border-top: 1px solid var(--border);
     background: var(--bg-0);
+}
+
+#problems-toggle.has-problems {
+    color: #ffb4b4;
+    border-color: #ff6b6b;
+}
+
+.problem {
+    padding: 8px 10px;
+    border-left: 3px solid transparent;
+    color: #e8e8e8;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.problem.error {
+    border-left-color: #ff6b6b;
+    color: #ffd2d2;
+}
+
+.problem.warning {
+    border-left-color: #f1b95d;
+    color: #ffe8c0;
 }
 
 #bottom-panel.open #problems-panel {

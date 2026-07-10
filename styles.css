@@ -68,6 +68,10 @@ a {
     text-decoration: none;
 }
 
+a:hover {
+    text-decoration: underline;
+}
+
 .code {
     font-family: monospace;
     font-size: 13px;
@@ -104,17 +108,11 @@ a {
 #left,
 #center,
 #right {
-    flex: 1 1 auto;
+    flex: 1 1 0;
     min-height: 0;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-}
-
-#left,
-#center,
-#right {
-    max-width: 500px;
     min-width: 350px;
     gap: 16px;
 }
@@ -157,6 +155,7 @@ a {
 #output-row {
     display: flex;
     gap: 12px;
+    max-width: 400px;
 }
 
 #text-display,
@@ -173,8 +172,8 @@ a {
 #grid-display {
     aspect-ratio: 1;
     background-color: #050505;
-    max-height: 350px;
-    max-width: 350px;
+    max-height: 375px;
+    max-width: 375px;
     overflow: auto;
 }
 
@@ -205,6 +204,7 @@ a {
     border-radius: var(--radius-xl);
     border: 2px solid var(--border);
     flex-shrink: 0;
+    max-width: 400px;
 }
 
 #dpad-wrap {
@@ -569,7 +569,7 @@ a {
 }
 
 .editor-gutter {
-    flex: 0 0 90px;
+    flex: 0 0 75px;
     padding: 18px 2px;
     color: #6d6d6d;
     font-family: monospace;
@@ -587,8 +587,8 @@ a {
 
 .editor-gutter-line {
     display: grid;
-    grid-template-columns: 44px minmax(0, 1fr);
-    gap: 8px;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
     align-items: center;
     height: 1.6em;
     line-height: 1.6;

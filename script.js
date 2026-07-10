@@ -495,11 +495,11 @@ const Documentation = {
                     </div>
                     <div class="doc-section">
                         <h3>What is this?</h3>
-                        <p>This is a web-based emulator for a digital CPU, designed to go along with 
-                        <a href="https://github.com/mattbatwings" target="_blank">MattBatWings'</a> 
-                        <a href="https://github.com/mattbatwings/BatPU-2" target="_blank">Redstone CPU</a>. 
-                        I made this as a kind of companion project while I was building his in-game CPU 
-                        design, as a way to better understand how and why everything works in a more technical way 
+                        <p>This is a web-based emulator for a digital CPU, designed to go along with
+                        <a href="https://github.com/mattbatwings" target="_blank">MattBatWings'</a>
+                        <a href="https://github.com/mattbatwings/BatPU-2" target="_blank">Redstone CPU</a>.
+                        I made this as a kind of companion project while I was building his in-game CPU
+                        design, as a way to better understand how and why everything works in a more technical way
                         than just building the circuits.</p>
                     </div>
                     <div class="doc-section">
@@ -513,6 +513,31 @@ const Documentation = {
                             <li>Text editor for writing and assembling programs based on the ISA</li>
                             <li>Error detection and reporting</li>
                             <li>Full ISA and Protocol documentation</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="doc-card">
+                    <div class="doc-card-header">
+                        <h2>Credits</h2>
+                        <span class="doc-badge">Info</span>
+                    </div>
+                    <div class="doc-section">
+                        <h3>Special Thanks to:</h3>
+                        <ul>
+                            <li>
+                                <strong><a href="https://github.com/mattbatwings" target="_blank">MattBatWings</a></strong> for
+                                the original CPU design, Instruction Set, Protocol, and for being an amazing teacher and
+                                great source of inspiration for this project.
+                            </li>
+                            <li>
+                                <strong><a href="https://github.com/AdoHTQ" target="_blank">AdoHTQ</a></strong> for the 
+                                original emulator layout.
+                            </li>
+                            <li>
+                                <strong><a href="https://github.com/ArmadilloMike" target="_blank">ArmadilloMike</a></strong> for some
+                                bugfixing help and feedback.
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -552,6 +577,7 @@ const Documentation = {
                     <div class="doc-card-header">
                         <h2>Version 1.1</h2>
                         <span class="doc-badge">BUGFIXING</span>
+                        <span class="doc-badge">UI & STYLING</span>
                         <span class="doc-badge">QUALITY OF LIFE</span>
                     </div>
                     <div class="doc-section">
@@ -574,6 +600,7 @@ const Documentation = {
                     <div class="doc-card-header">
                         <h2>Version 1.2</h2>
                         <span class="doc-badge">NEW FEATURES</span>
+                        <span class="doc-badge">UI & STYLING</span>
                         <span class="doc-badge">BUGFIXING</span>
                     </div>
                     <div class="doc-section">
@@ -595,6 +622,30 @@ const Documentation = {
                             <li>There are probably a ton of bugs so if you find any please let me know!</li>
                         </ul>
                     </div>
+                </div>
+
+                <div class="doc-card">
+                    <div class="doc-card-header">
+                        <h2>Version 1.21</h2>
+                        <span class="doc-badge">UI & STYLING</span>
+                        <span class="doc-badge">QUALITY OF LIFE</span>
+                    </div>
+                    <div class="doc-section">
+                        <h3>July 10, 2026</h3>
+                        <ul>
+                            <li>Fixed bug with speed slider being off-center</li>
+                            <li>Made UI panels/IO Windows wider</li>
+                            <li>Improved sizing of text field gutter</li>
+                            <li>Disabled spellcheck underlining in editor</li>
+                            <ul>
+                                <li>Built in error underlining will be added soon, probably</li>
+                            </ul>
+                            <li>Improved the look of stack display</li>
+                            <li>Made resetting the CPU also reset the stack</li>
+                            <li>Added credits in About page</li>
+                        </ul>
+                    </div>
+
                 </div>
             </div>
         `;
@@ -1258,6 +1309,7 @@ class Machine {
         this.cpu.flags.C = 0;
         this.cpu.registers.fill(0);
         this.memory.reset();
+        this.cpu.stack = [];
         this.ui.render();
 
     }
@@ -1965,8 +2017,10 @@ class UI {
         const stackSize = document.getElementById("stack-size");
         const stackTop = document.getElementById("stack-top");
 
+        const addr = this.cpu.stack.length > 0 ? this.cpu.stack[this.cpu.stack.length - 1] : null;
+
         stackSize.querySelector(".stack-value").textContent = this.cpu.stack.length;
-        stackTop.querySelector(".stack-value").textContent = this.cpu.stack.length > 0 ? this.cpu.stack[this.cpu.stack.length - 1] : "----------";
+        stackTop.querySelector(".stack-value").textContent = addr !== null ? addr.toString(2).padStart(10, "0").toUpperCase() : "----------";
     }
 
     updateRegisters() {

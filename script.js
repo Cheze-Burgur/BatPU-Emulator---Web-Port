@@ -704,6 +704,7 @@ const Documentation = {
                             <li>Added a folder in the repository for storing images for use in the preset menu</li>
                             <li>Added custom alert box library</li>
                             <li>Added a new type of button for use in the documentation menus</li>
+                            <li>Fixed bug with the pixel display clearing both the buffer and front on clear</li>
                         </ul>
                     </div>
                 </div>
@@ -2387,11 +2388,6 @@ class ScreenDevice extends Device {
 
     clearScreen() {
         this.buffer.fill(0);
-        this.frontBuffer.fill(0);
-
-        for (const px of this.pixelGrid.children) {
-            px.classList.remove("active");
-        }
     }
 
     reset() {

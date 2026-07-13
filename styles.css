@@ -63,6 +63,13 @@ button:active {
     box-shadow: 0 1px 0 #222, inset 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
+img {
+    width: 250px;
+    height: auto;
+    border-radius: var(--radius-md);
+    border: 2px solid var(--border-strong);
+}
+
 a {
     color: var(--accent-blue);
     text-decoration: none;
@@ -906,7 +913,8 @@ a:hover {
 }
 
 .doc-category,
-.doc-badge {
+.doc-badge,
+.doc-badge-button {
     padding: 4px 10px;
     border-radius: 999px;
     background: #2b2b2b;
@@ -915,6 +923,15 @@ a:hover {
     text-transform: uppercase;
     letter-spacing: 1px;
     white-space: nowrap;
+}
+
+.doc-badge-button {
+    display: inline-flex;
+    width: auto;
+    height: auto;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }
 
 .doc-section {
@@ -1019,4 +1036,31 @@ a:hover {
     border-radius: var(--radius-sm);
     color: #7dff93;
     overflow-x: auto;
+}
+
+.swal2-popup {
+    background: #171717;
+    color: #ddd;
+    border: 2px solid #3b3b3b;
+    border-radius: 12px;
+}
+
+.swal2-actions {
+    gap: 12px;
+}
+
+.swal2-confirm,
+.swal2-cancel {
+    min-width: 140px;
+    font-family: monospace;
+    font-size: 14px;
+    padding: 10px 18px;
+}
+
+.swal2-confirm {
+    background: #007aaa !important;
+}
+
+.swal2-cancel {
+    background: #444 !important;
 }

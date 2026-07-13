@@ -154,6 +154,7 @@ const docButtons = {
     isa: document.getElementById("isa-button"),
     io: document.getElementById("io-button"),
     help: document.getElementById("help-button"),
+    presets: document.getElementById("presets-button"),
     about: document.getElementById("about-button"),
     changelog: document.getElementById("changelog-button")
 };
@@ -477,6 +478,41 @@ const Documentation = {
         }
     },
 
+    presets: {
+        title: "Presets",
+
+        render() {
+            let html = `
+            <div class="doc-page">
+                <div class="doc-header">
+                    <h1>Presets</h1>
+                    <p>Pre-written programs that you can load into the editor.</p>
+                </div>
+            `;
+
+            for (const [name, preset] of Object.entries(Presets)) {
+                html += `
+                    <div class="doc-card">
+                        <div class="doc-card-header">
+                            <h2>${preset.title}</h2>
+                            <button class="doc-badge-button" onclick="loadPreset('${name}')">Load Preset</button>
+                        </div>
+                        <div class="doc-section">
+                            <h3>By ${preset.author}</h3>
+                            <p>${preset.description}</p>
+                            <img src="https://raw.githubusercontent.com/Cheze-Burgur/BatPU-Emulator---Web-Port/refs/heads/main/images/${preset.imageName}.png">
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += `</div>`
+
+            return html;
+        },
+
+    },
+
     about: {
         title: "About",
 
@@ -645,7 +681,31 @@ const Documentation = {
                             <li>Added credits in About page</li>
                         </ul>
                     </div>
+                </div>
 
+                <div class="doc-card">
+                    <div class="doc-card-header">
+                        <h2>Version 1.3</h2>
+                        <span class="doc-badge">NEW FEATURES</span>
+                        <span class="doc-badge">QUALITY OF LIFE</span>
+                    </div>
+                    <div class="doc-section">
+                        <h3>July 13, 2026</h3>
+                        <ul>
+                            <li>Created menu for loading presets</li>
+                            <ul>
+                                <li>Presets are just pre-written programs that are ready for use</li>
+                                <li>Credit is given to the creators of the programs</li>
+                                <li>
+                                    More presets will be added as the emulator gets closer to being complete; currently it is only powerful 
+                                    enough to run the dvd logo program, one of the simplest programs in Matt's showcase, and it doesn't really work that well. 
+                                </li>
+                            </ul>
+                            <li>Added a folder in the repository for storing images for use in the preset menu</li>
+                            <li>Added custom alert box library</li>
+                            <li>Added a new type of button for use in the documentation menus</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         `;
@@ -1120,6 +1180,169 @@ const Devices = {
     }
 
 };
+
+async function loadPreset(name) {
+
+    const preset = Presets[name];
+
+    if (!preset) return;
+
+    const result = await Swal.fire({
+        title: `Load "${preset.title}"?`,
+        text: "This will overwrite your current program.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Load",
+        cancelButtonText: "Cancel",
+        buttonsStyling: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+    });
+
+    if (!result.isConfirmed) return;
+
+    codeEditor.value = preset.code;
+
+    updateEditorGutter();
+
+    modal.close();
+
+}
+
+const Presets = {
+
+    dvdlogo: {
+
+        title: "DVD Logo",
+
+        author: "zPippo",
+
+        description: "Displays the clssic bouncing DVD logo on the pixel display.",
+
+        imageName: "dvdlogoimg",
+
+        code: `; DVD LOGO - By zPippo
+
+ldi r1 0
+ldi r2 79
+str r1 r2
+adi r1 1
+ldi r2 201
+str r1 r2
+adi r1 1
+ldi r2 230
+str r1 r2
+adi r1 1
+ldi r2 224
+str r1 r2
+adi r1 1
+ldi r2 231
+str r1 r2
+adi r1 1
+ldi r2 168
+str r1 r2
+adi r1 1
+ldi r2 231
+str r1 r2
+adi r1 1
+ldi r2 224
+str r1 r2
+adi r1 1
+ldi r2 239
+str r1 r2
+adi r1 1
+ldi r2 105
+str r1 r2
+adi r1 1
+ldi r2 70
+str r1 r2
+adi r1 1
+
+ldi r1 0 ; X position
+ldi r2 0 ; Y position
+ldi r3 1 ; X velocity
+ldi r4 1 ; Y velocity
+
+ldi r11 246
+ldi r12 240
+ldi r13 241
+ldi r14 242
+ldi r15 245
+
+;.loop
+str r11 r0
+cal 49 ; .draw_logo
+str r15 r0
+cal 71 ; .movement
+cal 74 ; .collision
+
+jmp 43 ; .loop
+
+
+; .draw_logo
+ldi r8 0
+ldi r9 11
+ldi r10 1
+; .next_byte
+	lod r8 r7
+	ldi r6 8
+	add r8 r1 r8
+	str r12 r8
+	sub r8 r1 r8
+	; .next_pixel
+		adi r6 255
+		
+		and r7 r10 r0
+		brh Z 64; .skip_pixel
+		add r6 r2 r6
+		str r13 r6
+		sub r6 r2 r6
+		str r14 r0
+		; .skip_pixel
+		rsh r7 r7
+		
+		add r6 r0 r6
+		brh !Z 57; .next_pixel
+	
+	adi r8 1
+	sub r8 r9 r0
+	brh !Z 52; .next_byte
+
+ret
+
+
+; .movement
+add r1 r3 r1
+add r2 r4 r2
+ret
+
+
+; .collision
+ldi r5 21
+ldi r6 24
+sub r1 r5 r0
+brh Z 85; .invert_x
+sub r1 r0 r0
+brh Z 85; .invert_x
+; .y_check
+sub r2 r6 r0
+brh Z 87; .invert_y
+sub r2 r0 r0
+brh Z 87; .invert_y
+ret
+
+; .invert_x
+sub r0 r3 r3
+jmp 80; .y_check
+
+; .invert_y
+sub r0 r4 r4
+ret
+`
+
+    }
+
+}
 
 /* ===== Setup ===== */
 const pixelGrid = document.getElementById("pixel-grid");

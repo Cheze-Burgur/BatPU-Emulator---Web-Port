@@ -468,8 +468,30 @@ const Documentation = {
                         </p>
                         <p>
                             Register 0 is what is called a <strong>zero register</strong>, which means it always contains the value 0. 
-                            You can read from it like a normal register, but you cannot write to it. Any attempt to write to register 0 will be ignored.
+                            You can read from it like a normal register, but you cannot write to it. Any attempt to write to r0 will be ignored.
                             r0 will always contain and read as zero, which can be useful for certain operations, such as clearing a register or comparing values.
+                        </p>
+                    </div>
+                    <div class="doc-section">
+                        <h3>Branching and Subroutines</h3>
+                        <p>
+                            To allow the creation and execution of complex programs, the CPU has to be able to <strong>compare values and conditions</strong>, and <strong>create 
+                            loops and reusable functions</strong>. The Arithmetic-Logic Unit (ALU) can already perform mathematical and logical operations on values, so the CPU just
+                            has to be able to decide what to do depending on the result.
+                        </p>
+                        <p>
+                            The <strong>JMP</strong> and <strong>BRH</strong> instructions allow you to do just that. The JMP instruction takes in one number from 0-1023 and sets
+                            the address of the <strong>program counter</strong> to that value, effectively "jumping" over to that instruction. The BRH instruction functions similarly,
+                            although it will only jump if a certain condition is met - this is called conditional branching. The conditions are based off properties of the last calculation
+                            the ALU has made. These properties are called <strong>flags</strong>. There are two flags: <strong>Zero</strong>, and <strong>Carry</strong>. The Zero flag is true if
+                            the result of the last calculation was equal to 0, while the Carry flag is true if the last calculation resulted in an overflow. These conditions can also be inverted,
+                            bring the total number of conditions up to four: Zero, Not Zero, Carry, and Not Carry.
+                        </p>
+                        <p>
+                            JMP and BRH take care of creating loops and comparing conditions, and <strong>CAL</strong> and <strong>RET</strong> take care of creating reusable functions, called
+                            <strong>subroutines</strong>. The CAL instruction functions similarly to the JMP function, except it will <strong>push</strong> the instruction immediately after it to the <strong>Call Stack</strong>.
+                            The RET instruction can then be used to <strong>pop</strong> that saved address and jump back to it. This means that if you have a block of instructions with a RET instruction at the end,
+                            you can use CAL to jump to that block as many times as you want. You can even have a subroutine call another subroutine inside of it.
                         </p>
                     </div>
                 </div>
@@ -500,7 +522,15 @@ const Documentation = {
                         <div class="doc-section">
                             <h3>By ${preset.author}</h3>
                             <p>${preset.description}</p>
-                            <img src="https://raw.githubusercontent.com/Cheze-Burgur/BatPU-Emulator---Web-Port/refs/heads/main/images/${preset.imageName}.png">
+                `
+
+                if (preset.imageName) {
+                    html += `
+                                <img src="https://raw.githubusercontent.com/Cheze-Burgur/BatPU-Emulator---Web-Port/refs/heads/main/images/${preset.imageName}.png">
+                    `
+                }
+
+                html += `
                         </div>
                     </div>
                 `;
@@ -705,6 +735,22 @@ const Documentation = {
                             <li>Added custom alert box library</li>
                             <li>Added a new type of button for use in the documentation menus</li>
                             <li>Fixed bug with the pixel display clearing both the buffer and front on clear</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="doc-card">
+                    <div class="doc-card-header">
+                        <h2>Version 1.31</h2>
+                        <span class="doc-badge">BUGFIXING</span>
+                    </div>
+                    <div class="doc-section">
+                        <h3>July 17, 2026</h3>
+                        <ul>
+                            <li>Implemented the character set for the Character Display</li>
+                            <li>Made writing to the character display actually work</li>
+                            <li>Added a new preset using the character display</li>
+                            <li>Added a new section to the help page</li>
                         </ul>
                     </div>
                 </div>
@@ -1204,6 +1250,11 @@ async function loadPreset(name) {
 
     codeEditor.value = preset.code;
 
+    loadProgram();
+    machine.reset();
+    cpu.loaded = false;
+    cpu.program = [];
+
     updateEditorGutter();
 
     modal.close();
@@ -1211,6 +1262,55 @@ async function loadPreset(name) {
 }
 
 const Presets = {
+
+    helloworld: {
+
+        title: "Hello World!",
+
+        author: "MattBatWings",
+
+        description: 'Writes "HELLOWORLD" in the Character Display.',
+
+        imageName: "helloworldimg",
+
+        code: `; Hello World - By MattBatWings
+
+; Clear character buffer
+LDI r15 249
+STR r15 r0
+
+; Write "HELLOWORLD"
+LDI r15 247
+
+LDI r14 8
+STR r15 r14
+LDI r14 5
+STR r15 r14
+LDI r14 12
+STR r15 r14
+LDI r14 12
+STR r15 r14
+LDI r14 15
+STR r15 r14
+LDI r14 23
+STR r15 r14
+LDI r14 15
+STR r15 r14
+LDI r14 18
+STR r15 r14
+LDI r14 12
+STR r15 r14
+LDI r14 4
+STR r15 r14
+
+; Push character buffer
+LDI r15 248
+STR r15 r0
+
+HLT
+`
+
+    },
 
     dvdlogo: {
 
@@ -1223,6 +1323,26 @@ const Presets = {
         imageName: "dvdlogoimg",
 
         code: `; DVD LOGO - By zPippo
+
+ldi r15 249
+str r15 r0
+ldi r15 247
+ldi r1 4
+str r15 r1
+ldi r1 22
+str r15 r1
+ldi r1 4
+str r15 r1
+ldi r1 0
+str r15 r1
+str r15 r1
+str r15 r1
+str r15 r1
+str r15 r1
+str r15 r1
+str r15 r1
+ldi r15 248
+str r15 r0
 
 ldi r1 0
 ldi r2 79
@@ -1272,42 +1392,42 @@ ldi r15 245
 
 ;.loop
 str r11 r0
-cal 49 ; .draw_logo
+cal 68 ; .draw_logo
 str r15 r0
-cal 71 ; .movement
-cal 74 ; .collision
+cal 90 ; .movement
+cal 93 ; .collision
 
-jmp 43 ; .loop
+jmp 62 ; .loop
 
 
 ; .draw_logo
 ldi r8 0
 ldi r9 11
 ldi r10 1
-; .next_byte
-	lod r8 r7
-	ldi r6 8
-	add r8 r1 r8
-	str r12 r8
-	sub r8 r1 r8
-	; .next_pixel
-		adi r6 255
+    ; .next_byte
+    lod r8 r7
+    ldi r6 8
+    add r8 r1 r8
+    str r12 r8
+    sub r8 r1 r8
+    ; .next_pixel
+        adi r6 255
 		
-		and r7 r10 r0
-		brh Z 64; .skip_pixel
-		add r6 r2 r6
-		str r13 r6
-		sub r6 r2 r6
-		str r14 r0
-		; .skip_pixel
-		rsh r7 r7
-		
-		add r6 r0 r6
-		brh !Z 57; .next_pixel
-	
-	adi r8 1
-	sub r8 r9 r0
-	brh !Z 52; .next_byte
+        and r7 r10 r0
+        brh Z 83; .skip_pixel
+        add r6 r2 r6
+        str r13 r6
+        sub r6 r2 r6
+        str r14 r0
+        ; .skip_pixel
+        rsh r7 r7
+
+        add r6 r0 r6
+        brh !Z 76; .next_pixel
+
+    adi r8 1
+    sub r8 r9 r0
+    brh !Z 71; .next_byte
 
 ret
 
@@ -1322,19 +1442,19 @@ ret
 ldi r5 21
 ldi r6 24
 sub r1 r5 r0
-brh Z 85; .invert_x
+brh Z 104; .invert_x
 sub r1 r0 r0
-brh Z 85; .invert_x
+brh Z 104; .invert_x
 ; .y_check
 sub r2 r6 r0
-brh Z 87; .invert_y
+brh Z 106; .invert_y
 sub r2 r0 r0
-brh Z 87; .invert_y
+brh Z 106; .invert_y
 ret
 
 ; .invert_x
 sub r0 r3 r3
-jmp 80; .y_check
+jmp 99; .y_check
 
 ; .invert_y
 sub r0 r4 r4
@@ -2409,35 +2529,52 @@ class CharacterDevice extends Device {
         this.buffer = [];
         this.front = "";
 
+        this.charSet = [' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '.', '!', '?'];
+
     }
 
     write(addr, value) {
 
         switch (addr) {
-            case 247: this.writeChar(String.fromCharCode(value)); break;
+            case 247: this.writeChar(value); break;
             case 248: this.flushChars(); break;
             case 249: this.clearCharsBuffer(); break;
         }
 
     }
 
+    valueToChar(val) {
+        if (val < 0 || val > 29) return;
+
+        return this.charSet[val];
+    }
+
     writeChar(c) {
 
         if (this.buffer.length >= 10) return;
-        this.buffer.push(c);
+
+        const char = this.valueToChar(c);
+
+        this.buffer.push(char);
 
     }
 
     flushChars() {
 
         this.front = this.buffer.join("");
-        textDisplay.textContent = this.front;
+        this.updateCharsDisplay();
 
     }
 
     clearCharsBuffer() {
 
         this.buffer = [];
+
+    }
+
+    updateCharsDisplay() {
+
+        textDisplay.textContent = this.front;
 
     }
 
@@ -2504,6 +2641,7 @@ class NumberDevice extends Device {
     }
 
     updateNumberDisplay() {
+
         if (!this.showNumber) {
             numDisplay.textContent = "";
         } else {

@@ -754,6 +754,23 @@ const Documentation = {
                         </ul>
                     </div>
                 </div>
+
+                <div class="doc-card">
+                    <div class="doc-card-header">
+                        <h2>Version 1.4</h2>
+                        <spam class="doc-badge">OPTIMIZATION</span>
+                        <span class="doc-badge">QUALITY OF LIFE</span>
+                    </div>
+                    <div class="doc-section">
+                        <h3>July 17, 2026</h3>
+                        <ul>
+                            <li>Improved the way fast execution rates are handled, drastically increasing speed</li>
+                            <li>Made UI only update registers, memory cells, flags, etc. that were updated in that tick</li>
+                            <li>Made comments work with <span class="code">;</span>, <span class="code">//</span>, and <span class="code">#</span></li>
+                            <li>Updated project README</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         `;
         }
@@ -1437,7 +1454,6 @@ add r1 r3 r1
 add r2 r4 r2
 ret
 
-
 ; .collision
 ldi r5 21
 ldi r6 24
@@ -1539,7 +1555,7 @@ class Machine {
         this.lastStepTime = 0;
         this.lastSpeedSampleTime = performance.now();
         this.ticksSinceLastSpeedSample = 0;
-        this.displayedSpeedHz = Number(speedSlider.value);
+        this.measuredSpeedHz = Number(speedSlider.value);
         this.intervalMode = "timer";
         this.accumulator = 0;
 
@@ -1549,90 +1565,66 @@ class Machine {
 
         this.memory.tick();
         this.cpu.step();
-        this.ui.render();
-        this.updateSpeedDisplay();
+
+        this.ticksSinceLastSpeedSample++;
 
     }
 
     updateSpeedDisplay() {
-
-        this.ticksSinceLastSpeedSample += 1;
 
         const now = performance.now();
         const elapsed = now - this.lastSpeedSampleTime;
 
         if (elapsed >= 250) {
             const measuredHz = Math.max(1, Math.round((this.ticksSinceLastSpeedSample / elapsed) * 1000));
-            this.displayedSpeedHz = measuredHz;
+            this.measuredSpeedHz = measuredHz;
             this.ticksSinceLastSpeedSample = 0;
             this.lastSpeedSampleTime = now;
-            updateSpeedText(this.displayedSpeedHz);
+            updateSpeedText(this.measuredSpeedHz);
         }
 
     }
 
     start() {
 
-        if (this.interval) return;
+        if (this.cpu.running) return;
+
         this.cpu.running = true;
-        this.lastStepTime = performance.now();
-        this.lastSpeedSampleTime = performance.now();
-        this.ticksSinceLastSpeedSample = 0;
-        this.displayedSpeedHz = Number(speedSlider.value);
-        updateSpeedText(this.displayedSpeedHz);
 
-        const targetSpeed = Number(speedSlider.value);
-        this.intervalMode = targetSpeed < 60 ? "loop" : "timer";
         this.accumulator = 0;
+        this.lastFrame = performance.now();
 
-        if (this.intervalMode === "loop") {
-            const loop = () => {
-                if (!this.cpu.running) return;
-                this.tick();
-                this.interval = setTimeout(loop, getSpeedDelay());
-            };
-            this.interval = setTimeout(loop, getSpeedDelay());
-            return;
-        }
+        const loop = (now) => {
 
-        const runTimer = () => {
             if (!this.cpu.running) return;
 
-            const now = performance.now();
-            const stepInterval = Math.max(1, Math.round(1000 / targetSpeed));
-            const elapsed = now - this.lastStepTime;
-            this.lastStepTime = now;
-            this.accumulator += elapsed;
+            const elapsed = now - this.lastFrame;
+            this.lastFrame = now;
 
-            let steps = 0;
-            while (this.accumulator >= stepInterval && steps < 8) {
+            const targetHz = Number(speedSlider.value);
+
+            this.accumulator += elapsed * targetHz / 1000;
+
+            while (this.accumulator >= 1 && this.cpu.running) {
                 this.tick();
-                this.accumulator -= stepInterval;
-                steps += 1;
+                this.accumulator--;
             }
 
-            const wait = Math.max(1, Math.ceil(stepInterval));
-            this.interval = setTimeout(runTimer, wait);
+            this.ui.render();
+            this.updateSpeedDisplay();
+
+            requestAnimationFrame(loop);
         };
 
-        this.lastStepTime = performance.now();
-        this.interval = setTimeout(runTimer, Math.max(1, Math.round(1000 / targetSpeed)));
+        requestAnimationFrame(loop);
 
     }
 
     stop() {
 
         this.cpu.running = false;
-        if (this.interval !== null) {
-            if (this.intervalMode === "loop") {
-                clearTimeout(this.interval);
-            } else {
-                clearTimeout(this.interval);
-            }
-        }
-        this.interval = null;
-        this.intervalMode = "timer";
         updateSpeedText(Number(speedSlider.value));
+        this.ui.render();
 
     }
 
@@ -1654,7 +1646,7 @@ class Machine {
         this.cpu.registers.fill(0);
         this.memory.reset();
         this.cpu.stack = [];
-        this.ui.render();
+        this.ui.render(true);
 
     }
 
@@ -1674,7 +1666,7 @@ class Assembler {
         source
             .split("\n")
             .forEach((rawLine, index) => {
-                const lineText = rawLine.split(";")[0].trim();
+                const lineText = rawLine.split(";")[0].trim().split("#")[0].trim().split("//")[0].trim();
 
                 if (!lineText) return;
 
@@ -2331,85 +2323,149 @@ class UI {
 
         this.cpu = cpu;
         this.memory = memory;
+        this.lastStatus = null;
+        this.lastPC = null;
+        this.lastFlags = { Z: null, C: null };
+        this.lastRegisters = new Uint8Array(16);
+        this.lastMemory = new Uint8Array(256);
+        this.lastStackSize = null;
+        this.lastStackTop = null;
+        this.textDisplayValue = "";
+        this.numDisplayValue = "";
+        this.pixelState = new Uint8Array(32 * 32);
 
     }
 
     setStatus(running) {
 
-        cpuStatusText.textContent = running ? "RUNNING" : "HALTED";
+        if (this.lastStatus === running) return;
+        this.lastStatus = running;
 
+        cpuStatusText.textContent = running ? "RUNNING" : "HALTED";
         cpuStatusText.classList.toggle(
             "status-running", running
         );
 
     }
 
-    updateFlags() {
+    updateFlags(force = false) {
 
         const zeroFlag = document.getElementById("flag-zero");
         const carryFlag = document.getElementById("flag-carry");
 
-        zeroFlag.querySelector(".flag-value").textContent = this.cpu.flags.Z;
-        carryFlag.querySelector(".flag-value").textContent = this.cpu.flags.C;
+        if (force || this.lastFlags.Z !== this.cpu.flags.Z) {
+            zeroFlag.querySelector(".flag-value").textContent = this.cpu.flags.Z;
+            zeroFlag.classList.toggle("active", this.cpu.flags.Z === 1);
+            this.lastFlags.Z = this.cpu.flags.Z;
+        }
 
-        zeroFlag.classList.toggle("active", this.cpu.flags.Z === 1);
-        carryFlag.classList.toggle("active", this.cpu.flags.C === 1);
+        if (force || this.lastFlags.C !== this.cpu.flags.C) {
+            carryFlag.querySelector(".flag-value").textContent = this.cpu.flags.C;
+            carryFlag.classList.toggle("active", this.cpu.flags.C === 1);
+            this.lastFlags.C = this.cpu.flags.C;
+        }
 
     }
 
-    updateStack() {
+    updateStack(force = false) {
         const stackSize = document.getElementById("stack-size");
         const stackTop = document.getElementById("stack-top");
 
-        const addr = this.cpu.stack.length > 0 ? this.cpu.stack[this.cpu.stack.length - 1] : null;
+        const size = this.cpu.stack.length;
+        const addr = size > 0 ? this.cpu.stack[size - 1] : null;
+        const topText = addr !== null ? addr.toString(2).padStart(10, "0").toUpperCase() : "----------";
 
-        stackSize.querySelector(".stack-value").textContent = this.cpu.stack.length;
-        stackTop.querySelector(".stack-value").textContent = addr !== null ? addr.toString(2).padStart(10, "0").toUpperCase() : "----------";
+        if (force || this.lastStackSize !== size) {
+            stackSize.querySelector(".stack-value").textContent = size;
+            this.lastStackSize = size;
+        }
+
+        if (force || this.lastStackTop !== topText) {
+            stackTop.querySelector(".stack-value").textContent = topText;
+            this.lastStackTop = topText;
+        }
     }
 
-    updateRegisters() {
-
+    updateRegisters(force = false) {
         for (let i = 1; i < 16; i++) {
             const v = this.cpu.registers[i];
+            if (!force && this.lastRegisters[i] === v) continue;
+            this.lastRegisters[i] = v;
+
             regCells[i].dec.textContent = v;
             const bin = formatBinaryRows(v);
             regCells[i].binTop.textContent = bin.top;
             regCells[i].binBottom.textContent = bin.bottom;
         }
-
     }
 
-    updateMemory() {
-
+    updateMemory(force = false) {
         for (let i = 0; i < 256; i++) {
             const v = this.memory.data[i];
+            if (!force && this.lastMemory[i] === v) continue;
+            this.lastMemory[i] = v;
+
             memCells[i].dec.textContent = v;
             const bin = formatBinaryRows(v);
             memCells[i].binTop.textContent = bin.top;
             memCells[i].binBottom.textContent = bin.bottom;
         }
-
     }
 
-    render() {
+    updatePixels(force = false) {
+        const screenDevice = this.memory.devices.find(d => d instanceof ScreenDevice);
+        const source = screenDevice ? screenDevice.frontBuffer : null;
+
+        for (let i = 0; i < 32 * 32; i++) {
+            const v = source ? source[i] : 0;
+            if (!force && this.pixelState[i] === v) continue;
+            this.pixelState[i] = v;
+            pixelGrid.children[i].classList.toggle("active", !!v);
+        }
+    }
+
+    updateDisplays(force = false) {
+        const charsDevice = this.memory.devices.find(d => d instanceof CharacterDevice);
+        const numDevice = this.memory.devices.find(d => d instanceof NumberDevice);
+
+        const textValue = charsDevice ? charsDevice.front : "";
+        if (force || this.textDisplayValue !== textValue) {
+            this.textDisplayValue = textValue;
+            textDisplay.textContent = textValue;
+        }
+
+        const numberValue = numDevice && numDevice.showNumber
+            ? (numDevice.numberMode === "signed" && (numDevice.displayNumber & 0x80)
+                ? numDevice.displayNumber - 256
+                : numDevice.displayNumber).toString()
+            : "";
+
+        if (force || this.numDisplayValue !== numberValue) {
+            this.numDisplayValue = numberValue;
+            numDisplay.textContent = numberValue;
+        }
+    }
+
+    render(force = false) {
 
         this.setStatus(this.cpu.running);
 
-        this.updateFlags();
-        this.updateStack();
-        this.updateRegisters();
-        this.updateMemory();
+        this.updateFlags(force);
+        this.updateStack(force);
+        this.updateRegisters(force);
+        this.updateMemory(force);
+        this.updatePixels(force);
+        this.updateDisplays(force);
 
-        if (this.cpu.pc !== 0) {
+        const pcText = this.cpu.pc !== 0
+            ? `PC: ${String(this.cpu.pc - 1).padStart(4, "0")}`
+            : `PC: ----`;
+
+        if (force || this.lastPC !== pcText) {
+            this.lastPC = pcText;
             document.querySelector(
                 "#cpu-status-bar div:nth-child(2)"
-            ).textContent =
-                `PC: ${String(this.cpu.pc - 1).padStart(4, "0")}`;
-        } else {
-            document.querySelector(
-                "#cpu-status-bar div:nth-child(2)"
-            ).textContent =
-                `PC: ----`;
+            ).textContent = pcText;
         }
 
     }
@@ -2499,11 +2555,6 @@ class ScreenDevice extends Device {
 
     flushScreen() {
         this.frontBuffer.set(this.buffer);
-
-        for (let i = 0; i < 32 * 32; i++) {
-            this.pixelGrid.children[i]
-                .classList.toggle("active", this.frontBuffer[i]);
-        }
     }
 
     clearScreen() {
@@ -2856,8 +2907,6 @@ const cpu = new CPU(memory);
 const ui = new UI(cpu, memory);
 const machine = new Machine(cpu, memory, ui);
 
-let interval = null;
-
 /* ===== Helpers ===== */
 const clamp = (v, max) => Math.min(max - 1, Math.max(0, v));
 const toBin = v => (v & 0xff).toString(2).padStart(8, "0");
@@ -2901,7 +2950,7 @@ function updateSpeedUI() {
     updateSpeedText(targetSpeed);
 
     if (machine && machine.cpu.running) {
-        machine.displayedSpeedHz = targetSpeed;
+        machine.measuredSpeedHz = targetSpeed;
         machine.restart();
     }
 }
@@ -2918,6 +2967,7 @@ function loadProgram() {
         line: problem.line
     })));
     updateEditorGutter(source);
+    ui.render(true);
 }
 
 /* ===== Input Handling ===== */
@@ -2942,6 +2992,7 @@ document.getElementById("line-step").onclick = () => {
     if (cpu.program.length === 0) loadProgram();
     if (problems.items.length > 0) return;
     machine.tick();
+    ui.render(true);
 };
 
 document.getElementById("reset-program").onclick = () => {
@@ -2964,7 +3015,7 @@ speedSlider.addEventListener("input", updateSpeedUI);
 function init() {
     updateSpeedUI();
     loadProgram();
-    ui.render();
+    ui.render(true);
 }
 
 init();

@@ -745,7 +745,7 @@ const Documentation = {
                         <span class="doc-badge">BUGFIXING</span>
                     </div>
                     <div class="doc-section">
-                        <h3>July 17, 2026</h3>
+                        <h3>July 16, 2026</h3>
                         <ul>
                             <li>Implemented the character set for the Character Display</li>
                             <li>Made writing to the character display actually work</li>
@@ -762,7 +762,7 @@ const Documentation = {
                         <span class="doc-badge">QUALITY OF LIFE</span>
                     </div>
                     <div class="doc-section">
-                        <h3>July 17, 2026</h3>
+                        <h3>July 16, 2026</h3>
                         <ul>
                             <li>Improved the way fast execution rates are handled, drastically increasing speed</li>
                             <li>Made UI only update registers, memory cells, flags, etc. that were updated in that tick</li>

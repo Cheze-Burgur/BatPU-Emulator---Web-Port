@@ -771,6 +771,20 @@ const Documentation = {
                         </ul>
                     </div>
                 </div>
+
+                <div class="doc-card">
+                    <div class="doc-card-header">
+                        <h2>Version 1.41</h2>
+                        <spam class="doc-badge">BUGFIXING</span>
+                    </div>
+                    <div class="doc-section">
+                        <h3>July 16, 2026</h3>
+                        <ul>
+                            <li>Added handlers for stack over/underflow</li>
+                            <li>Fixed the missalignment between the ISA and Assembler for the LOD and STR instructions.</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         `;
         }
@@ -1477,7 +1491,7 @@ sub r0 r4 r4
 ret
 `
 
-    }
+    },
 
 }
 
@@ -2188,15 +2202,21 @@ class CPU {
 
     executeCAL(args) {
 
-        const addr = Assembler.parseImmediate(args[0]);
+        if (this.stack.length >= 16)
+            throw new Error("Stack overflow");
+
         this.stack.push(this.pc);
-        this.pc = addr;
+
+        this.pc = Assembler.parseImmediate(args[0]);
 
     }
 
     executeRET(args) {
 
-        this.pc = this.stack.length ? this.stack.pop() : 0;
+        if (this.stack.length === 0)
+            throw new Error("Stack underflow");
+
+        this.pc = this.stack.pop();
 
     }
 
@@ -2204,41 +2224,39 @@ class CPU {
     executeLOD(args) {
 
         const rA = this.parseRegister(args[0]);
-        let offset;
+
         let rB;
+        let offset = 0;
 
         if (args.length === 2) {
-            offset = 0;
             rB = this.parseRegister(args[1]);
         } else {
-            offset = Assembler.parseImmediate(args[1]);
-            rB = this.parseRegister(args[2]);
+            rB = this.parseRegister(args[1]);
+            offset = Assembler.parseImmediate(args[2]);
         }
 
         const addr = (this.registers[rA] + offset) & 0xff;
 
         this.writeRegister(rB, this.memory.read(addr));
-
     }
 
     executeSTR(args) {
 
         const rA = this.parseRegister(args[0]);
-        let offset;
+
         let rB;
+        let offset = 0;
 
         if (args.length === 2) {
-            offset = 0;
             rB = this.parseRegister(args[1]);
         } else {
-            offset = Assembler.parseImmediate(args[1]);
-            rB = this.parseRegister(args[2]);
+            rB = this.parseRegister(args[1]);
+            offset = Assembler.parseImmediate(args[2]);
         }
 
         const addr = (this.registers[rA] + offset) & 0xff;
 
         this.memory.write(addr, this.registers[rB]);
-
     }
 
     execute({ op, args }) {

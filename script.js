@@ -160,6 +160,7 @@ class SettingsManager {
             default: "Default",
             light: "Light",
             machine: "Machine",
+            nord: "Nord",
         };
 
         this.settings = {

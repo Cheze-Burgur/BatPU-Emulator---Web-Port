@@ -658,8 +658,9 @@ const Documentation = {
                             <li>Updated README to better reflect recent changes and improvements</li>
                         </ul>
                     </div>
+				</div>
 
-					<div class="doc-card">
+				<div class="doc-card">
                     <div class="doc-card-header">
                         <h2>Version 1.61</h2>
                         <span class="doc-badge">BUGFIXING</span>
@@ -675,6 +676,19 @@ const Documentation = {
 							<ul>
 								<li>Buttons were mapped in the wrong order. Order should have been &lt; v &gt; ^ b a 1 2 instead of &lt; ^ V &gt; a b 1 2</li>
 							</ul>
+                        </ul>
+                    </div>
+                </div>
+
+				<div class="doc-card">
+                    <div class="doc-card-header">
+                        <h2>Version 1.62</h2>
+                        <span class="doc-badge">UI & STYLING</span>
+                    </div>
+                    <div class="doc-section">
+                        <h3>August 17, 2026</h3>
+                        <ul>
+                            <li>New "Nord" theme (don't ask what it means, I'm not the one who made it)</li>
                         </ul>
                     </div>
                 </div>

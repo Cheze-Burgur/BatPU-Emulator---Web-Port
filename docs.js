@@ -688,7 +688,7 @@ const Documentation = {
                     <div class="doc-section">
                         <h3>August 17, 2026</h3>
                         <ul>
-                            <li>New "Nord" theme (don't ask what it means, I'm not the one who made it)</li>
+                            <li>New "Nord" theme based off <a href="https://www.nordtheme.com" target="_blank">https://www.nordtheme.com</a></li>
                         </ul>
                     </div>
                 </div>

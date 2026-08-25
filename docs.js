@@ -1,21 +1,39 @@
+/* ======================================
+    DOCUMENTATION:
+	This file contains the structural
+	data for the documentation menus.
+
+	DOC SECTIONS:
+	- Instruction set architecture
+	  (ISA)
+	- I/O Protocol
+	- Help Guide
+	- About Page
+	- Preset Browser
+	- Changelog
+
+	FILE STRUCTURE:
+	This file is broken into two main
+	parts. The first part consists of
+	the Documentation object, with each
+	nested object inside correspoding
+	to one of the documentaion sections.
+	These objects then contain the
+	section title and a render() method
+	that returns the structure of the
+	modal.
+
+	The second part consists of the
+	data used to populate the modals
+	dynamically. It contains infomation
+	on the ISA and Protocol, and the
+	data for the preset programs
+====================================== */
+
+/* ===== Main Documentation object ===== */
 const Documentation = {
 
-    home: {
-
-        title: "Home",
-
-        render() {
-
-            return `
-<h1>CPU Simulator</h1>
-<p>Welcome...</p>
-`;
-
-        }
-
-    },
-
-    isa: {
+    isa: { // Instruction Set modal structure
 
         title: "Instruction Set",
 
@@ -140,7 +158,7 @@ const Documentation = {
 
     },
 
-    io: {
+    io: { // Protocol modal structure
 
         title: "I/O Protocol",
 
@@ -219,7 +237,7 @@ const Documentation = {
 
     },
 
-    help: {
+    help: { // Help menu structure - maybe rework this so it has its own data object attached
         title: "Help Guide",
 
         render() {
@@ -329,7 +347,7 @@ const Documentation = {
         }
     },
 
-    presets: {
+    presets: { // Preset Browser modal structure
         title: "Presets",
 
         render() {
@@ -372,7 +390,7 @@ const Documentation = {
 
     },
 
-    about: {
+    about: { // About menu structure - maybe rework this so it has its own data object attached
         title: "About",
 
         render() {
@@ -441,7 +459,7 @@ const Documentation = {
         }
     },
 
-    changelog: {
+    changelog: { // Changelog structure - maybe rework this so it has its own data object attached
         title: "Changelog",
 
         render() {
@@ -699,6 +717,8 @@ const Documentation = {
 
 };
 
+
+/* ===== Documentation Data ===== */
 const Instructions = {
 
     NOP: {

@@ -202,15 +202,7 @@ https://github.com/mattbatwings
 
 Created the original Virtual Machine that this project is based on.
 
-https://github.com/AdoHTQ
-
----
-
-### ArmadilloMike
-
-Provided help and feedback during development.
-
-https://github.com/ArmadilloMike
+https://github.com/
 
 ---
 

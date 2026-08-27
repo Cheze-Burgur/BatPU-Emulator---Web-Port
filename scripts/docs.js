@@ -442,9 +442,21 @@ const Documentation = {
                                 <strong><a href="https://github.com/AdoHTQ" target="_blank">AdoHTQ</a></strong> for the 
                                 original emulator layout.
                             </li>
+                        </ul>
+                    </div>
+                </div>
+
+				<div class="doc-card">
+                    <div class="doc-card-header">
+                        <h2>Contributors</h2>
+                        <span class="doc-badge">Info</span>
+                    </div>
+                    <div class="doc-section">
+                        <h3>Special Thanks to:</h3>
+                        <ul>
                             <li>
                                 <strong><a href="https://github.com/ArmadilloMike" target="_blank">ArmadilloMike</a></strong> for some
-                                bugfixing help and feedback.
+                                bugfixing/styling help and feedback.
                             </li>
                         </ul>
                     </div>

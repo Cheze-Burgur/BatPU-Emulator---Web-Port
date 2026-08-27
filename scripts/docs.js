@@ -705,6 +705,31 @@ const Documentation = {
                         </ul>
                     </div>
                 </div>
+
+				<div class="doc-card">
+                    <div class="doc-card-header">
+                        <h2>Version 1.7</h2>
+                        <span class="doc-badge">QUALITY OF LIFE</span>
+                    </div>
+                    <div class="doc-section">
+                        <h3>August 17, 2026</h3>
+                        <ul>
+                            <li>Completely refactored the single large <span class="code">script.js</span> file into multiple smaller, more managable files</li>
+							<ul>
+                                <li><span class="code">main.js</span> contains and initializes the Machine class</li>
+                                <li><span class="code">ui.js</span> handles UI updates</li>
+                                <li><span class="code">cpu.js</span> contains the main CPU logic</li>
+                                <li><span class="code">assembler.js</span> contains the built in assembler</li>
+                                <li><span class="code">memory.js</span> handles updates to the data memory</li>
+                                <li><span class="code">devices.js</span> contains the I/O devices and their logic</li>
+                                <li><span class="code">saveManager.js</span> handles saving and loading programs</li>
+                                <li><span class="code">utils.js</span> contains misc. helper functions</li>
+                                <li><span class="code">docs.js</span> contains the documentation</li>
+                            </ul>
+							<li>Now that this large peice of housekeeping is done, i want to focus on making updates that are more focused on making new or improving existing features</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         `;
         }

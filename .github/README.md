@@ -214,6 +214,14 @@ https://github.com/ArmadilloMike
 
 ---
 
+## Contributors
+
+### [ArmadilloMike](https://github.com/ArmadilloMike)
+
+Helped improve styling, added new site themes.
+
+---
+
 # Repository
 
 GitHub:

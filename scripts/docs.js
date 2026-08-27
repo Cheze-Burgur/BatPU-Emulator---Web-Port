@@ -1,34 +1,29 @@
-/* ======================================
+/* ============================================================
     DOCUMENTATION:
-	This file contains the structural
-	data for the documentation menus.
+    This file contains the structural data for the
+    documentation menus.
 
-	DOC SECTIONS:
-	- Instruction set architecture
-	  (ISA)
-	- I/O Protocol
-	- Help Guide
-	- About Page
-	- Preset Browser
-	- Changelog
+    DOC SECTIONS:
+    - Instruction set architecture
+      (ISA)
+    - I/O Protocol
+    - Help Guide
+    - About Page
+    - Preset Browser
+    - Changelog
 
-	FILE STRUCTURE:
-	This file is broken into two main
-	parts. The first part consists of
-	the Documentation object, with each
-	nested object inside correspoding
-	to one of the documentaion sections.
-	These objects then contain the
-	section title and a render() method
-	that returns the structure of the
-	modal.
+    FILE STRUCTURE:
+    This file is broken into two main parts. The
+    first part consists of the Documentation object,
+    with each nested object inside correspoding to one
+    of the documentaion sections. These objects then
+    contain the section title and a render() method
+    that returns the structure of the modal.
 
-	The second part consists of the
-	data used to populate the modals
-	dynamically. It contains infomation
-	on the ISA and Protocol, and the
-	data for the preset programs
-====================================== */
+    The second part consists of the data used to populate
+    the modals dynamically. It contains infomation on the
+    ISA and Protocol, and the data for the preset programs
+============================================================ */
 
 /* ===== Main Documentation object ===== */
 const Documentation = {
@@ -717,6 +712,8 @@ const Documentation = {
 
 };
 
+export { Presets };
+export default Documentation;
 
 /* ===== Documentation Data ===== */
 const Instructions = {

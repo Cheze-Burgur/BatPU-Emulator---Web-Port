@@ -8,23 +8,23 @@ Run programs, interact with virtual hardware devices in real time, and learn low
 
 ## Main Emulator
 
-![Main Emulator](images/readme/readme-main.png)
+![Main Emulator](../images/readme/readme-main.png)
 
 ## Writing and Running Programs
 
-![Assembly Editor](images/readme/readme-editor.png)
+![Assembly Editor](../images/readme/readme-editor.png)
 
 ## Built-in ISA Documentation
 
-![ISA Documentation](images/readme/readme-isa.png)
+![ISA Documentation](../images/readme/readme-isa.png)
 
 ## Built-in I/O Documentation
 
-![I/O Documentation](images/readme/readme-io.png)
+![I/O Documentation](../images/readme/readme-io.png)
 
 ## Preset Programs
 
-![Preset Browser](images/readme/readme-presets.png)
+![Preset Browser](../images/readme/readme-presets.png)
 
 ---
 

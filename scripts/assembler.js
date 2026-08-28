@@ -262,10 +262,8 @@ export default class Assembler {
 
         if (typeof value !== "string") return false;
 
-        if (value.startsWith("0b")) return !Number.isNaN(parseInt(value.slice(2), 2));
-        if (value.startsWith("0x")) return !Number.isNaN(parseInt(value.slice(2), 16));
-
-        return !Number.isNaN(Number(value));
+        const parsed = this.parseImmediate(value);
+        return Number.isInteger(parsed);
 
     }
 
@@ -279,10 +277,23 @@ export default class Assembler {
 
         if (typeof str !== "string") return str;
 
-        if (str.startsWith("0b")) return parseInt(str.slice(2), 2);
-        if (str.startsWith("0x")) return parseInt(str.slice(2), 16);
+        const value = str.trim();
+        if (!value) return NaN;
 
-        return Number(str);
+        if (value.startsWith("0b")) {
+            const bits = value.slice(2);
+            if (!/^[01]+$/.test(bits)) return NaN;
+            return parseInt(bits, 2);
+        }
+
+        if (value.startsWith("0x")) {
+            const digits = value.slice(2);
+            if (!/^[0-9a-fA-F]+$/.test(digits)) return NaN;
+            return parseInt(digits, 16);
+        }
+
+        const numeric = Number(value);
+        return Number.isFinite(numeric) ? numeric : NaN;
 
     }
 

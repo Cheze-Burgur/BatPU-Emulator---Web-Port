@@ -185,6 +185,13 @@ function loadProgram() {
     ui.render(true);
 }
 
+function resetRuntimeState() {
+    machine.reset();
+    cpu.loaded = false;
+    cpu.program = [];
+    ui.render(true);
+}
+
 async function loadPreset(name) {
     const preset = Presets[name];
 
@@ -206,9 +213,7 @@ async function loadPreset(name) {
 
     codeEditor.value = preset.code;
     loadProgram();
-    machine.reset();
-    cpu.loaded = false;
-    cpu.program = [];
+    resetRuntimeState();
     updateEditorGutter(codeEditor.value, codeEditor, editorGutter, editorLineMap, Assembler);
     modal.close();
 }
@@ -256,9 +261,7 @@ document.getElementById("line-step").onclick = () => {
 
 document.getElementById("reset-program").onclick = () => {
     loadProgram();
-    machine.reset();
-    cpu.loaded = false;
-    cpu.program = [];
+    resetRuntimeState();
 };
 
 codeEditor.addEventListener("input", loadProgram);

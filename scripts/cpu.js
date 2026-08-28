@@ -62,6 +62,22 @@ export default class CPU {
 
     }
 
+    parseRegisters(args, requiredCount, opName) {
+
+        if (args.length !== requiredCount) {
+            throw new Error(`${opName} requires ${requiredCount} operands`);
+        }
+
+        return args.map(arg => this.parseRegister(arg));
+
+    }
+
+    getMemoryAddress(baseRegister, offsetValue = 0) {
+
+        return (this.registers[baseRegister] + Assembler.parseImmediate(offsetValue)) & 0xff;
+
+    }
+
     writeRegister(idx, value) {
 
         if (idx === 0) return;
@@ -244,38 +260,18 @@ export default class CPU {
     /* Memory Manipulation Instructions */
     executeLOD(args) {
 
-        const rA = this.parseRegister(args[0]);
-
-        let rB;
-        let offset = 0;
-
-        if (args.length === 2) {
-            rB = this.parseRegister(args[1]);
-        } else {
-            rB = this.parseRegister(args[1]);
-            offset = Assembler.parseImmediate(args[2]);
-        }
-
-        const addr = (this.registers[rA] + offset) & 0xff;
+        const [rA, rB] = this.parseRegisters(args.slice(0, 2), 2, "LOD");
+        const offset = args.length === 3 ? Assembler.parseImmediate(args[2]) : 0;
+        const addr = this.getMemoryAddress(rA, offset);
 
         this.writeRegister(rB, this.memory.read(addr));
     }
 
     executeSTR(args) {
 
-        const rA = this.parseRegister(args[0]);
-
-        let rB;
-        let offset = 0;
-
-        if (args.length === 2) {
-            rB = this.parseRegister(args[1]);
-        } else {
-            rB = this.parseRegister(args[1]);
-            offset = Assembler.parseImmediate(args[2]);
-        }
-
-        const addr = (this.registers[rA] + offset) & 0xff;
+        const [rA, rB] = this.parseRegisters(args.slice(0, 2), 2, "STR");
+        const offset = args.length === 3 ? Assembler.parseImmediate(args[2]) : 0;
+        const addr = this.getMemoryAddress(rA, offset);
 
         this.memory.write(addr, this.registers[rB]);
     }

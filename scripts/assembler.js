@@ -51,6 +51,17 @@ export default class Assembler {
             return problems;
         }
 
+        const addRangeProblem = (label, value, min, max) => {
+            const parsed = this.parseImmediate(value);
+            if (parsed < min || parsed > max) {
+                problems.push({
+                    type: "error",
+                    message: `${label} must be between ${min} and ${max}`,
+                    line
+                });
+            }
+        };
+
         switch (op) {
             case "NOP":
             case "HLT":
@@ -127,13 +138,7 @@ export default class Assembler {
                     break;
                 }
 
-                if (this.parseImmediate(args[1]) < 0 || this.parseImmediate(args[1]) > 255) {
-                    problems.push({
-                        type: "error",
-                        message: `${op} immediate value must be between 0 and 255`,
-                        line
-                    });
-                }
+                addRangeProblem(`${op} immediate value`, args[1], 0, 255);
                 break;
 
             case "JMP":
@@ -147,13 +152,7 @@ export default class Assembler {
                     break;
                 }
 
-                if (this.parseImmediate(args[0]) < 0 || this.parseImmediate(args[0]) > 1023) {
-                    problems.push({
-                        type: "error",
-                        message: `${op} address must be between 0 and 1023`,
-                        line
-                    });
-                }
+                addRangeProblem(`${op} address`, args[0], 0, 1023);
                 break;
 
             case "BRH":
@@ -183,13 +182,7 @@ export default class Assembler {
                     break;
                 }
 
-                if (this.parseImmediate(args[1]) < 0 || this.parseImmediate(args[1]) > 1023) {
-                    problems.push({
-                        type: "error",
-                        message: `BRH address must be between 0 and 1023`,
-                        line
-                    });
-                }
+                addRangeProblem("BRH address", args[1], 0, 1023);
                 break;
 
             case "RET":
@@ -238,12 +231,8 @@ export default class Assembler {
                     break;
                 }
 
-                if (args.length === 3 && (this.parseImmediate(args[2]) < -8 || this.parseImmediate(args[2]) > 7)) {
-                    problems.push({
-                        type: "error",
-                        message: `${op} offset must be between -8 and 7`,
-                        line
-                    });
+                if (args.length === 3) {
+                    addRangeProblem(`${op} offset`, args[2], -8, 7);
                 }
                 break;
         }

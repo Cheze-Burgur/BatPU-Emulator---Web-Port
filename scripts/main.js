@@ -35,6 +35,7 @@ class Machine {
         this.ui = ui;
 
         this.interval = null;
+        this.animationFrameId = null;
         this.lastStepTime = 0;
         this.lastSpeedSampleTime = performance.now();
         this.ticksSinceLastSpeedSample = 0;
@@ -79,7 +80,10 @@ class Machine {
 
         const loop = (now) => {
 
-            if (!this.cpu.running) return;
+            if (!this.cpu.running) {
+                this.animationFrameId = null;
+                return;
+            }
 
             const elapsed = now - this.lastFrame;
             this.lastFrame = now;
@@ -96,16 +100,22 @@ class Machine {
             this.ui.render();
             this.updateSpeedDisplay();
 
-            requestAnimationFrame(loop);
+            this.animationFrameId = requestAnimationFrame(loop);
         };
 
-        requestAnimationFrame(loop);
+        this.animationFrameId = requestAnimationFrame(loop);
 
     }
 
     stop() {
 
         this.cpu.running = false;
+
+        if (this.animationFrameId !== null) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
+        }
+
         updateSpeedText(Number(speedSlider.value), speedValue);
         this.ui.render();
 

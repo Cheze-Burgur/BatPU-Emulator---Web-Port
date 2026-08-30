@@ -154,10 +154,22 @@ const editorGutter = document.getElementById("editor-gutter");
 const codeEditor = document.getElementById("code-editor");
 const editorLineMap = [];
 
+const app = document.getElementById("app");
 const mobileNav = document.getElementById("mobile-nav");
 const mobilePanelButtons = [...document.querySelectorAll(".mobile-nav-panel-button")];
 const mobileProblemsButton = document.getElementById("mobile-problems-button");
+const bottomPanel = document.getElementById("bottom-panel");
 const workspacePanels = [...document.querySelectorAll("#workspace .panel")];
+
+function updateMobileLayoutState() {
+    if (!app) return;
+
+    const navOpen = !!mobileNav && mobileNav.classList.contains("open");
+    const problemsOpen = !!bottomPanel && bottomPanel.classList.contains("open");
+
+    app.classList.toggle("mobile-sheet-open", navOpen || problemsOpen);
+    app.classList.toggle("mobile-problems-open", problemsOpen);
+}
 
 function updateMobileProblemsButtonVisibility() {
     if (!mobileProblemsButton) return;
@@ -189,13 +201,17 @@ function toggleMobileNav(forceOpen) {
 
     mobileNav.classList.toggle("open", shouldOpen);
     mobileNav.classList.toggle("closed", !shouldOpen);
+    updateMobileLayoutState();
 }
 
 const isMobileViewport = () => window.matchMedia("(max-width: 920px)").matches;
 
 if (mobileNav) {
     setActivePanel(isMobileViewport() ? "center" : "left");
-    window.addEventListener("resize", updateMobileProblemsButtonVisibility);
+    window.addEventListener("resize", () => {
+        updateMobileProblemsButtonVisibility();
+        updateMobileLayoutState();
+    });
     document.getElementById("mobile-nav-handle").addEventListener("click", () => toggleMobileNav());
 
     mobilePanelButtons.forEach(button => {
@@ -246,6 +262,9 @@ if (mobileProblemsButton) {
         document.getElementById("problems-toggle").click();
     });
 }
+
+document.addEventListener("mobile-layout-update", updateMobileLayoutState);
+updateMobileLayoutState();
 
 const problems = new ProblemsPanel(document.getElementById("problems-list"));
 const modal = new Modal();

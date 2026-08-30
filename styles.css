@@ -1150,7 +1150,11 @@ a:hover {
 
     #workspace {
         display: block;
-        padding-bottom: 100px;
+        padding-bottom: 0;
+    }
+
+    #mobile-nav~#workspace {
+        padding-bottom: 0;
     }
 
     #left,
@@ -1159,7 +1163,8 @@ a:hover {
         display: none;
         min-width: 0;
         width: 100%;
-        min-height: calc(100dvh - 190px);
+        min-height: 100dvh;
+        height: 100dvh;
         padding: 12px 12px 24px;
     }
 
@@ -1187,6 +1192,7 @@ a:hover {
 
     #mobile-nav.open {
         height: auto;
+        max-height: min(72vh, 420px);
     }
 
     #mobile-nav-content {
@@ -1204,15 +1210,6 @@ a:hover {
 
     #mobile-nav.closed #mobile-nav-content {
         display: none;
-    }
-
-    #mobile-nav.open {
-        max-height: min(72vh, 420px);
-    }
-
-    #mobile-nav-buttons,
-    .mobile-nav-actions {
-        display: grid;
     }
 
     #mobile-nav-handle {
@@ -1317,14 +1314,6 @@ a:hover {
         box-shadow: none;
     }
 
-    @media (max-width: 920px) {
-
-        #mobile-problems-button,
-        .mobile-editor-problems-button {
-            display: inline-flex;
-        }
-    }
-
     #bottom-panel.open {
         display: flex;
         position: fixed;
@@ -1343,6 +1332,38 @@ a:hover {
         display: block;
         height: 170px;
         border-top: 1px solid var(--border);
+    }
+
+    #right {
+        position: relative;
+        transition: transform 0.2s ease;
+    }
+
+    #right.active .editor-shell,
+    #right.active .editor-text-area,
+    #right.active #code-editor {
+        min-height: clamp(360px, 62vh, 600px);
+        height: clamp(360px, 62vh, 600px);
+    }
+
+    #app.mobile-sheet-open #right.active,
+    #app.mobile-problems-open #right.active {
+        transform: translateY(calc(-1 * min(24vh, 170px)));
+    }
+
+    #app.mobile-sheet-open #right.active .editor-shell,
+    #app.mobile-sheet-open #right.active .editor-text-area,
+    #app.mobile-sheet-open #right.active #code-editor,
+    #app.mobile-problems-open #right.active .editor-shell,
+    #app.mobile-problems-open #right.active .editor-text-area,
+    #app.mobile-problems-open #right.active #code-editor {
+        min-height: clamp(360px, 72vh, 700px);
+        height: clamp(360px, 72vh, 700px);
+    }
+
+    #mobile-problems-button,
+    .mobile-editor-problems-button {
+        display: inline-flex;
     }
 
     #bottom-toolbar {

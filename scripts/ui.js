@@ -248,12 +248,14 @@ class ProblemsPanel {
     open() {
 
         this.panel.classList.add("open");
+        document.dispatchEvent(new Event("mobile-layout-update"));
 
     }
 
     close() {
 
         this.panel.classList.remove("open");
+        document.dispatchEvent(new Event("mobile-layout-update"));
 
     }
 
@@ -287,6 +289,7 @@ class ProblemsPanel {
 
         this.toggle.addEventListener("click", () => {
             this.panel.classList.toggle("open");
+            document.dispatchEvent(new Event("mobile-layout-update"));
         });
 
     }

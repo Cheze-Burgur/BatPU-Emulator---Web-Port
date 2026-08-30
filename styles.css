@@ -1170,7 +1170,7 @@ a:hover {
     }
 
     #editor-shell {
-        min-height: 300px;
+        height: 300px;
     }
 
     #mobile-nav {

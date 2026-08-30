@@ -1169,6 +1169,10 @@ a:hover {
         display: flex;
     }
 
+    #editor-shell {
+        min-height: 300px;
+    }
+
     #mobile-nav {
         position: fixed;
         left: 10px;

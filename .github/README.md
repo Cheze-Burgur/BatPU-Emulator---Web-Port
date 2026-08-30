@@ -157,6 +157,7 @@ Site Themes:
 * Default (Dark)
 * Light
 * Machine
+* Nord
 
 ---
 
@@ -210,7 +211,13 @@ https://github.com/
 
 ### [ArmadilloMike](https://github.com/ArmadilloMike)
 
-Helped improve styling, added new site themes.
+Helped improve styling, added new site themes, misc bug fixing, etc.
+
+---
+
+## Want to contribute?
+
+Read the [contributing guidelines](CONTRIBUTING.md) and the [code of conduct](CODE_OF_CONDUCT.md) before opening a pull request or issue.
 
 ---
 
@@ -226,4 +233,4 @@ https://github.com/Cheze-Burgur/BatPU-Emulator---Web-Port
 
 This project is licensed under the MIT License unless otherwise specified.
 
-See the LICENSE file for details.
+See the [LICENSE](../LICENSE) file for details.

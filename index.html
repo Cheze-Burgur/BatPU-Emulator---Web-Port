@@ -14,6 +14,32 @@
 <body>
     <div id="app">
 
+        <div id="mobile-nav" class="closed" aria-label="Mobile navigation">
+            <div id="mobile-nav-handle" aria-label="Toggle mobile navigation">
+                <span></span>
+            </div>
+
+            <div id="mobile-nav-content">
+                <div id="mobile-nav-buttons">
+                    <button type="button" class="mobile-nav-panel-button active" data-panel="left">I/O</button>
+                    <button type="button" class="mobile-nav-panel-button" data-panel="center">Control</button>
+                    <button type="button" class="mobile-nav-panel-button" data-panel="right">Editor</button>
+                </div>
+
+                <div class="mobile-nav-actions" aria-label="Utility buttons">
+                    <button type="button" class="mobile-nav-action-button" data-action="isa">ISA</button>
+                    <button type="button" class="mobile-nav-action-button" data-action="io">I/O</button>
+                    <button type="button" class="mobile-nav-action-button" data-action="help">Help</button>
+                    <button type="button" class="mobile-nav-action-button" data-action="presets">Presets</button>
+                    <button type="button" class="mobile-nav-action-button" data-action="about">About</button>
+                    <button type="button" class="mobile-nav-action-button" data-action="changelog">Changelog</button>
+                    <button type="button" class="mobile-nav-action-button" data-action="settings">Settings</button>
+                    <button type="button" class="mobile-nav-action-button" data-action="project-repo">Project
+                        Repository</button>
+                </div>
+            </div>
+        </div>
+
         <div id="workspace">
 
             <!-- I/O Panel -->
@@ -160,6 +186,10 @@
                         <textarea id="code-editor" spellcheck="false"># Enter a program or load a preset.</textarea>
                     </div>
                 </div>
+
+                <button id="mobile-problems-button" class="mobile-editor-problems-button" type="button">
+                    Problems (0)
+                </button>
             </div>
 
         </div>

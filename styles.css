@@ -467,6 +467,10 @@ a:hover {
     height: 100vh;
 }
 
+#mobile-nav {
+    display: none;
+}
+
 #workspace {
     flex: 1;
     display: flex;
@@ -1031,6 +1035,33 @@ a:hover {
     flex-shrink: 0;
 }
 
+@media (max-width: 920px) {
+    #bottom-panel {
+        display: none;
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        bottom: 18px;
+        z-index: 1100;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid var(--panel-border);
+        box-shadow: 0 -12px 28px rgba(0, 0, 0, 0.22);
+    }
+
+    #bottom-panel.open {
+        display: flex;
+    }
+
+    #bottom-panel.open #problems-panel {
+        display: block;
+    }
+
+    #bottom-panel.open #bottom-toolbar {
+        display: none;
+    }
+}
+
 #bottom-toolbar {
     height: 40px;
     display: flex;
@@ -1103,6 +1134,246 @@ a:hover {
 
 #bottom-panel.open #problems-panel {
     display: block;
+}
+
+#mobile-problems-button {
+    display: none;
+    width: 100%;
+    min-height: 40px;
+    margin-top: auto;
+}
+
+@media (max-width: 920px) {
+    #app {
+        height: 100dvh;
+    }
+
+    #workspace {
+        display: block;
+        padding-bottom: 100px;
+    }
+
+    #left,
+    #center,
+    #right {
+        display: none;
+        min-width: 0;
+        width: 100%;
+        min-height: calc(100dvh - 190px);
+        padding: 12px 12px 24px;
+    }
+
+    #left.active,
+    #center.active,
+    #right.active {
+        display: flex;
+    }
+
+    #mobile-nav {
+        position: fixed;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        z-index: 1000;
+        display: block;
+        pointer-events: auto;
+        overflow: hidden;
+        height: 22px;
+    }
+
+    #mobile-nav.closed {
+        height: 22px;
+    }
+
+    #mobile-nav.open {
+        height: auto;
+    }
+
+    #mobile-nav-content {
+        display: none;
+        background: linear-gradient(to bottom, var(--bg-2), var(--bg-1));
+        border: 1px solid var(--panel-border);
+        border-radius: 18px 18px 12px 12px;
+        overflow: hidden;
+        box-shadow: 0 -10px 28px rgba(0, 0, 0, 0.28);
+    }
+
+    #mobile-nav.open #mobile-nav-content {
+        display: block;
+    }
+
+    #mobile-nav.closed #mobile-nav-content {
+        display: none;
+    }
+
+    #mobile-nav.open {
+        max-height: min(72vh, 420px);
+    }
+
+    #mobile-nav-buttons,
+    .mobile-nav-actions {
+        display: grid;
+    }
+
+    #mobile-nav-handle {
+        width: 58px;
+        height: 14px;
+        margin: 0 auto 6px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.08);
+        cursor: pointer;
+        position: relative;
+        z-index: 2;
+    }
+
+    #mobile-nav-handle span {
+        display: block;
+        width: 34px;
+        height: 4px;
+        border-radius: 999px;
+        background: var(--bottom-button-text);
+        opacity: 0.75;
+    }
+
+    #mobile-nav-buttons {
+        display: flex;
+        gap: 8px;
+        justify-content: space-between;
+        padding: 12px 12px 8px;
+    }
+
+    .mobile-nav-panel-button,
+    .mobile-nav-action-button,
+    .mobile-editor-problems-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 34px;
+        height: auto;
+        width: auto;
+        max-width: none;
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--bottom-button-border);
+        background: var(--bottom-button-bg);
+        color: var(--bottom-button-text);
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        line-height: 1.1;
+        box-shadow: none;
+        white-space: nowrap;
+        transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+    }
+
+    .mobile-nav-panel-button {
+        flex: 0 0 auto;
+        min-height: 42px;
+        min-width: 0;
+        border-radius: 12px;
+    }
+
+    .mobile-nav-panel-button.active {
+        background: var(--button-hover-bg);
+        border-color: var(--accent);
+    }
+
+    .mobile-nav-action-button {
+        min-width: 0;
+        flex: 0 0 auto;
+        border-radius: 999px;
+    }
+
+    .mobile-nav-action-button:hover,
+    .mobile-nav-panel-button:hover,
+    .mobile-editor-problems-button:hover {
+        background: var(--bottom-button-hover-bg);
+    }
+
+    .mobile-nav-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 0 12px 12px;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #mobile-problems-button,
+    .mobile-editor-problems-button {
+        display: none;
+        width: 100%;
+        min-height: 40px;
+        margin-top: auto;
+    }
+
+    #bottom-panel {
+        display: none;
+        background: transparent;
+        border-top: none;
+        box-shadow: none;
+    }
+
+    @media (max-width: 920px) {
+
+        #mobile-problems-button,
+        .mobile-editor-problems-button {
+            display: inline-flex;
+        }
+    }
+
+    #bottom-panel.open {
+        display: flex;
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        bottom: 20px;
+        z-index: 1100;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid var(--panel-border);
+        box-shadow: 0 -12px 28px rgba(0, 0, 0, 0.22);
+        background: var(--bg-1);
+    }
+
+    #bottom-panel.open #problems-panel {
+        display: block;
+        height: 170px;
+        border-top: 1px solid var(--border);
+    }
+
+    #bottom-toolbar {
+        height: auto;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 8px 12px 0;
+    }
+
+    #bottom-toolbar>button,
+    #bottom-buttons>button {
+        min-height: 32px;
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+
+    #bottom-toolbar>button {
+        width: 100%;
+    }
+
+    #bottom-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    #problems-panel {
+        height: 170px;
+        border-top: 1px solid var(--border);
+    }
 }
 
 /* ===== Modal and Documentation ===== */

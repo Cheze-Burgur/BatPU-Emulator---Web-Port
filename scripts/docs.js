@@ -742,6 +742,20 @@ const Documentation = {
                         </ul>
                     </div>
                 </div>
+
+				<div class="doc-card">
+                    <div class="doc-card-header">
+                        <h2>Version 1.8</h2>
+                        <span class="doc-badge">QUALITY OF LIFE</span>
+						<span class="doc-badge">UI & STYLING</span>
+                    </div>
+                    <div class="doc-section">
+                        <h3>August 30, 2026</h3>
+                        <ul>
+                            <li>Added basic mobile support. Still some bugs to work out but we'll get to those later</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         `;
         }

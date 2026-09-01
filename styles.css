@@ -1112,6 +1112,20 @@ a:hover {
     gap: 8px;
 }
 
+#project-repo-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.github-icon {
+    width: 1.1em;
+    height: 1.1em;
+    display: block;
+    flex-shrink: 0;
+}
+
 #problems-panel {
     display: none;
     height: 180px;

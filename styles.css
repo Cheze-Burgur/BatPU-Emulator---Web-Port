@@ -688,6 +688,16 @@ a:hover {
     height: 46px;
     font-size: 14px;
     letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+}
+
+#control-buttons .material-symbols-outlined {
+    display: block;
+    font-size: 1.1em;
+    line-height: 1;
 }
 
 #speed-control {

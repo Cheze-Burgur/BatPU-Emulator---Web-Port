@@ -1112,7 +1112,7 @@ a:hover {
     gap: 8px;
 }
 
-#project-repo-button {
+.repo-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;

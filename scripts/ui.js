@@ -232,6 +232,109 @@ class UI {
 
 }
 
+class MobileUI {
+
+    constructor() {
+
+        this.app = document.getElementById("app");
+        this.mobileNav = document.getElementById("mobile-nav");
+        this.mobilePanelButtons = [...document.querySelectorAll(".mobile-nav-panel-button")];
+        this.mobileProblemsButton = document.getElementById("mobile-problems-button");
+        this.workspacePanels = [...document.querySelectorAll("#workspace .panel")];
+
+        this.init();
+
+    }
+
+    updateLayoutState() {
+
+        if (!this.app) return;
+
+        const navOpen = !!this.mobileNav && this.mobileNav.classList.contains("open");
+        const problemsPanel = document.getElementById("bottom-panel");
+        const problemsOpen = !!problemsPanel && problemsPanel.classList.contains("open");
+
+        this.app.classList.toggle("mobile-sheet-open", navOpen || problemsOpen);
+        this.app.classList.toggle("mobile-problems-open", problemsOpen);
+
+    }
+
+    updateProblemsButtonVisibility() {
+
+        if (!this.mobileProblemsButton) return;
+
+        const isMobile = window.innerWidth <= 920;
+        const editorIsActive = document.getElementById("right")?.classList.contains("active");
+
+        this.mobileProblemsButton.style.display = isMobile && editorIsActive ? "inline-flex" : "none";
+
+    }
+
+    setActivePanel(panelId) {
+
+        this.workspacePanels.forEach(panel => {
+            panel.classList.toggle("active", panel.id === panelId);
+        });
+
+        this.mobilePanelButtons.forEach(button => {
+            button.classList.toggle("active", button.dataset.panel === panelId);
+        });
+
+        this.updateProblemsButtonVisibility();
+
+    }
+
+    toggleNav(forceOpen) {
+
+        if (!this.mobileNav) return;
+
+        const shouldOpen = typeof forceOpen === "boolean"
+            ? forceOpen
+            : !this.mobileNav.classList.contains("open");
+
+        this.mobileNav.classList.toggle("open", shouldOpen);
+        this.mobileNav.classList.toggle("closed", !shouldOpen);
+        this.updateLayoutState();
+
+    }
+
+    init() {
+
+        if (!this.mobileNav) return;
+
+        this.setActivePanel(window.matchMedia("(max-width: 920px)").matches ? "center" : "left");
+        window.addEventListener("resize", () => {
+            this.updateProblemsButtonVisibility();
+            this.updateLayoutState();
+        });
+
+        document.getElementById("mobile-nav-handle").addEventListener("click", () => this.toggleNav());
+
+        this.mobilePanelButtons.forEach(button => {
+            button.addEventListener("click", () => {
+                this.setActivePanel(button.dataset.panel);
+                this.toggleNav(true);
+            });
+        });
+
+        document.querySelectorAll(".mobile-nav-action-button").forEach(button => {
+            button.addEventListener("click", () => {
+                const target = document.getElementById(`${button.dataset.action}-button`);
+                target?.click();
+            });
+        });
+
+        this.mobileProblemsButton?.addEventListener("click", () => {
+            document.getElementById("problems-toggle")?.click();
+        });
+
+        document.addEventListener("mobile-layout-update", () => this.updateLayoutState());
+        this.updateLayoutState();
+
+    }
+
+}
+
 class ProblemsPanel {
 
     constructor(element) {
@@ -543,4 +646,4 @@ class SettingsManager {
 
 }
 
-export { UI, ProblemsPanel, Modal, DocumentationManager, SettingsManager };
+export { UI, MobileUI, ProblemsPanel, Modal, DocumentationManager, SettingsManager };

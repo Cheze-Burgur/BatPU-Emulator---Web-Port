@@ -13,6 +13,7 @@ import {
 
 import {
     UI,
+    MobileUI,
     ProblemsPanel,
     Modal,
     DocumentationManager,
@@ -154,118 +155,6 @@ const editorGutter = document.getElementById("editor-gutter");
 const codeEditor = document.getElementById("code-editor");
 const editorLineMap = [];
 
-const app = document.getElementById("app");
-const mobileNav = document.getElementById("mobile-nav");
-const mobilePanelButtons = [...document.querySelectorAll(".mobile-nav-panel-button")];
-const mobileProblemsButton = document.getElementById("mobile-problems-button");
-const bottomPanel = document.getElementById("bottom-panel");
-const workspacePanels = [...document.querySelectorAll("#workspace .panel")];
-
-function updateMobileLayoutState() {
-    if (!app) return;
-
-    const navOpen = !!mobileNav && mobileNav.classList.contains("open");
-    const problemsOpen = !!bottomPanel && bottomPanel.classList.contains("open");
-
-    app.classList.toggle("mobile-sheet-open", navOpen || problemsOpen);
-    app.classList.toggle("mobile-problems-open", problemsOpen);
-}
-
-function updateMobileProblemsButtonVisibility() {
-    if (!mobileProblemsButton) return;
-
-    const isMobile = window.innerWidth <= 920;
-    const editorIsActive = document.getElementById("right")?.classList.contains("active");
-
-    mobileProblemsButton.style.display = isMobile && editorIsActive ? "inline-flex" : "none";
-}
-
-function setActivePanel(panelId) {
-    workspacePanels.forEach(panel => {
-        panel.classList.toggle("active", panel.id === panelId);
-    });
-
-    mobilePanelButtons.forEach(button => {
-        button.classList.toggle("active", button.dataset.panel === panelId);
-    });
-
-    updateMobileProblemsButtonVisibility();
-}
-
-function toggleMobileNav(forceOpen) {
-    if (!mobileNav) return;
-
-    const shouldOpen = typeof forceOpen === "boolean"
-        ? forceOpen
-        : !mobileNav.classList.contains("open");
-
-    mobileNav.classList.toggle("open", shouldOpen);
-    mobileNav.classList.toggle("closed", !shouldOpen);
-    updateMobileLayoutState();
-}
-
-const isMobileViewport = () => window.matchMedia("(max-width: 920px)").matches;
-
-if (mobileNav) {
-    setActivePanel(isMobileViewport() ? "center" : "left");
-    window.addEventListener("resize", () => {
-        updateMobileProblemsButtonVisibility();
-        updateMobileLayoutState();
-    });
-    document.getElementById("mobile-nav-handle").addEventListener("click", () => toggleMobileNav());
-
-    mobilePanelButtons.forEach(button => {
-        button.addEventListener("click", () => {
-            setActivePanel(button.dataset.panel);
-            toggleMobileNav(true);
-        });
-    });
-
-    document.querySelectorAll(".mobile-nav-action-button").forEach(button => {
-        button.addEventListener("click", () => {
-            const action = button.dataset.action;
-
-            switch (action) {
-                case "isa":
-                    document.getElementById("isa-button").click();
-                    break;
-                case "io":
-                    document.getElementById("io-button").click();
-                    break;
-                case "help":
-                    document.getElementById("help-button").click();
-                    break;
-                case "presets":
-                    document.getElementById("presets-button").click();
-                    break;
-                case "about":
-                    document.getElementById("about-button").click();
-                    break;
-                case "changelog":
-                    document.getElementById("changelog-button").click();
-                    break;
-                case "settings":
-                    document.getElementById("settings-button").click();
-                    break;
-                case "project-repo":
-                    document.getElementById("project-repo-button").click();
-                    break;
-                default:
-                    break;
-            }
-        });
-    });
-}
-
-if (mobileProblemsButton) {
-    mobileProblemsButton.addEventListener("click", () => {
-        document.getElementById("problems-toggle").click();
-    });
-}
-
-document.addEventListener("mobile-layout-update", updateMobileLayoutState);
-updateMobileLayoutState();
-
 const problems = new ProblemsPanel(document.getElementById("problems-list"));
 const modal = new Modal();
 const docs = new DocumentationManager(modal, Documentation);
@@ -277,6 +166,7 @@ const charsDisplay = new CharacterDevice(memory, textDisplayElement);
 const numDisplay = new NumberDevice(memory, numDisplayElement);
 const randNum = new RandomNumberDevice(memory);
 const ui = new UI(cpu, memory, screen, textDisplayElement, numDisplayElement);
+const mobileUI = new MobileUI();
 const controller = new ControllerDevice(memory);
 
 const machine = new Machine(cpu, memory, ui);

@@ -1366,8 +1366,8 @@ a:hover {
     #right.active .editor-shell,
     #right.active .editor-text-area,
     #right.active #code-editor {
-        min-height: clamp(360px, 62vh, 600px);
-        height: clamp(360px, 62vh, 600px);
+        min-height: clamp(360px, 75vh, 600px);
+        height: clamp(360px, 75vh, 600px);
     }
 
     #app.mobile-sheet-open #right.active,
@@ -1381,8 +1381,8 @@ a:hover {
     #app.mobile-problems-open #right.active .editor-shell,
     #app.mobile-problems-open #right.active .editor-text-area,
     #app.mobile-problems-open #right.active #code-editor {
-        min-height: clamp(360px, 72vh, 700px);
-        height: clamp(360px, 72vh, 700px);
+        min-height: clamp(360px, 85vh, 700px);
+        height: clamp(360px, 85vh, 700px);
     }
 
     #mobile-problems-button,

@@ -302,6 +302,13 @@ class MobileUI {
 
         if (!this.mobileNav) return;
 
+        document.addEventListener("mobile-open-panel", (e) => {
+            const panelId = e?.detail?.panel;
+            if (panelId && window.innerWidth <= 920) {
+                this.setActivePanel(panelId);
+            }
+        });
+
         this.setActivePanel(window.matchMedia("(max-width: 920px)").matches ? "center" : "left");
         window.addEventListener("resize", () => {
             this.updateProblemsButtonVisibility();
@@ -353,6 +360,10 @@ class ProblemsPanel {
         this.panel.classList.add("open");
         document.dispatchEvent(new Event("mobile-layout-update"));
 
+        if (window.innerWidth <= 920) {
+            document.dispatchEvent(new CustomEvent("mobile-open-panel", { detail: { panel: "right" } }));
+        }
+        
     }
 
     close() {

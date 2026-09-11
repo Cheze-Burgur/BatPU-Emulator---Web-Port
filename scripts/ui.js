@@ -1,4 +1,8 @@
-import { formatBinaryRows } from "./utils.js";
+import {
+    formatBinaryRows,
+    keyBindingLabel,
+    keyEventToBinding
+} from "./utils.js";
 import { CharacterDevice, NumberDevice } from "./devices.js";
 
 class UI {
@@ -234,8 +238,9 @@ class UI {
 
 class MobileUI {
 
-    constructor() {
+    constructor(settings = null) {
 
+        this.settings = settings;
         this.app = document.getElementById("app");
         this.mobileNav = document.getElementById("mobile-nav");
         this.mobilePanelButtons = [...document.querySelectorAll(".mobile-nav-panel-button")];
@@ -309,7 +314,14 @@ class MobileUI {
             }
         });
 
-        this.setActivePanel(window.matchMedia("(max-width: 920px)").matches ? "center" : "left");
+        const defaultPanel = this.settings?.get("defaultMobilePanel") || "center";
+        this.setActivePanel(window.matchMedia("(max-width: 920px)").matches ? defaultPanel : "left");
+
+        this.settings?.subscribe(() => {
+            if (window.matchMedia("(max-width: 920px)").matches) {
+                this.setActivePanel(this.settings.get("defaultMobilePanel"));
+            }
+        });
         window.addEventListener("resize", () => {
             this.updateProblemsButtonVisibility();
             this.updateLayoutState();
@@ -363,7 +375,7 @@ class ProblemsPanel {
         if (window.innerWidth <= 920) {
             document.dispatchEvent(new CustomEvent("mobile-open-panel", { detail: { panel: "right" } }));
         }
-        
+
     }
 
     close() {
@@ -521,40 +533,96 @@ class SettingsManager {
         this.themes = {
             default: "Default",
             light: "Light",
+            "high-contrast": "High Contrast (Dark)",
+            "high-contrast-light": "High Contrast (Light)",
             machine: "Machine",
             nord: "Nord",
         };
 
-        this.settings = {
-            theme: this.loadTheme()
+        this.defaults = {
+            theme: "default",
+            confirmReset: true,
+            defaultMobilePanel: "center",
+            autosaveInterval: 0,
+            keybindings: {
+                run: "Ctrl+Enter",
+                step: "F10",
+                closeModal: "Escape",
+                controllerUp: "ArrowUp",
+                controllerDown: "ArrowDown",
+                controllerLeft: "ArrowLeft",
+                controllerRight: "ArrowRight",
+                controllerA: "KeyZ",
+                controllerB: "KeyX",
+                controllerOne: "Digit1",
+                controllerTwo: "Digit2"
+            }
         };
+
+        this.listeners = new Set();
+        this.settings = this.loadSettings();
 
         this.applyTheme();
 
     }
 
-    loadTheme() {
+    loadSettings() {
 
         const saved =
             localStorage.getItem(this.storageKey);
 
-        if (!saved) {
-            return "default";
-        }
+        if (!saved) return structuredClone(this.defaults);
 
         try {
 
-            const settings = JSON.parse(saved);
+            const savedSettings = JSON.parse(saved);
+            const settings = structuredClone(this.defaults);
 
-            if (this.themes[settings.theme]) {
-                return settings.theme;
+            if (this.themes[savedSettings.theme]) {
+                settings.theme = savedSettings.theme;
             }
+
+            if (typeof savedSettings.confirmReset === "boolean") {
+                settings.confirmReset = savedSettings.confirmReset;
+            }
+
+            if (["left", "center", "right"].includes(savedSettings.defaultMobilePanel)) {
+                settings.defaultMobilePanel = savedSettings.defaultMobilePanel;
+            }
+
+            if ([0, 5, 15, 30, 60, 300].includes(savedSettings.autosaveInterval)) {
+                settings.autosaveInterval = savedSettings.autosaveInterval;
+            }
+
+            if (savedSettings.keybindings && typeof savedSettings.keybindings === "object") {
+                Object.keys(settings.keybindings).forEach(action => {
+                    if (typeof savedSettings.keybindings[action] === "string") {
+                        settings.keybindings[action] = savedSettings.keybindings[action];
+                    }
+                });
+            }
+
+            return settings;
 
         } catch {
             // Ignore invalid settings
         }
 
-        return "default";
+        return structuredClone(this.defaults);
+
+    }
+
+    get(name) {
+        return this.settings[name];
+    }
+
+    subscribe(listener) {
+        this.listeners.add(listener);
+        return () => this.listeners.delete(listener);
+    }
+
+    notify() {
+        this.listeners.forEach(listener => listener(this.settings));
 
     }
 
@@ -564,6 +632,8 @@ class SettingsManager {
             this.storageKey,
             JSON.stringify(this.settings)
         );
+
+        this.notify();
 
     }
 
@@ -597,6 +667,44 @@ class SettingsManager {
     }
 
     render() {
+
+        const keybindingGroups = [
+            {
+                title: "Emulator",
+                actions: [
+                    ["run", "Run / pause"],
+                    ["step", "Step instruction"],
+                    ["closeModal", "Close modal"]
+                ]
+            },
+            {
+                title: "Controller",
+                actions: [
+                    ["controllerUp", "Up"],
+                    ["controllerDown", "Down"],
+                    ["controllerLeft", "Left"],
+                    ["controllerRight", "Right"],
+                    ["controllerA", "A"],
+                    ["controllerB", "B"],
+                    ["controllerOne", "1"],
+                    ["controllerTwo", "2"]
+                ]
+            }
+        ];
+
+        const keybindingMarkup = keybindingGroups.map(group => `
+            <div class="settings-shortcut-group">
+                <div class="settings-label">${group.title}</div>
+                ${group.actions.map(([action, label]) => `
+                    <div class="settings-shortcut-row">
+                        <span>${label}</span>
+                        <button type="button" class="settings-shortcut" data-keybinding="${action}">
+                            ${keyBindingLabel(this.settings.keybindings[action])}
+                        </button>
+                    </div>
+                `).join("")}
+            </div>
+        `).join("");
 
         return `
 
@@ -637,6 +745,55 @@ class SettingsManager {
                     </div>
                 </div>
 
+                <div class="doc-card">
+                    <div class="doc-card-header">
+                        <h2>Behavior</h2>
+                    </div>
+
+                    <div class="doc-section settings-section">
+                        <div class="settings-meta">
+                            <div class="settings-label">Confirm before reset</div>
+                            <div class="settings-description">Ask before clearing the current CPU state.</div>
+                        </div>
+                        <input id="confirm-reset" class="settings-checkbox" type="checkbox" ${this.settings.confirmReset ? "checked" : ""}>
+                    </div>
+
+                    <div class="doc-section settings-section">
+                        <div class="settings-meta">
+                            <div class="settings-label">Default mobile panel</div>
+                            <div class="settings-description">Choose which workspace panel opens first on mobile.</div>
+                        </div>
+                        <select id="default-mobile-panel" class="settings-select">
+                            <option value="left" ${this.settings.defaultMobilePanel === "left" ? "selected" : ""}>Input</option>
+                            <option value="center" ${this.settings.defaultMobilePanel === "center" ? "selected" : ""}>Control</option>
+                            <option value="right" ${this.settings.defaultMobilePanel === "right" ? "selected" : ""}>Editor</option>
+                        </select>
+                    </div>
+
+                    <div class="doc-section settings-section">
+                        <div class="settings-meta">
+                            <div class="settings-label">Autosave interval</div>
+                            <div class="settings-description">Save the current program to LocalStorage automatically.</div>
+                        </div>
+                        <select id="autosave-interval" class="settings-select">
+                            ${[[0, "Off"], [5, "Every 5 seconds"], [15, "Every 15 seconds"], [30, "Every 30 seconds"], [60, "Every minute"], [300, "Every 5 minutes"]].map(([value, label]) => `
+                                <option value="${value}" ${this.settings.autosaveInterval === value ? "selected" : ""}>${label}</option>
+                            `).join("")}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="doc-card">
+                    <div class="doc-card-header">
+                        <h2>Keyboard Shortcuts</h2>
+                    </div>
+                    <div class="doc-section settings-shortcuts">
+                        <div class="settings-description">Select a shortcut, then press the key or key combination to assign it.</div>
+                        <button type="button" id="reset-keybindings" class="settings-reset-button">Reset Keybinds</button>
+                        ${keybindingMarkup}
+                    </div>
+                </div>
+
             </div>
 
         `;
@@ -653,6 +810,72 @@ class SettingsManager {
             () => this.setTheme(themeSelect.value)
         );
 
+        document.getElementById("confirm-reset").addEventListener(
+            "change",
+            event => this.update("confirmReset", event.target.checked)
+        );
+
+        document.getElementById("default-mobile-panel").addEventListener(
+            "change",
+            event => this.update("defaultMobilePanel", event.target.value)
+        );
+
+        document.getElementById("autosave-interval").addEventListener(
+            "change",
+            event => this.update("autosaveInterval", Number(event.target.value))
+        );
+
+        document.getElementById("reset-keybindings").addEventListener(
+            "click",
+            () => this.resetKeybindings()
+        );
+
+        document.querySelectorAll(".settings-shortcut").forEach(button => {
+            button.addEventListener("click", () => {
+                button.textContent = "Press a key...";
+
+                const capture = event => {
+                    const modifierKeys = [
+                        "Control", "Shift", "Alt", "Meta",
+                        "ControlLeft", "ControlRight",
+                        "ShiftLeft", "ShiftRight",
+                        "AltLeft", "AltRight",
+                        "MetaLeft", "MetaRight"
+                    ];
+
+                    if (modifierKeys.includes(event.key) || modifierKeys.includes(event.code)) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    const action = button.dataset.keybinding;
+                    this.settings.keybindings[action] = keyEventToBinding(event);
+                    this.save();
+                    button.textContent = keyBindingLabel(this.settings.keybindings[action]);
+                    document.removeEventListener("keydown", capture, true);
+                };
+
+                document.addEventListener("keydown", capture, true);
+            });
+        });
+
+    }
+
+    update(name, value) {
+        this.settings[name] = value;
+        this.save();
+    }
+
+    resetKeybindings() {
+        this.settings.keybindings = structuredClone(this.defaults.keybindings);
+        this.save();
+
+        document.querySelectorAll(".settings-shortcut").forEach(button => {
+            const action = button.dataset.keybinding;
+            button.textContent = keyBindingLabel(this.settings.keybindings[action]);
+        });
     }
 
 }

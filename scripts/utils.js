@@ -10,6 +10,46 @@ function updateSpeedText(value, speedValue) {
     speedValue.textContent = `${value} Hz`;
 }
 
+function keyEventToBinding(event) {
+    const modifiers = [];
+
+    if (event.ctrlKey) modifiers.push("Ctrl");
+    if (event.altKey) modifiers.push("Alt");
+    if (event.shiftKey) modifiers.push("Shift");
+    if (event.metaKey) modifiers.push("Meta");
+
+    return [...modifiers, event.code].join("+");
+}
+
+function matchesKeyBinding(event, binding) {
+    if (!binding) return false;
+
+    const parts = binding.split("+");
+    const code = parts.at(-1);
+
+    return event.code === code
+        && event.ctrlKey === parts.includes("Ctrl")
+        && event.altKey === parts.includes("Alt")
+        && event.shiftKey === parts.includes("Shift")
+        && event.metaKey === parts.includes("Meta");
+}
+
+function keyBindingLabel(binding) {
+    if (!binding) return "Unassigned";
+
+    return binding
+        .split("+")
+        .map(part => {
+            if (part.startsWith("Key")) return part.slice(3);
+            if (part.startsWith("Digit")) return part.slice(5);
+            if (part === "Escape") return "Esc";
+            if (part === "Space") return "Space";
+            if (part.startsWith("Arrow")) return part.slice(5);
+            return part;
+        })
+        .join("+");
+}
+
 function updateEditorGutter(source, codeEditor, editorGutter, editorLineMap, Assembler) {
     const assembly = Assembler.assembleWithDiagnostics(source);
     const programLineMap = new Map(
@@ -56,4 +96,15 @@ function showToast(title, icon = "success") {
 
 }
 
-export { clamp, toBin, formatBinaryRows, getSpeedDelay, updateSpeedText, updateEditorGutter, showToast };
+export {
+    clamp,
+    toBin,
+    formatBinaryRows,
+    getSpeedDelay,
+    updateSpeedText,
+    updateEditorGutter,
+    showToast,
+    keyEventToBinding,
+    matchesKeyBinding,
+    keyBindingLabel
+};

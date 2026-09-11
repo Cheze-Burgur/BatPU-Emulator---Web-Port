@@ -1,4 +1,4 @@
-import { clamp } from "./utils.js";
+import { clamp, matchesKeyBinding } from "./utils.js";
 
 class Device {
 
@@ -259,13 +259,14 @@ class RandomNumberDevice extends Device {
 
 class ControllerDevice extends Device {
 
-    constructor(memory, onMemoryUpdate = null) {
+    constructor(memory, onMemoryUpdate = null, settings = null) {
 
         super(255);
         memory.register(this);
 
         this.memory = memory;
         this.onMemoryUpdate = onMemoryUpdate;
+        this.settings = settings;
 
         this.liveState = {
             left: 0,
@@ -381,35 +382,51 @@ class ControllerDevice extends Device {
 
     setupKeyboard() {
 
+        const controllerBindings = () => this.settings?.get("keybindings") || {};
+
         window.addEventListener("keydown", e => {
 
-            switch (e.code) {
+            const bindings = controllerBindings();
+            const actions = [
+                ["controllerUp", "up"],
+                ["controllerDown", "down"],
+                ["controllerLeft", "left"],
+                ["controllerRight", "right"],
+                ["controllerA", "a"],
+                ["controllerB", "b"],
+                ["controllerOne", "one"],
+                ["controllerTwo", "two"]
+            ];
 
-                case "ArrowUp": this.updateState("up", 1); break;
-                case "ArrowDown": this.updateState("down", 1); break;
-                case "ArrowLeft": this.updateState("left", 1); break;
-                case "ArrowRight": this.updateState("right", 1); break;
-
-                case "KeyZ": this.updateState("a", 1); break;
-                case "KeyX": this.updateState("b", 1); break;
-
-            }
+            actions.forEach(([action, key]) => {
+                if (matchesKeyBinding(e, bindings[action])) {
+                    e.preventDefault();
+                    this.updateState(key, 1);
+                }
+            });
 
         });
 
         window.addEventListener("keyup", e => {
 
-            switch (e.code) {
+            const bindings = controllerBindings();
+            const actions = [
+                ["controllerUp", "up"],
+                ["controllerDown", "down"],
+                ["controllerLeft", "left"],
+                ["controllerRight", "right"],
+                ["controllerA", "a"],
+                ["controllerB", "b"],
+                ["controllerOne", "one"],
+                ["controllerTwo", "two"]
+            ];
 
-                case "ArrowUp": this.updateState("up", 0); break;
-                case "ArrowDown": this.updateState("down", 0); break;
-                case "ArrowLeft": this.updateState("left", 0); break;
-                case "ArrowRight": this.updateState("right", 0); break;
-
-                case "KeyZ": this.updateState("a", 0); break;
-                case "KeyX": this.updateState("b", 0); break;
-
-            }
+            actions.forEach(([action, key]) => {
+                if (matchesKeyBinding(e, bindings[action])) {
+                    e.preventDefault();
+                    this.updateState(key, 0);
+                }
+            });
 
         });
 

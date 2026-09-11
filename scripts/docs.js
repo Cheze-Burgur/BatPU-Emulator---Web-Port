@@ -756,6 +756,32 @@ const Documentation = {
                         </ul>
                     </div>
                 </div>
+
+                <div class="doc-card">
+                    <div class="doc-card-header">
+                        <h2>Version 1.9</h2>
+                        <span class="doc-badge">QUALITY OF LIFE</span>
+                        <span class="doc-badge">NEW FEATURES</span>
+                    </div>
+                    <div class="doc-section">
+                        <h3>September 11, 2026</h3>
+                        <ul>
+                            <li>Added new settings:</li>
+                            <ul>
+                                <li>Reset Confirmation on CPU reset and Page Refresh</li>
+                                <li>Editor Save Interval (Can be set to off or 5, 15, 30 seconds, 1 or 5 minutes)</li>
+                                <li>Default site panel (Mobile only)</li>
+                                <li>Keybind Remapping (Run, Step, Controller Buttons, etc.)</li>
+                            </ul> 
+                            <li>New site themes:</li>
+                            <ul>
+                                <li>High Contrast (Dark)</li>
+                                <li>High Contrast (Light)</li>
+                            </ul>
+                            <li>Cleaned up modal styling</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         `;
         }

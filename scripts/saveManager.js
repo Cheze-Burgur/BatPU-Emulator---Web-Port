@@ -3,13 +3,15 @@ import { showToast } from "./utils.js";
 
 export default class SaveManager {
 
-    constructor(codeEditor, problems, cpu, machine, loadProgram) {
+    constructor(codeEditor, problems, cpu, machine, loadProgram, settings) {
 
         this.codeEditor = codeEditor;
         this.problems = problems;
         this.cpu = cpu;
         this.machine = machine;
         this.loadProgram = loadProgram;
+        this.settings = settings;
+        this.autosaveTimer = null;
 
         this.storageKey = "batpu-current-program";
 
@@ -27,6 +29,26 @@ export default class SaveManager {
         this.loadButton.addEventListener(
             "click",
             () => this.openLoadMenu()
+        );
+
+        this.settings?.subscribe(() => this.configureAutosave());
+        this.configureAutosave();
+
+    }
+
+    configureAutosave() {
+
+        if (this.autosaveTimer !== null) {
+            clearInterval(this.autosaveTimer);
+            this.autosaveTimer = null;
+        }
+
+        const interval = Number(this.settings?.get("autosaveInterval") || 0);
+        if (interval <= 0) return;
+
+        this.autosaveTimer = setInterval(
+            () => this.saveToLocalStorage(false),
+            interval * 1000
         );
 
     }
@@ -113,14 +135,16 @@ export default class SaveManager {
 
     }
 
-    saveToLocalStorage() {
+    saveToLocalStorage(showNotification = true) {
 
         localStorage.setItem(
             this.storageKey,
             this.codeEditor.value
         );
 
-        showToast("Program saved to LocalStorage");
+        if (showNotification) {
+            showToast("Program saved to LocalStorage");
+        }
 
     }
 

@@ -23,6 +23,7 @@ import {
 import Documentation, { Presets } from "./docs.js";
 
 import {
+    matchesKeyBinding,
     updateEditorGutter,
     updateSpeedText
 } from "./utils.js";
@@ -166,11 +167,11 @@ const charsDisplay = new CharacterDevice(memory, textDisplayElement);
 const numDisplay = new NumberDevice(memory, numDisplayElement);
 const randNum = new RandomNumberDevice(memory);
 const ui = new UI(cpu, memory, screen, textDisplayElement, numDisplayElement);
-const mobileUI = new MobileUI();
-const controller = new ControllerDevice(memory);
+const mobileUI = new MobileUI(settings);
+const controller = new ControllerDevice(memory, null, settings);
 
 const machine = new Machine(cpu, memory, ui);
-const saveManager = new SaveManager(codeEditor, problems, cpu, machine, loadProgram);
+const saveManager = new SaveManager(codeEditor, problems, cpu, machine, loadProgram, settings);
 
 function loadProgram() {
     const source = codeEditor.value;
@@ -261,10 +262,59 @@ document.getElementById("line-step").onclick = () => {
     ui.render(true);
 };
 
-document.getElementById("reset-program").onclick = () => {
+async function resetProgram() {
+
+    if (settings.get("confirmReset")) {
+        const result = await Swal.fire({
+            title: "Reset CPU?",
+            text: "This will clear the current CPU state.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Reset",
+            cancelButtonText: "Cancel",
+            buttonsStyling: false,
+            allowOutsideClick: false
+        });
+
+        if (!result.isConfirmed) return;
+    }
+
     loadProgram();
     resetRuntimeState();
-};
+
+}
+
+document.getElementById("reset-program").onclick = resetProgram;
+
+window.addEventListener("beforeunload", event => {
+
+    if (!settings.get("confirmReset")) return;
+
+    event.preventDefault();
+
+});
+
+window.addEventListener("keydown", event => {
+
+    const keybindings = settings.get("keybindings");
+
+    if (matchesKeyBinding(event, keybindings.closeModal)) {
+        modal.close();
+        return;
+    }
+
+    if (matchesKeyBinding(event, keybindings.run)) {
+        event.preventDefault();
+        document.getElementById("clock-toggle").click();
+        return;
+    }
+
+    if (matchesKeyBinding(event, keybindings.step)) {
+        event.preventDefault();
+        document.getElementById("line-step").click();
+    }
+
+});
 
 codeEditor.addEventListener("input", loadProgram);
 codeEditor.addEventListener("scroll", () => {

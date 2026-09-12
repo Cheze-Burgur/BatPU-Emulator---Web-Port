@@ -303,7 +303,7 @@ Potential areas for future contributions include:
 
 # Crediting and Attributions
 
-Contributors will be added to the [README.md](README.md) under the Contributors section.
+Contributors will be added to the [README.md](../README.md) under the Contributors section.
 
 ---
 

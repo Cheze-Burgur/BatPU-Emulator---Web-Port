@@ -615,12 +615,46 @@ a:hover {
     min-width: 0;
 }
 
+.editor-highlight {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    padding: 18px;
+    color: var(--code-text);
+    font-family: monospace;
+    font-size: 15px;
+    line-height: 1.6;
+    white-space: pre;
+    overflow: hidden;
+    pointer-events: none;
+    box-sizing: border-box;
+}
+
+.syntax-opcode {
+    color: var(--syntax-opcode);
+    font-weight: 700;
+}
+
+.syntax-register {
+    color: var(--syntax-register);
+}
+
+.syntax-number {
+    color: var(--syntax-number);
+}
+
+.syntax-comment {
+    color: var(--syntax-comment);
+    font-style: italic;
+}
+
 #code-editor {
     width: 100%;
     height: 100%;
     resize: none;
     background: transparent;
-    color: var(--code-text);
+    color: transparent;
+    -webkit-text-fill-color: transparent;
     caret-color: var(--code-text);
     outline: none;
     padding: 18px;

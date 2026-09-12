@@ -15,7 +15,8 @@
     <link rel="icon" type="image/png" sizes="16x16" href="./images/icons/favicon-16x16.png">
     <link rel="manifest" href="./images/icons/site.webmanifest">
     <!-- Google Fonts Symbol Library -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0&icon_names=play_pause,replay,download,upload" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0&icon_names=play_pause,replay,download,upload" />
 </head>
 
 <body>
@@ -43,8 +44,7 @@
                     <button type="button" class="mobile-nav-action-button" data-action="settings">Settings</button>
                     <button type="button" class="mobile-nav-action-button repo-button" data-action="project-repo">
                         <svg class="github-icon" viewBox="0 0 24 24" aria-hidden="true">
-                            <path fill="currentColor"
-                            d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56
+                            <path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56
                             0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.33-1.28-1.69-1.28-1.69
                             -1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.69 1.26
                             3.35.96.1-.75.4-1.26.73-1.55-2.55-.29-5.23-1.28-5.23-5.69
@@ -55,7 +55,7 @@
                             0 1.57-.01 2.84-.01 3.22 0 .31.21.68.8.56A11.51 11.51
                             0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z" />
                         </svg>
-                        
+
                         &#8195;Project Repository
                     </button>
                 </div>
@@ -116,10 +116,13 @@
                     <div class="section-header">CONTROL</div>
                     <div id="control-wrap">
                         <div id="control-buttons">
-                            <button id="clock-toggle"><span class="material-symbols-outlined">play_pause</span>Run</button>
+                            <button id="clock-toggle"><span
+                                    class="material-symbols-outlined">play_pause</span>Run</button>
                             <button id="line-step">Step Inst</button>
-                            <button id="reset-program"><span class="material-symbols-outlined">replay</span>Reset</button>
-                            <button id="save-program"><span class="material-symbols-outlined">download</span>Save</button>
+                            <button id="reset-program"><span
+                                    class="material-symbols-outlined">replay</span>Reset</button>
+                            <button id="save-program"><span
+                                    class="material-symbols-outlined">download</span>Save</button>
                             <button id="load-program"><span class="material-symbols-outlined">upload</span>Load</button>
                         </div>
 
@@ -205,6 +208,7 @@
                 <div class="editor-shell">
                     <div id="editor-gutter" class="editor-gutter" aria-hidden="true"></div>
                     <div class="editor-text-area">
+                        <pre id="editor-highlight" class="editor-highlight" aria-hidden="true"></pre>
                         <textarea id="code-editor" spellcheck="false"># Enter a program or load a preset.</textarea>
                     </div>
                 </div>
@@ -256,8 +260,7 @@
 
                     <button id="project-repo-button" class="repo-button">
                         <svg class="github-icon" viewBox="0 0 24 24" aria-hidden="true">
-                            <path fill="currentColor"
-                            d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56
+                            <path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56
                             0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.33-1.28-1.69-1.28-1.69
                             -1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.69 1.26
                             3.35.96.1-.75.4-1.26.73-1.55-2.55-.29-5.23-1.28-5.23-5.69
@@ -268,7 +271,7 @@
                             0 1.57-.01 2.84-.01 3.22 0 .31.21.68.8.56A11.51 11.51
                             0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z" />
                         </svg>
-                        
+
                         &#8195;Project Repository
                     </button>
 

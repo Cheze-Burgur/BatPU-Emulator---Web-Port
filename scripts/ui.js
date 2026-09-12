@@ -547,6 +547,9 @@ class SettingsManager {
             keybindings: {
                 run: "Ctrl+Enter",
                 step: "F10",
+                reset: "Ctrl+R",
+                saveProgram: "Ctrl+S",
+                loadProgram: "Ctrl+O",
                 closeModal: "Escape",
                 controllerUp: "ArrowUp",
                 controllerDown: "ArrowDown",
@@ -674,6 +677,14 @@ class SettingsManager {
                 actions: [
                     ["run", "Run / pause"],
                     ["step", "Step instruction"],
+                    ["reset", "Reset CPU"],
+                    ["saveProgram", "Save program"],
+                    ["loadProgram", "Load program"]
+                ]
+            },
+            {
+                title: "Menus",
+                actions: [
                     ["closeModal", "Close modal"]
                 ]
             },

@@ -25,6 +25,7 @@ import Documentation, { Presets } from "./docs.js";
 import {
     matchesKeyBinding,
     updateEditorGutter,
+    highlightAssembly,
     updateSpeedText
 } from "./utils.js";
 
@@ -153,6 +154,7 @@ const numDisplayElement = document.getElementById("num-display");
 const speedSlider = document.getElementById("program-speed-slider");
 const speedValue = document.getElementById("speed-value");
 const editorGutter = document.getElementById("editor-gutter");
+const editorHighlight = document.getElementById("editor-highlight");
 const codeEditor = document.getElementById("code-editor");
 const editorLineMap = [];
 
@@ -185,6 +187,9 @@ function loadProgram() {
         line: problem.line
     })));
     updateEditorGutter(source, codeEditor, editorGutter, editorLineMap, Assembler);
+    editorHighlight.innerHTML = highlightAssembly(source);
+    editorHighlight.scrollTop = codeEditor.scrollTop;
+    editorHighlight.scrollLeft = codeEditor.scrollLeft;
     ui.render(true);
 }
 
@@ -314,11 +319,27 @@ window.addEventListener("keydown", event => {
         document.getElementById("line-step").click();
     }
 
+    if (matchesKeyBinding(event, keybindings.reset)) {
+        event.preventDefault();
+        resetProgram();
+    }
+
+    if (matchesKeyBinding(event, keybindings.saveProgram)) {
+        event.preventDefault();
+        saveManager.openSaveMenu();
+    }
+
+    if (matchesKeyBinding(event, keybindings.loadProgram)) {
+        event.preventDefault();
+        saveManager.openLoadMenu();
+    }
 });
 
 codeEditor.addEventListener("input", loadProgram);
 codeEditor.addEventListener("scroll", () => {
     editorGutter.scrollTop = codeEditor.scrollTop;
+    editorHighlight.scrollTop = codeEditor.scrollTop;
+    editorHighlight.scrollLeft = codeEditor.scrollLeft;
 });
 
 speedSlider.addEventListener("input", () => {

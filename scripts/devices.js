@@ -383,8 +383,11 @@ class ControllerDevice extends Device {
     setupKeyboard() {
 
         const controllerBindings = () => this.settings?.get("keybindings") || {};
+        const isCodeEditorTarget = event => event.target?.id === "code-editor";
 
         window.addEventListener("keydown", e => {
+
+            if (isCodeEditorTarget(e)) return;
 
             const bindings = controllerBindings();
             const actions = [
@@ -408,6 +411,8 @@ class ControllerDevice extends Device {
         });
 
         window.addEventListener("keyup", e => {
+
+            if (isCodeEditorTarget(e)) return;
 
             const bindings = controllerBindings();
             const actions = [

@@ -60,6 +60,10 @@
     --editor-gutter-line-number: #7f7f7f;
     --editor-gutter-instruction-number: #d1d1d1;
     --code-text: #ff88ff;
+    --syntax-opcode: var(--accent-blue);
+    --syntax-register: var(--accent);
+    --syntax-number: var(--accent-warning);
+    --syntax-comment: var(--muted);
     --doc-code-text: #7dff93;
     --bottom-border: #2d2d2d;
     --bottom-button-bg: #232323;
@@ -165,6 +169,10 @@
     --editor-gutter-line-number: #777;
     --editor-gutter-instruction-number: #444;
     --code-text: #9900aa;
+    --syntax-opcode: var(--accent-blue);
+    --syntax-register: var(--accent);
+    --syntax-number: var(--accent-warning);
+    --syntax-comment: var(--muted);
     --bottom-border: #ddd;
     --bottom-button-bg: #d7d7d7;
     --bottom-button-border: #bbb;
@@ -235,6 +243,10 @@
     --editor-gutter-line-number: #fff;
     --editor-gutter-instruction-number: #fff;
     --code-text: #ffb3ff;
+    --syntax-opcode: var(--accent-blue);
+    --syntax-register: var(--accent);
+    --syntax-number: var(--accent-warning);
+    --syntax-comment: var(--muted);
     --bottom-button-bg: #151515;
     --bottom-button-hover-bg: #303030;
     --bottom-button-border: #aaa;
@@ -289,6 +301,10 @@
     --editor-gutter-line-number: #000;
     --editor-gutter-instruction-number: #000;
     --code-text: #660066;
+    --syntax-opcode: var(--accent-blue);
+    --syntax-register: var(--accent);
+    --syntax-number: var(--accent-warning);
+    --syntax-comment: var(--muted);
     --bottom-button-bg: #fff;
     --bottom-button-hover-bg: #ddd;
     --bottom-button-border: #444;
@@ -370,6 +386,10 @@
     --editor-gutter-line-number: #7f7f7f;
     --editor-gutter-instruction-number: #d1d1d1;
     --code-text: var(--text);
+    --syntax-opcode: var(--accent-blue);
+    --syntax-register: var(--accent);
+    --syntax-number: var(--accent-warning);
+    --syntax-comment: var(--muted);
     --doc-code-text: #7dff93;
     --bottom-border: #2d2d2d;
     --bottom-button-bg: var(--panel-alt);
@@ -470,6 +490,10 @@
     --editor-gutter-line-number: #7b88a1;
     --editor-gutter-instruction-number: #d8dee9;
     --code-text: var(--text);
+    --syntax-opcode: var(--accent-blue);
+    --syntax-register: var(--accent);
+    --syntax-number: var(--accent-warning);
+    --syntax-comment: var(--muted);
     --doc-code-text: #a3be8c;
     --bottom-border: #434c5e;
     --bottom-button-bg: var(--panel-alt);

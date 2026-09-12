@@ -66,7 +66,7 @@ This version of the emulator also comes with the full built-in CPU documentation
 
 # Writing Programs
 
-Programs are written directly in the built-in assembly editor.
+Programs are written directly in the built-in assembly editor (now with syntax highlighting!).
 
 Example:
 
@@ -172,6 +172,7 @@ Site Themes:
 * Memory viewer
 * Stack viewer
 * Hardware devices
+* Syntax highlighting
 * Error reporting
 * Documentation
 * Preset programs
@@ -180,7 +181,6 @@ Site Themes:
 
 ## Planned
 
-* Syntax highlighting
 * Improved debugging
 * Additional preset programs
 * Performance optimizations

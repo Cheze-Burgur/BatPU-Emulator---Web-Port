@@ -4,8 +4,7 @@
     "description": "Web remake of the redstone CPU emulator by MattBatWings and AdoHTQ",
     "lang": "en-US",
     "categories": ["computer science", "computer architecture", "simulation"],
-    "start_url": "https://cheze-burgur.github.io/BatPU-Emulator---Web-Port/
-",
+    "start_url": "https://cheze-burgur.github.io/BatPU-Emulator---Web-Port/",
     "display": "standalone",
     "background_color": "#111111",
     "theme_color": "#1b1b1b",

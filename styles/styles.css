@@ -63,6 +63,24 @@ a:hover {
 }
 
 /* ===== App Shell ===== */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  z-index: 9999;
+  padding: 0.5rem 1rem;
+  background: #000;
+  color: #fff;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 0;
+  left: 0;
+  outline: 2px solid #fbbf24;
+  outline-offset: 2px;
+}
+
 #app {
     display: flex;
     flex-direction: column;

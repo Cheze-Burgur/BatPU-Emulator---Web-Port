@@ -20,6 +20,7 @@
 </head>
 
 <body>
+    <a class="skip-link" href="#app">Skip to main content</a>
     <div id="app">
 
         <div id="mobile-nav" class="closed" aria-label="Mobile navigation">
@@ -65,22 +66,22 @@
         <div id="workspace">
 
             <!-- I/O Panel -->
-            <div class="panel" id="left">
+            <div class="panel" id="left" aria-label="Input-Output Panel">
                 <div class="section">
                     <div class="section-header">Output Devices</div>
                     <div id="output-wrap">
                         <div id="output-row">
-                            <div id="text-display">
+                            <div id="text-display" aria-label="Program Text Output">
                                 <!-- Max length - 10 chars -->
                             </div>
-                            <div id="num-display">
+                            <div id="num-display" aria-label="Program Number Output">
                                 <!-- Max # of digits - 3 -->
                                 <!-- Max # of digits (signed) - 4 -->
                             </div>
                         </div>
 
                         <div id="grid-display">
-                            <div id="pixel-grid">
+                            <div id="pixel-grid" role="img" aria-label="Program Visual Output">
                                 <!-- 32x32 -->
                             </div>
                         </div>
@@ -91,20 +92,20 @@
                     <div class="section-header">Input Controller</div>
                     <div id="input-wrap">
                         <div id="dpad-wrap">
-                            <button id="btn-up">⌃</button>
-                            <button id="btn-lft">‹</button>
-                            <button id="btn-rgt">›</button>
-                            <button id="btn-dwn">⌄</button>
+                            <button id="btn-up" type="button" aria-label="Controller Button Up">⌃</button>
+                            <button id="btn-lft" type="button" aria-label="Controller Button Left">‹</button>
+                            <button id="btn-rgt" type="button" aria-label="Controller Button Right">›</button>
+                            <button id="btn-dwn" type="button" aria-label="Controller Button Down">⌄</button>
                         </div>
 
                         <div id="ctr-btns-wrap">
-                            <button id="ctr-btn-one">1</button>
-                            <button id="ctr-btn-two">2</button>
+                            <button id="ctr-btn-one" type="button" aria-label="Controller Button One">1</button>
+                            <button id="ctr-btn-two" type="button" aria-label="Controller Button Two">2</button>
                         </div>
 
                         <div id="rgt-btns-wrap">
-                            <button id="ctr-btn-a">A</button>
-                            <button id="ctr-btn-b">B</button>
+                            <button id="ctr-btn-a" type="button" aria-label="Controller Button A">A</button>
+                            <button id="ctr-btn-b" type="button" aria-label="Controller Button B">B</button>
                         </div>
                     </div>
                 </div>
@@ -128,8 +129,8 @@
 
                         <div id="speed-control">
                             <div id="speed-header">
-                                <span>Execution Rate</span>
-                                <span id="speed-value">100 Hz</span>
+                                <label for="program-speed-slider">Execution Rate</label>
+                                <output id="speed-value" for="program-speed-slider">100 Hz</output>
                             </div>
 
                             <input id="program-speed-slider" name="speed" type="range" min="1" max="10000" step="1"
@@ -147,7 +148,7 @@
                         <div id="cpu-status-bar">
                             <div>
                                 STATUS:
-                                <span id="cpu-status-text" class="status-running">
+                                <span id="cpu-status-text" class="status-running" role="status" aria-live="polite">
                                     HALTED
                                 </span>
                             </div>
@@ -209,7 +210,7 @@
                     <div id="editor-gutter" class="editor-gutter" aria-hidden="true"></div>
                     <div class="editor-text-area">
                         <pre id="editor-highlight" class="editor-highlight" aria-hidden="true"></pre>
-                        <textarea id="code-editor" spellcheck="false"># Enter a program or load a preset.</textarea>
+                        <textarea id="code-editor" spellcheck="false" aria-label="Assembly Editor"># Enter a program or load a preset.</textarea>
                     </div>
                 </div>
 
@@ -224,7 +225,7 @@
 
             <div id="bottom-toolbar">
 
-                <button id="problems-toggle">
+                <button id="problems-toggle" type="button">
                     Problems (0)
                 </button>
 

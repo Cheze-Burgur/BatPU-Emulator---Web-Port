@@ -4,6 +4,7 @@ const formatBinaryRows = v => {
     const b = toBin(v);
     return { top: b.slice(0, 4), bottom: b.slice(4) };
 };
+const formatHex = v => (v & 0xff).toString(16).padStart(2, "0").toUpperCase();
 const getSpeedDelay = speedSlider => Math.max(1, Math.round(1000 / Number(speedSlider.value)));
 
 function updateSpeedText(value, speedValue) {
@@ -136,6 +137,7 @@ export {
     clamp,
     toBin,
     formatBinaryRows,
+    formatHex,
     getSpeedDelay,
     updateSpeedText,
     updateEditorGutter,

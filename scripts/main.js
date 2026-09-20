@@ -175,6 +175,16 @@ const controller = new ControllerDevice(memory, null, settings);
 const machine = new Machine(cpu, memory, ui);
 const saveManager = new SaveManager(codeEditor, problems, cpu, machine, loadProgram, settings);
 
+function applyEditorHighlighting() {
+    if (!settings.get("syntaxHighlighting")) {
+        editorHighlight.innerHTML = "";
+        editorHighlight.textContent = codeEditor.value;
+        return;
+    }
+
+    editorHighlight.innerHTML = highlightAssembly(codeEditor.value);
+}
+
 function loadProgram() {
     const source = codeEditor.value;
     const assembly = Assembler.assembleWithDiagnostics(source);
@@ -187,7 +197,7 @@ function loadProgram() {
         line: problem.line
     })));
     updateEditorGutter(source, codeEditor, editorGutter, editorLineMap, Assembler);
-    editorHighlight.innerHTML = highlightAssembly(source);
+    applyEditorHighlighting();
     editorHighlight.scrollTop = codeEditor.scrollTop;
     editorHighlight.scrollLeft = codeEditor.scrollLeft;
     ui.render(true);
@@ -244,6 +254,11 @@ Object.entries(docButtons).forEach(([page, button]) => {
 document.getElementById("settings-button").addEventListener(
     "click", () => settings.open()
 );
+
+document.addEventListener("settings-updated", () => {
+    ui.setDisplayMode(settings.get("registerMemoryFormat"));
+    applyEditorHighlighting();
+});
 
 document.getElementById("project-repo-button").onclick = () => {
     window.open("https://github.com/Cheze-Burgur/BatPU-Emulator---Web-Port", "_blank");
@@ -353,5 +368,6 @@ speedSlider.addEventListener("input", () => {
 });
 
 updateSpeedText(Number(speedSlider.value), speedValue);
+ui.setDisplayMode(settings.get("registerMemoryFormat"));
 loadProgram();
 ui.render(true);

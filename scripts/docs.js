@@ -782,6 +782,25 @@ const Documentation = {
                         </ul>
                     </div>
                 </div>
+
+                <div class="doc-card">
+                    <div class="doc-card-header">
+                        <h2>Version 1.91</h2>
+                        <span class="doc-badge">QUALITY OF LIFE</span>
+                        <span class="doc-badge">ACCESSIBILITY</span>
+                    </div>
+                    <div class="doc-section">
+                        <h3>September 20, 2026</h3>
+                        <ul>
+                            <li>Improved accessibility features</li>
+                            <li>Created <span class="code">site.webmanifest</span> file for better support as a Progressive Web App (PWA)</li>
+                            <li>Added syntax highlighting to the editor (can be disabled in settings)</li>
+                            <li>Most panels that display data in binary can now also display data in hexidecimal</li>
+                            <li><span class="code">styles.css</span> file has been split into <span class="code">styles.css</span> and <span class="code">themes.css</span> for better organization</li>
+                            <li>Probably some other changes</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         `;
         }

@@ -1,5 +1,6 @@
 import {
     formatBinaryRows,
+    formatHex,
     keyBindingLabel,
     keyEventToBinding
 } from "./utils.js";
@@ -25,6 +26,7 @@ class UI {
         this.textDisplayValue = "";
         this.numDisplayValue = "";
         this.pixelState = new Uint8Array(32 * 32);
+        this.displayMode = "binary";
 
         this.cacheElements();
         this.createPixels();
@@ -105,6 +107,20 @@ class UI {
 
     }
 
+    setDisplayMode(mode) {
+        this.displayMode = ["binary", "hex"].includes(mode) ? mode : "binary";
+        this.render(true);
+    }
+
+    formatDisplayValue(value) {
+        if (this.displayMode === "hex") {
+            const hex = formatHex(value);
+            return { top: hex, bottom: "" };
+        }
+
+        return formatBinaryRows(value);
+    }
+
     setStatus(running) {
 
         if (this.lastStatus === running) return;
@@ -137,7 +153,12 @@ class UI {
 
         const size = this.cpu.stack.length;
         const addr = size > 0 ? this.cpu.stack[size - 1] : null;
-        const topText = addr !== null ? addr.toString(2).padStart(10, "0").toUpperCase() : "----------";
+        const placeholder = this.displayMode === "hex" ? "---" : "----------";
+        const topText = addr !== null
+            ? (this.displayMode === "hex"
+                ? formatHex(addr)
+                : addr.toString(2).padStart(8, "0").toUpperCase())
+            : placeholder;
 
         if (force || this.lastStackSize !== size) {
             this.stackSize.querySelector(".stack-value").textContent = size;
@@ -157,9 +178,9 @@ class UI {
             this.lastRegisters[i] = v;
 
             this.regCells[i].dec.textContent = v;
-            const bin = formatBinaryRows(v);
-            this.regCells[i].binTop.textContent = bin.top;
-            this.regCells[i].binBottom.textContent = bin.bottom;
+            const display = this.formatDisplayValue(v);
+            this.regCells[i].binTop.textContent = display.top;
+            this.regCells[i].binBottom.textContent = display.bottom;
         }
     }
 
@@ -170,9 +191,9 @@ class UI {
             this.lastMemory[i] = v;
 
             this.memCells[i].dec.textContent = v;
-            const bin = formatBinaryRows(v);
-            this.memCells[i].binTop.textContent = bin.top;
-            this.memCells[i].binBottom.textContent = bin.bottom;
+            const display = this.formatDisplayValue(v);
+            this.memCells[i].binTop.textContent = display.top;
+            this.memCells[i].binBottom.textContent = display.bottom;
         }
     }
 
@@ -299,6 +320,12 @@ class MobileUI {
 
         this.mobileNav.classList.toggle("open", shouldOpen);
         this.mobileNav.classList.toggle("closed", !shouldOpen);
+
+        const navHandle = document.getElementById("mobile-nav-handle");
+        if (navHandle) {
+            navHandle.setAttribute("aria-expanded", String(shouldOpen));
+        }
+
         this.updateLayoutState();
 
     }
@@ -470,9 +497,15 @@ class Modal {
         this.body =
             document.getElementById("modal-body");
 
-        document
-            .getElementById("modal-close")
-            .onclick = () => this.close();
+        this.closeButton =
+            document.getElementById("modal-close");
+
+        this.lastFocusedElement = null;
+        this.keydownHandler = (event) => {
+            if (event.key === "Escape") this.close();
+        };
+
+        this.closeButton.onclick = () => this.close();
 
         this.overlay.onclick = e => {
 
@@ -483,18 +516,44 @@ class Modal {
 
     }
 
+    focusFirstElement() {
+
+        const focusable = this.overlay.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+
+        if (focusable.length > 0) {
+            focusable[0].focus();
+            return;
+        }
+
+        this.body.focus();
+
+    }
+
     open(title, html) {
 
+        this.lastFocusedElement = document.activeElement;
         this.title.textContent = title;
         this.body.innerHTML = html;
-
         this.overlay.classList.remove("hidden");
+        this.overlay.setAttribute("aria-hidden", "false");
+        document.addEventListener("keydown", this.keydownHandler);
+        this.focusFirstElement();
 
     }
 
     close() {
 
+        if (this.overlay.classList.contains("hidden")) return;
+
         this.overlay.classList.add("hidden");
+        this.overlay.setAttribute("aria-hidden", "true");
+        document.removeEventListener("keydown", this.keydownHandler);
+
+        if (this.lastFocusedElement && typeof this.lastFocusedElement.focus === "function") {
+            this.lastFocusedElement.focus();
+        }
 
     }
 
@@ -544,6 +603,8 @@ class SettingsManager {
             confirmReset: true,
             defaultMobilePanel: "center",
             autosaveInterval: 0,
+            syntaxHighlighting: true,
+            registerMemoryFormat: "binary",
             keybindings: {
                 run: "Ctrl+Enter",
                 step: "F10",
@@ -595,6 +656,14 @@ class SettingsManager {
 
             if ([0, 5, 15, 30, 60, 300].includes(savedSettings.autosaveInterval)) {
                 settings.autosaveInterval = savedSettings.autosaveInterval;
+            }
+
+            if (typeof savedSettings.syntaxHighlighting === "boolean") {
+                settings.syntaxHighlighting = savedSettings.syntaxHighlighting;
+            }
+
+            if (["binary", "hex"].includes(savedSettings.registerMemoryFormat)) {
+                settings.registerMemoryFormat = savedSettings.registerMemoryFormat;
             }
 
             if (savedSettings.keybindings && typeof savedSettings.keybindings === "object") {
@@ -709,7 +778,7 @@ class SettingsManager {
                 ${group.actions.map(([action, label]) => `
                     <div class="settings-shortcut-row">
                         <span>${label}</span>
-                        <button type="button" class="settings-shortcut" data-keybinding="${action}">
+                        <button type="button" class="settings-shortcut" data-keybinding="${action}" aria-label="Change shortcut for ${label}">
                             ${keyBindingLabel(this.settings.keybindings[action])}
                         </button>
                     </div>
@@ -733,13 +802,13 @@ class SettingsManager {
 
                     <div class="doc-section settings-section">
                         <div class="settings-meta">
-                            <div class="settings-label">Theme</div>
+                            <label class="settings-label" for="theme-select">Theme</label>
                             <div class="settings-description">
                                 Choose the appearance of the emulator.
                             </div>
                         </div>
 
-                        <select id="theme-select" class="settings-select">
+                        <select id="theme-select" class="settings-select" aria-label="Theme">
                             ${Object.entries(this.themes)
                 .map(([value, name]) => `
                                     <option
@@ -763,18 +832,18 @@ class SettingsManager {
 
                     <div class="doc-section settings-section">
                         <div class="settings-meta">
-                            <div class="settings-label">Confirm before reset</div>
+                            <label class="settings-label" for="confirm-reset">Confirm before reset</label>
                             <div class="settings-description">Ask before clearing the current CPU state.</div>
                         </div>
-                        <input id="confirm-reset" class="settings-checkbox" type="checkbox" ${this.settings.confirmReset ? "checked" : ""}>
+                        <input id="confirm-reset" class="settings-checkbox" type="checkbox" ${this.settings.confirmReset ? "checked" : ""} aria-label="Confirm before reset">
                     </div>
 
                     <div class="doc-section settings-section">
                         <div class="settings-meta">
-                            <div class="settings-label">Default mobile panel</div>
+                            <label class="settings-label" for="default-mobile-panel">Default mobile panel</label>
                             <div class="settings-description">Choose which workspace panel opens first on mobile.</div>
                         </div>
-                        <select id="default-mobile-panel" class="settings-select">
+                        <select id="default-mobile-panel" class="settings-select" aria-label="Default mobile panel">
                             <option value="left" ${this.settings.defaultMobilePanel === "left" ? "selected" : ""}>Input</option>
                             <option value="center" ${this.settings.defaultMobilePanel === "center" ? "selected" : ""}>Control</option>
                             <option value="right" ${this.settings.defaultMobilePanel === "right" ? "selected" : ""}>Editor</option>
@@ -783,13 +852,32 @@ class SettingsManager {
 
                     <div class="doc-section settings-section">
                         <div class="settings-meta">
-                            <div class="settings-label">Autosave interval</div>
+                            <label class="settings-label" for="autosave-interval">Autosave interval</label>
                             <div class="settings-description">Save the current program to LocalStorage automatically.</div>
                         </div>
-                        <select id="autosave-interval" class="settings-select">
+                        <select id="autosave-interval" class="settings-select" aria-label="Autosave interval">
                             ${[[0, "Off"], [5, "Every 5 seconds"], [15, "Every 15 seconds"], [30, "Every 30 seconds"], [60, "Every minute"], [300, "Every 5 minutes"]].map(([value, label]) => `
                                 <option value="${value}" ${this.settings.autosaveInterval === value ? "selected" : ""}>${label}</option>
                             `).join("")}
+                        </select>
+                    </div>
+
+                    <div class="doc-section settings-section">
+                        <div class="settings-meta">
+                            <label class="settings-label" for="syntax-highlighting">Syntax highlighting</label>
+                            <div class="settings-description">Highlight assembly keywords and registers in the editor.</div>
+                        </div>
+                        <input id="syntax-highlighting" class="settings-checkbox" type="checkbox" ${this.settings.syntaxHighlighting ? "checked" : ""} aria-label="Syntax highlighting">
+                    </div>
+
+                    <div class="doc-section settings-section">
+                        <div class="settings-meta">
+                            <label class="settings-label" for="register-display-mode">Registers and memory format</label>
+                            <div class="settings-description">Choose how register and memory values are displayed.</div>
+                        </div>
+                        <select id="register-display-mode" class="settings-select" aria-label="Registers and memory format">
+                            <option value="binary" ${this.settings.registerMemoryFormat === "binary" ? "selected" : ""}>Binary</option>
+                            <option value="hex" ${this.settings.registerMemoryFormat === "hex" ? "selected" : ""}>Hexadecimal</option>
                         </select>
                     </div>
                 </div>
@@ -836,6 +924,16 @@ class SettingsManager {
             event => this.update("autosaveInterval", Number(event.target.value))
         );
 
+        document.getElementById("syntax-highlighting").addEventListener(
+            "change",
+            event => this.update("syntaxHighlighting", event.target.checked)
+        );
+
+        document.getElementById("register-display-mode").addEventListener(
+            "change",
+            event => this.update("registerMemoryFormat", event.target.value)
+        );
+
         document.getElementById("reset-keybindings").addEventListener(
             "click",
             () => this.resetKeybindings()
@@ -877,6 +975,7 @@ class SettingsManager {
     update(name, value) {
         this.settings[name] = value;
         this.save();
+        document.dispatchEvent(new CustomEvent("settings-updated"));
     }
 
     resetKeybindings() {

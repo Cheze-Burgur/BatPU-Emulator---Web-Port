@@ -2,6 +2,7 @@ import CPU from "./cpu.js";
 import Assembler from "./assembler.js";
 import Memory from "./memory.js";
 import SaveManager from "./saveManager.js";
+import SettingsManager from "./settingsManager.js";
 
 import {
     ScreenDevice,
@@ -16,8 +17,7 @@ import {
     MobileUI,
     ProblemsPanel,
     Modal,
-    DocumentationManager,
-    SettingsManager
+    DocumentationManager
 } from "./ui.js";
 
 import Documentation, { Presets } from "./docs.js";

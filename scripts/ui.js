@@ -557,26 +557,4 @@ class Modal {
 
 }
 
-class DocumentationManager {
-
-    constructor(modal, documentation) {
-
-        this.modal = modal;
-        this.documentation = documentation;
-
-    }
-
-    open(page) {
-
-        if (!this.documentation[page]) return;
-
-        this.modal.open(
-            this.documentation[page].title,
-            this.documentation[page].render()
-        );
-
-    }
-
-}
-
-export { UI, MobileUI, ProblemsPanel, Modal, DocumentationManager };
+export { UI, MobileUI, ProblemsPanel, Modal };

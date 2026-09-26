@@ -25,8 +25,30 @@
     ISA and Protocol, and the data for the preset programs
 ============================================================ */
 
-/* ===== Main Documentation object ===== */
-const Documentation = {
+/* ===== Main Documentation object and class ===== */
+export class DocumentationManager {
+
+    constructor(modal, documentation) {
+
+        this.modal = modal;
+        this.documentation = documentation;
+
+    }
+
+    open(page) {
+
+        if (!this.documentation[page]) return;
+
+        this.modal.open(
+            this.documentation[page].title,
+            this.documentation[page].render()
+        );
+
+    }
+
+}
+
+export const Documentation = {
 
     isa: { // Instruction Set modal structure
 
@@ -825,9 +847,6 @@ const Documentation = {
 
 };
 
-export { Presets };
-export default Documentation;
-
 /* ===== Documentation Data ===== */
 const Instructions = {
 
@@ -1296,7 +1315,7 @@ const Devices = {
 
 };
 
-const Presets = {
+export const Presets = {
 
     helloworld: {
 

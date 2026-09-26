@@ -16,11 +16,10 @@ import {
     UI,
     MobileUI,
     ProblemsPanel,
-    Modal,
-    DocumentationManager
+    Modal
 } from "./ui.js";
 
-import Documentation, { Presets } from "./docs.js";
+import { DocumentationManager, Documentation, Presets } from "./docs.js";
 
 import {
     matchesKeyBinding,

@@ -26,6 +26,7 @@ import {
     matchesKeyBinding,
     updateEditorGutter,
     highlightAssembly,
+    escapeHtml,
     updateSpeedText
 } from "./utils.js";
 
@@ -100,6 +101,7 @@ class Machine {
                 this.accumulator--;
             }
 
+            applyEditorHighlighting();
             this.ui.render();
             this.updateSpeedDisplay();
 
@@ -176,13 +178,21 @@ const machine = new Machine(cpu, memory, ui);
 const saveManager = new SaveManager(codeEditor, problems, cpu, machine, loadProgram, settings);
 
 function applyEditorHighlighting() {
-    if (!settings.get("syntaxHighlighting")) {
-        editorHighlight.innerHTML = "";
-        editorHighlight.textContent = codeEditor.value;
-        return;
-    }
+    const executedLine = cpu.lastExecutedLine;
+    const syntaxHighlighting = settings.get("syntaxHighlighting");
+    const highlightCurrentLine = settings.get("highlightCurrentLine");
 
-    editorHighlight.innerHTML = highlightAssembly(codeEditor.value);
+    editorHighlight.innerHTML = codeEditor.value.split("\n").map((line, index) => {
+        const content = syntaxHighlighting
+            ? highlightAssembly(line).replace(/\n$/, "")
+            : escapeHtml(line);
+        const currentClass = highlightCurrentLine && index + 1 === executedLine
+            ? " editor-highlight-line-current"
+            : "";
+        return `<span class="editor-highlight-line${currentClass}">${content}</span>`;
+    }).join("");
+
+    editorGutter.classList.toggle("hide-line-numbers", !settings.get("showLineNumbers"));
 }
 
 function loadProgram() {
@@ -191,6 +201,7 @@ function loadProgram() {
 
     cpu.program = assembly.program;
     cpu.pc = 0;
+    cpu.lastExecutedLine = null;
     cpu.loaded = assembly.problems.length === 0;
     problems.set(assembly.problems.map(problem => ({
         ...problem,
@@ -279,6 +290,7 @@ document.getElementById("line-step").onclick = () => {
     if (cpu.program.length === 0) loadProgram();
     if (problems.items.length > 0) return;
     machine.tick();
+    applyEditorHighlighting();
     ui.render(true);
 };
 

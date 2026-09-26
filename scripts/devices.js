@@ -1,4 +1,4 @@
-import { clamp, matchesKeyBinding } from "./utils.js";
+import { clamp, matchesKeyBinding, keyBindingLabel } from "./utils.js";
 
 class Device {
 
@@ -290,6 +290,8 @@ class ControllerDevice extends Device {
         };
 
         this.initBtns();
+        this.updateButtonLabels();
+        this.settings?.subscribe(() => this.updateButtonLabels());
 
     }
 
@@ -330,6 +332,45 @@ class ControllerDevice extends Device {
         this.bindButton("ctr-btn-two", "two");
 
         this.setupKeyboard();
+
+    }
+
+    updateButtonLabels() {
+
+        const labels = {
+            "btn-up": ["⌃", "controllerUp"],
+            "btn-dwn": ["⌄", "controllerDown"],
+            "btn-lft": ["‹", "controllerLeft"],
+            "btn-rgt": ["›", "controllerRight"],
+            "ctr-btn-a": ["A", "controllerA"],
+            "ctr-btn-b": ["B", "controllerB"],
+            "ctr-btn-one": ["1", "controllerOne"],
+            "ctr-btn-two": ["2", "controllerTwo"]
+        };
+        const showKeys = this.settings?.get("controllerDisplaysKeys");
+
+        Object.entries(labels).forEach(([id, [defaultLabel, action]]) => {
+            const button = document.getElementById(id);
+            if (!button) return;
+            const label = showKeys
+                ? keyBindingLabel(this.settings.get("keybindings")[action])
+                : defaultLabel;
+            button.textContent = label;
+            button.title = showKeys ? label : "";
+
+            const baseFontSize = Number(button.dataset.baseFontSize)
+                || Number.parseFloat(getComputedStyle(button).fontSize);
+            button.dataset.baseFontSize = String(baseFontSize);
+
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+            const computedStyle = getComputedStyle(button);
+            context.font = computedStyle.font.replace(/[\d.]+px/, `${baseFontSize}px`);
+            const availableWidth = (button.clientWidth || Number.parseFloat(computedStyle.width)) - 8;
+            const textWidth = context.measureText(label).width;
+            const fontSize = Math.min(baseFontSize, baseFontSize * availableWidth / textWidth);
+            button.style.fontSize = `${Math.max(6, fontSize)}px`;
+        });
 
     }
 

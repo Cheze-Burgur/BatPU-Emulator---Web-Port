@@ -7,6 +7,7 @@ export default class CPU {
         this.running = false;
 
         this.pc = 0;
+        this.lastExecutedLine = null;
         this.stack = [];
         this.flags = {
             Z: 0,
@@ -94,6 +95,7 @@ export default class CPU {
         }
 
         const instruction = this.program[this.pc++];
+        this.lastExecutedLine = instruction.line;
 
         try {
             this.execute(instruction);

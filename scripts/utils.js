@@ -95,7 +95,7 @@ function highlightAssembly(source) {
         const commentStart = line.search(/[;#]|\/\//);
         const code = commentStart === -1 ? line : line.slice(0, commentStart);
         const comment = commentStart === -1 ? "" : line.slice(commentStart);
-        const highlighted = code
+        const highlighted = escapeHtml(code)
             .replace(/\b(?:0b[01]+|0x[\da-f]+|\d+)\b|\br(?:1[0-5]|[0-9])\b/gi, token => {
                 const className = /^r(?:1[0-5]|[0-9])$/i.test(token)
                     ? "syntax-register"
@@ -145,5 +145,6 @@ export {
     showToast,
     keyEventToBinding,
     matchesKeyBinding,
-    keyBindingLabel
+    keyBindingLabel,
+    escapeHtml
 };

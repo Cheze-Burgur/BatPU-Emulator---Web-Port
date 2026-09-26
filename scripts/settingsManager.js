@@ -23,7 +23,10 @@ class SettingsManager {
             defaultMobilePanel: "center",
             autosaveInterval: 0,
             syntaxHighlighting: true,
+            showLineNumbers: true,
+            highlightCurrentLine: false,
             registerMemoryFormat: "binary",
+            controllerDisplaysKeys: false,
             keybindings: {
                 run: "Ctrl+Enter",
                 step: "F10",
@@ -83,6 +86,18 @@ class SettingsManager {
 
             if (["binary", "hex"].includes(savedSettings.registerMemoryFormat)) {
                 settings.registerMemoryFormat = savedSettings.registerMemoryFormat;
+            }
+
+            if (typeof savedSettings.showLineNumbers === "boolean") {
+                settings.showLineNumbers = savedSettings.showLineNumbers;
+            }
+
+            if (typeof savedSettings.highlightCurrentLine === "boolean") {
+                settings.highlightCurrentLine = savedSettings.highlightCurrentLine;
+            }
+
+            if (typeof savedSettings.controllerDisplaysKeys === "boolean") {
+                settings.controllerDisplaysKeys = savedSettings.controllerDisplaysKeys;
             }
 
             if (savedSettings.keybindings && typeof savedSettings.keybindings === "object") {
@@ -289,6 +304,30 @@ class SettingsManager {
 						<input id="syntax-highlighting" class="settings-checkbox" type="checkbox" ${this.settings.syntaxHighlighting ? "checked" : ""} aria-label="Syntax highlighting">
 					</div>
 
+                    <div class="doc-section settings-section">
+                        <div class="settings-meta">
+                            <label class="settings-label" for="show-line-numbers">Show line numbers</label>
+                            <div class="settings-description">Show line numbers beside the editor.</div>
+                        </div>
+                        <input id="show-line-numbers" class="settings-checkbox" type="checkbox" ${this.settings.showLineNumbers ? "checked" : ""} aria-label="Show line numbers">
+                    </div>
+
+                    <div class="doc-section settings-section">
+                        <div class="settings-meta">
+                            <label class="settings-label" for="highlight-current-line">Highlight current line</label>
+                            <div class="settings-description">Highlight the instruction currently being executed.</div>
+                        </div>
+                        <input id="highlight-current-line" class="settings-checkbox" type="checkbox" ${this.settings.highlightCurrentLine ? "checked" : ""} aria-label="Highlight current line">
+                    </div>
+
+                    <div class="doc-section settings-section">
+                        <div class="settings-meta">
+                            <label class="settings-label" for="controller-displays-keys">Show controller key bindings</label>
+                            <div class="settings-description">Display assigned keyboard shortcuts on controller buttons.</div>
+                        </div>
+                        <input id="controller-displays-keys" class="settings-checkbox" type="checkbox" ${this.settings.controllerDisplaysKeys ? "checked" : ""} aria-label="Show controller key bindings">
+                    </div>
+
 					<div class="doc-section settings-section">
 						<div class="settings-meta">
 							<label class="settings-label" for="register-display-mode">Registers and memory format</label>
@@ -346,6 +385,21 @@ class SettingsManager {
         document.getElementById("syntax-highlighting").addEventListener(
             "change",
             event => this.update("syntaxHighlighting", event.target.checked)
+        );
+
+        document.getElementById("show-line-numbers").addEventListener(
+            "change",
+            event => this.update("showLineNumbers", event.target.checked)
+        );
+
+        document.getElementById("highlight-current-line").addEventListener(
+            "change",
+            event => this.update("highlightCurrentLine", event.target.checked)
+        );
+
+        document.getElementById("controller-displays-keys").addEventListener(
+            "change",
+            event => this.update("controllerDisplaysKeys", event.target.checked)
         );
 
         document.getElementById("register-display-mode").addEventListener(

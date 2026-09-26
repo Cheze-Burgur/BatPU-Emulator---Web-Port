@@ -801,6 +801,23 @@ const Documentation = {
                         </ul>
                     </div>
                 </div>
+
+                <div class="doc-card">
+                    <div class="doc-card-header">
+                        <h2>Version 1.92</h2>
+                        <span class="doc-badge">QUALITY OF LIFE</span>
+                    </div>
+                    <div class="doc-section">
+                        <h3>September 26, 2026</h3>
+                        <ul>
+                            <li>Moved the <span class="code">settingsManager</span> object to a separate file for better organization</li>
+                            <li>
+                                Added options to hide the line numbers beside the editor, replace the controller button text with the names of the keys they are mapped to,
+                                and highlight the instruction currently being executed in the editor
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         `;
         }

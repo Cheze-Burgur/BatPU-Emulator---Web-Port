@@ -64,21 +64,21 @@ a:hover {
 
 /* ===== App Shell ===== */
 .skip-link {
-  position: absolute;
-  top: -100%;
-  left: 0;
-  z-index: 9999;
-  padding: 0.5rem 1rem;
-  background: #000;
-  color: #fff;
-  text-decoration: none;
+    position: absolute;
+    top: -100%;
+    left: 0;
+    z-index: 9999;
+    padding: 0.5rem 1rem;
+    background: #000;
+    color: #fff;
+    text-decoration: none;
 }
 
 .skip-link:focus {
-  top: 0;
-  left: 0;
-  outline: 2px solid #fbbf24;
-  outline-offset: 2px;
+    top: 0;
+    left: 0;
+    outline: 2px solid #fbbf24;
+    outline-offset: 2px;
 }
 
 #app {
@@ -218,6 +218,8 @@ a:hover {
 
 #dpad-wrap button {
     position: absolute;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 #btn-up {
@@ -267,6 +269,8 @@ a:hover {
     background: var(--control-button-bg);
     box-shadow: 0 5px 0 rgba(0, 0, 0, 0.28), inset 0 1px 1px rgba(255, 255, 255, 0.18), 0 0 14px rgba(255, 255, 255, 0.08);
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 #ctr-btn-a:hover,
@@ -623,6 +627,10 @@ a:hover {
     padding-left: 2px;
 }
 
+.editor-gutter.hide-line-numbers {
+    display: none;
+}
+
 .editor-gutter::-webkit-scrollbar {
     display: none;
 }
@@ -646,6 +654,15 @@ a:hover {
     overflow: hidden;
     pointer-events: none;
     box-sizing: border-box;
+}
+
+.editor-highlight-line {
+    display: block;
+    min-height: 1.6em;
+}
+
+.editor-highlight-line-current {
+    background: color-mix(in srgb, var(--code-text) 10%, transparent);
 }
 
 .syntax-opcode {

@@ -1516,4 +1516,46 @@ ret
 
     },
 
+	fibonacci: {
+
+		title: "Fibonacci Sequence",
+
+		author: "Cheze",
+
+		description: "Calculates the fibonacci sequence",
+
+		code: `// Fibonacci sequence - By Cheze
+
+LDI r1 0 // A
+LDI r2 1 // B
+LDI r3 0 // Next
+LDI r4 12 // Counter
+LDI r5 250 // Display Pointer
+LDI r6 1 // Memory Pointer
+
+// loop
+    // Next = A + B
+    ADD r1 r2 r3
+
+    // A = B
+    ADD r2 r0 r1
+
+    // B = Next
+    ADD r3 r0 r2
+
+    // Update Display and Store Value
+    STR r5 r3
+    STR r6 r1
+
+    // Update Counters
+    ADI r6 1
+    ADI r4 255
+    BRH !Z 6
+
+// Store final value
+STR r6 r3
+
+HLT
+		`
+
 }

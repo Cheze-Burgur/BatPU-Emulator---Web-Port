@@ -1526,6 +1526,28 @@ ret
 
 		code: `// Fibonacci sequence - By Cheze
 
+LDI r1 247
+LDI r2 6
+STR r1 r2
+LDI r2 9
+STR r1 r2
+LDI r2 2
+STR r1 r2
+LDI r2 15
+STR r1 r2
+LDI r2 14
+STR r1 r2
+LDI r2 1
+STR r1 r2
+LDI r2 3
+STR r1 r2
+LDI r2 3
+STR r1 r2
+LDI r2 9
+STR r1 r2
+LDI r1 248
+STR r1 r0
+
 LDI r1 0 // A
 LDI r2 1 // B
 LDI r3 0 // Next
@@ -1556,7 +1578,7 @@ LDI r6 1 // Memory Pointer
 STR r6 r3
 
 HLT
-		`
+`
 
 	}
 

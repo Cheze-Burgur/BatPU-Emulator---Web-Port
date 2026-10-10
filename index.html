@@ -39,6 +39,7 @@
                 <div class="mobile-nav-actions" aria-label="Utility buttons">
                     <button type="button" class="mobile-nav-action-button" data-action="isa">ISA</button>
                     <button type="button" class="mobile-nav-action-button" data-action="io">I/O</button>
+                    <button type="button" class="mobile-nav-action-button" data-action="diagram">Diagram</button>
                     <button type="button" class="mobile-nav-action-button" data-action="help">Help</button>
                     <button type="button" class="mobile-nav-action-button" data-action="presets">Presets</button>
                     <button type="button" class="mobile-nav-action-button" data-action="about">About</button>
@@ -241,6 +242,10 @@
                         I/O
                     </button>
 
+                    <button id="diagram-button" type="button">
+                        Diagram
+                    </button>
+
                     <button id="help-button">
                         Help
                     </button>
@@ -307,6 +312,26 @@
                 </div>
 
                 <div id="modal-body" tabindex="0">
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div id="diagram-modal-overlay" class="hidden" aria-hidden="true">
+
+            <div id="diagram-modal-window" role="dialog" aria-modal="true" aria-labelledby="diagram-modal-title">
+
+                <div id="diagram-modal-header">
+
+                    <span id="diagram-modal-title">CPU Diagram</span>
+
+                    <button id="diagram-modal-close" type="button" aria-label="Close CPU diagram">✕</button>
+
+                </div>
+
+                <div id="diagram-modal-body" tabindex="0">
 
                 </div>
 

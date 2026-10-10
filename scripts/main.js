@@ -16,10 +16,11 @@ import {
     UI,
     MobileUI,
     ProblemsPanel,
-    Modal
+    Modal,
+    DiagramModal
 } from "./ui.js";
 
-import { DocumentationManager, Documentation, Presets } from "./docs.js";
+import { DocumentationManager, Documentation, DiagramComponents, Presets } from "./docs.js";
 
 import {
     matchesKeyBinding,
@@ -161,7 +162,8 @@ const editorLineMap = [];
 
 const problems = new ProblemsPanel(document.getElementById("problems-list"));
 const modal = new Modal();
-const docs = new DocumentationManager(modal, Documentation);
+const diagramModal = new DiagramModal(DiagramComponents);
+const docs = new DocumentationManager(modal, Documentation, diagramModal);
 const settings = new SettingsManager(modal);
 const memory = new Memory();
 const cpu = new CPU(memory, problems);
@@ -251,6 +253,7 @@ window.loadPreset = loadPreset;
 const docButtons = {
     isa: document.getElementById("isa-button"),
     io: document.getElementById("io-button"),
+    diagram: document.getElementById("diagram-button"),
     help: document.getElementById("help-button"),
     presets: document.getElementById("presets-button"),
     about: document.getElementById("about-button"),

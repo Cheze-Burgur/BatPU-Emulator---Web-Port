@@ -1089,7 +1089,8 @@ a:hover {
 }
 
 /* ===== Modal and Documentation ===== */
-#modal-overlay {
+#modal-overlay,
+#diagram-modal-overlay {
     position: fixed;
     inset: 0;
     display: flex;
@@ -1099,11 +1100,13 @@ a:hover {
     z-index: 1000;
 }
 
-#modal-overlay.hidden {
+#modal-overlay.hidden,
+#diagram-modal-overlay.hidden {
     display: none;
 }
 
-#modal-window {
+#modal-window,
+#diagram-modal-window {
     width: min(900px, 90vw);
     height: min(700px, 85vh);
     display: flex;
@@ -1115,7 +1118,8 @@ a:hover {
     box-shadow: 0 20px 60px var(--modal-window-shadow);
 }
 
-#modal-header {
+#modal-header,
+#diagram-modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1124,12 +1128,14 @@ a:hover {
     border-bottom: 1px solid var(--border);
 }
 
-#modal-title {
+#modal-title,
+#diagram-modal-title {
     font-size: 18px;
     font-weight: bold;
 }
 
-#modal-body {
+#modal-body,
+#diagram-modal-body {
     flex: 1;
     overflow: auto;
     padding: 20px;
@@ -1138,16 +1144,29 @@ a:hover {
     font-size: 15px;
 }
 
+#diagram-modal-body {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
 #modal-body h1,
 #modal-body h2,
 #modal-body h3,
 #modal-body p,
 #modal-body pre,
-#modal-body table {
+#modal-body table,
+#diagram-modal-body h1,
+#diagram-modal-body h2,
+#diagram-modal-body h3,
+#diagram-modal-body p,
+#diagram-modal-body pre,
+#diagram-modal-body table {
     margin: 0;
 }
 
-#modal-body h1 {
+#modal-body h1,
+#diagram-modal-body h1 {
     margin-bottom: 18px;
     color: var(--modal-title-text);
 }
@@ -1159,11 +1178,13 @@ a:hover {
     font-size: 22px;
 }
 
-#modal-body h2 {
+#modal-body h2,
+#diagram-modal-body h2 {
     margin-bottom: 8px;
 }
 
 #modal-body h3,
+#diagram-modal-body h3,
 .doc-card h3 {
     margin: 0 0 8px;
     color: var(--accent-warning);
@@ -1173,12 +1194,14 @@ a:hover {
 }
 
 #modal-body p,
+#diagram-modal-body p,
 .doc-card p {
     margin: 10px 0;
     line-height: 1.6;
 }
 
 #modal-body pre,
+#diagram-modal-body pre,
 .doc-code {
     padding: 12px;
     background: var(--surface);
@@ -1189,6 +1212,7 @@ a:hover {
 }
 
 #modal-body table,
+#diagram-modal-body table,
 .doc-table {
     width: 100%;
     border-collapse: collapse;
@@ -1196,12 +1220,15 @@ a:hover {
 
 #modal-body th,
 #modal-body td,
+#diagram-modal-body th,
+#diagram-modal-body td,
 .doc-table th,
 .doc-table td {
     padding: 8px;
 }
 
 #modal-body th,
+#diagram-modal-body th,
 .doc-table th {
     text-align: left;
     color: var(--accent-warning);
@@ -1209,6 +1236,7 @@ a:hover {
 }
 
 #modal-body tr:nth-child(even),
+#diagram-modal-body tr:nth-child(even),
 .doc-table tr:nth-child(even) {
     background: var(--table-row-alt-bg);
 }
@@ -1510,6 +1538,117 @@ a:hover {
 .settings-select:focus {
     border-color: var(--accent-blue);
     box-shadow: 0 0 0 3px rgba(0, 187, 255, 0.14);
+}
+
+.cpu-diagram-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+    grid-template-rows: minmax(0, 1fr);
+    gap: 16px;
+    flex: 1;
+    min-height: 0;
+    align-items: stretch;
+}
+
+.cpu-diagram-page {
+    flex: 1;
+    min-height: 0;
+}
+
+.diagram-container {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+}
+
+#cpu-diagram-canvas {
+    display: block;
+    width: 100%;
+    aspect-ratio: 20 / 11;
+    flex: 1;
+    min-height: 0;
+    cursor: pointer;
+}
+
+.cpu-diagram-layout > .doc-card {
+    min-height: 0;
+}
+
+.cpu-diagram-component-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+    min-width: 0;
+}
+
+.cpu-diagram-component-button {
+    width: auto;
+    max-width: 100%;
+    min-height: 36px;
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    white-space: normal;
+}
+
+.cpu-diagram-component-button:hover,
+.cpu-diagram-component-button[aria-pressed="true"] {
+    border-color: var(--accent-blue);
+}
+
+.cpu-diagram-details h2 {
+    margin: 14px 0 8px;
+}
+
+.cpu-diagram-layout > .cpu-diagram-details {
+    margin-top: 0;
+    min-width: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.cpu-diagram-details p {
+    color: var(--muted);
+}
+
+#cpu-diagram-details-text {
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 700px) {
+    .cpu-diagram-layout {
+        display: flex;
+        flex-direction: column;
+        flex: none;
+        min-height: 0;
+    }
+
+    .cpu-diagram-page {
+        flex: none;
+        min-height: auto;
+    }
+
+    .diagram-container {
+        flex: none;
+    }
+
+    #cpu-diagram-canvas {
+        flex: none;
+        height: auto;
+    }
+
+    .cpu-diagram-layout > .cpu-diagram-details {
+        flex: none;
+        max-height: min(30vh, 220px);
+        overflow-y: auto;
+    }
 }
 
 .swal2-popup {

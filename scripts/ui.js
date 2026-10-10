@@ -484,19 +484,19 @@ class ProblemsPanel {
 
 class Modal {
 
-    constructor() {
+    constructor(prefix = "modal") {
 
         this.overlay =
-            document.getElementById("modal-overlay");
+            document.getElementById(`${prefix}-overlay`);
 
         this.title =
-            document.getElementById("modal-title");
+            document.getElementById(`${prefix}-title`);
 
         this.body =
-            document.getElementById("modal-body");
+            document.getElementById(`${prefix}-body`);
 
         this.closeButton =
-            document.getElementById("modal-close");
+            document.getElementById(`${prefix}-close`);
 
         this.lastFocusedElement = null;
         this.keydownHandler = (event) => {
@@ -557,4 +557,283 @@ class Modal {
 
 }
 
-export { UI, MobileUI, ProblemsPanel, Modal };
+class DiagramModal extends Modal {
+
+    constructor(DiagramComponents) {
+        super("diagram-modal");
+        this.components = [
+            { id: "instr-memory", label: "Instruction\nMemory", color: "#ff00ff", textColor: "#333333", x: 150, y: 0, width: 200, height: 200 },
+            { id: "alu", label: "ALU", color: "#ff8800", textColor: "#333333", x: 600, y: 25, width: 75, height: 150 },
+            { id: "registers", label: "Register File", color: "#00ffff", textColor: "#333333", x: 400, y: 25, width: 150, height: 150 },
+            { id: "program-counter", label: "Program\nCounter", color: "#ffff00", textColor: "#333333", x: 0, y: 125, width: 100, height: 75 },
+            { id: "data-memory", label: "Data\nMemory", color: "#ff0000", textColor: "#333333", x: 725, y: 0, width: 100, height: 200 },
+            { id: "stack", label: "Call Stack", color: "#00ff00", textColor: "#333333", x: 0, y: 0, width: 100, height: 100 },
+            { id: "control", label: "Control ROM", color: "#0000ff", textColor: "#cccccc", x: 275, y: 250, width: 300, height: 100 },
+            { id: "clock", label: "Clock", color: "#8f8f8f", textColor: "#333333", x: 625, y: 250, width: 100, height: 100 },
+        ];
+        this.componentDescriptions = DiagramComponents;
+        this.muxes = [
+            // Starts at (x, y), extends down for length
+            { x: 575, y: 130, length: 30 },
+            { x: 385, y: 100, length: 30 },
+            { x: 385, y: 135, length: 30 },
+        ];
+        this.connections = [
+            // (x[0], y[0]) -> (x[1], y[1]) -> (x[2], y[2]) ...
+            { x: [550, 600], y: [62, 62] },
+            { x: [550, 575], y: [138, 138] },
+            { x: [575, 600], y: [145, 145] },
+            { x: [675, 725], y: [100, 100] },
+            { x: [675, 700, 700, 370, 370, 385], y: [100, 100, 195, 195, 163, 163] },
+            { x: [550, 555, 555, 725], y: [138, 138, 182, 182] },
+            { x: [350, 370, 370, 400], y: [75, 75, 50, 50] },
+            { x: [350, 400], y: [75, 75] },
+            { x: [350, 370, 370, 385], y: [75, 75, 102, 102] },
+            { x: [350, 370, 370, 385], y: [75, 75, 115, 115] },
+            { x: [350, 370, 370, 385], y: [75, 75, 128, 128] },
+            { x: [385, 400], y: [115, 115] },
+            { x: [350, 370, 370, 385], y: [75, 75, 137, 137] },
+            { x: [385, 400], y: [150, 150] },
+            { x: [825, 835, 835, 365, 365, 385], y: [100, 100, 205, 205, 150, 150] },
+        ];
+        this.resizeObserver = null;
+        this.selectedComponent = null;
+        this.canvas = null;
+        this.context = null;
+        this.detailsTitle = null;
+        this.detailsText = null;
+        this.componentButtons = [];
+    }
+
+    openDiagram() {
+        this._disconnectDiagram();
+        this.selectedComponent = null;
+        super.open("CPU Diagram", this._renderDiagram());
+        this._initializeDiagram();
+    }
+
+    close() {
+        this._disconnectDiagram();
+        super.close();
+    }
+
+    _renderDiagram() {
+        return `
+            <div class="doc-page cpu-diagram-page">
+                <div class="doc-header">
+                    <h1>CPU Diagram</h1>
+                    <p>Explore the CPU components. Work in progress.</p>
+                </div>
+
+                <div class="cpu-diagram-layout">
+                    <div class="doc-card diagram-container">
+                        <canvas
+                            id="cpu-diagram-canvas"
+                            role="img"
+                            aria-label="Interactive CPU diagram. Select a component to view its information."
+                        ></canvas>
+                        <div class="cpu-diagram-component-list" role="group" aria-label="CPU components">
+                            ${this.components.map(component => `
+                                <button
+                                    type="button"
+                                    class="cpu-diagram-component-button"
+                                    data-diagram-component="${component.id}"
+                                    aria-pressed="false"
+                                >${component.label}</button>
+                            `).join("")}
+                        </div>
+                    </div>
+
+                    <section class="doc-card cpu-diagram-details" aria-live="polite">
+                        <h2 id="cpu-diagram-details-title">Select a component</h2>
+                        <p id="cpu-diagram-details-text">
+                            Click a block in the diagram or choose a component button to learn more.
+                        </p>
+                    </section>
+                </div>
+            </div>
+        `;
+    }
+
+    _initializeDiagram() {
+        this.canvas = this.body.querySelector("#cpu-diagram-canvas");
+        this.context = this.canvas.getContext("2d");
+        this.detailsTitle = this.body.querySelector("#cpu-diagram-details-title");
+        this.detailsText = this.body.querySelector("#cpu-diagram-details-text");
+        this.componentButtons = [...this.body.querySelectorAll("[data-diagram-component]")];
+
+        this.canvas.addEventListener("click", event => {
+            const bounds = this.canvas.getBoundingClientRect();
+            const x = ((event.clientX - bounds.left) / bounds.width) * 850;
+            const y = ((event.clientY - bounds.top) / bounds.height) * 450;
+            const component = [...this.components].reverse().find(item =>
+                x >= item.x && x <= item.x + item.width &&
+                y >= item.y && y <= item.y + item.height
+            );
+
+            if (component) this._selectComponent(component.id);
+        });
+
+        this.componentButtons.forEach(button => {
+            button.addEventListener("click", () => {
+                this._selectComponent(button.dataset.diagramComponent);
+            });
+        });
+
+        this.resizeObserver = new ResizeObserver(() => this._drawDiagram());
+        this.resizeObserver.observe(this.canvas);
+        this._drawDiagram();
+    }
+
+    _drawDiagram() {
+        const width = this.canvas.clientWidth;
+        const height = this.canvas.clientHeight;
+
+        if (!width || !height) return;
+
+        const pixelRatio = window.devicePixelRatio || 1;
+        this.canvas.width = Math.round(width * pixelRatio);
+        this.canvas.height = Math.round(height * pixelRatio);
+        this.context.setTransform(
+            (width / 850) * pixelRatio,
+            0,
+            0,
+            (height / 450) * pixelRatio,
+            0,
+            0
+        );
+
+        const styles = getComputedStyle(document.documentElement);
+        const textColor = styles.getPropertyValue("--text").trim() || "#e8e8e8";
+        const mutedColor = styles.getPropertyValue("--muted").trim() || "#a0a0a0";
+        const accentColor = styles.getPropertyValue("--accent-blue").trim() || "#00bbff";
+        const borderColor = styles.getPropertyValue("--border").trim() || "#59616b";
+
+        this.context.clearRect(0, 0, 850, 450);
+        this.context.lineWidth = 3;
+        this.context.beginPath();
+        for (const connection of this.connections) {
+            this.context.strokeStyle = connection.color || mutedColor;
+            const pointCount = Math.min(connection.x.length, connection.y.length);
+            if (pointCount === 0) continue;
+
+            this.context.moveTo(connection.x[0], connection.y[0]);
+            for (let i = 1; i < pointCount; i++) {
+                this.context.lineTo(connection.x[i], connection.y[i]);
+            }
+        }
+        this.context.stroke();
+
+        for (const connection of this.connections) {
+            this.context.fillStyle = connection.color || mutedColor;
+            const pointCount = Math.min(connection.x.length, connection.y.length);
+            if (pointCount < 2) continue;
+
+            const tip = {
+                x: connection.x[pointCount - 1],
+                y: connection.y[pointCount - 1]
+            };
+            let previousIndex = pointCount - 2;
+
+            while (
+                previousIndex >= 0 &&
+                connection.x[previousIndex] === tip.x &&
+                connection.y[previousIndex] === tip.y
+            ) {
+                previousIndex--;
+            }
+
+            if (previousIndex < 0) continue;
+
+            this.context.fillStyle = connection.color || mutedColor;
+            const angle = Math.atan2(
+                tip.y - connection.y[previousIndex],
+                tip.x - connection.x[previousIndex]
+            );
+            const arrowLength = 12;
+            const arrowWidth = 7;
+
+            this.context.beginPath();
+            this.context.moveTo(tip.x, tip.y);
+            this.context.lineTo(
+                tip.x - arrowLength * Math.cos(angle) + arrowWidth * Math.sin(angle),
+                tip.y - arrowLength * Math.sin(angle) - arrowWidth * Math.cos(angle)
+            );
+            this.context.lineTo(
+                tip.x - arrowLength * Math.cos(angle) - arrowWidth * Math.sin(angle),
+                tip.y - arrowLength * Math.sin(angle) + arrowWidth * Math.cos(angle)
+            );
+            this.context.closePath();
+            this.context.fill();
+        }
+
+        for (const component of this.components) {
+            this.context.fillStyle = component.color || "#20252b";
+            this.context.fillRect(component.x, component.y, component.width, component.height);
+        }
+
+        this.context.strokeStyle = "#0073ff";
+        this.context.lineWidth = 3;
+        this.context.beginPath();
+        for (const mux of this.muxes) {
+            if (!Number.isFinite(mux.x) || !Number.isFinite(mux.y) ||
+                !Number.isFinite(mux.length) || mux.length <= 0) {
+                continue;
+            }
+
+            this.context.moveTo(mux.x, mux.y);
+            this.context.lineTo(mux.x, mux.y + mux.length);
+        }
+        this.context.stroke();
+
+        for (const component of this.components) {
+            const isSelected = component.id === this.selectedComponent;
+            this.context.strokeStyle = isSelected ? accentColor : borderColor;
+            this.context.lineWidth = isSelected ? 5 : 2;
+            this.context.strokeRect(component.x, component.y, component.width, component.height);
+            this.context.fillStyle = component.textColor || textColor;
+            this.context.font = "bold 20px sans-serif";
+            this.context.textAlign = "center";
+            this.context.textBaseline = "middle";
+            const labelLines = component.label.split("\n");
+            const lineHeight = 24;
+            const firstLineY = component.y + component.height / 2 -
+                ((labelLines.length - 1) * lineHeight) / 2;
+
+            labelLines.forEach((line, index) => {
+                this.context.fillText(
+                    line,
+                    component.x + component.width / 2,
+                    firstLineY + index * lineHeight,
+                    component.width - 20
+                );
+            });
+        }
+    }
+
+    _selectComponent(id) {
+        const component = this.components.find(item => item.id === id);
+        if (!component) return;
+
+        this.selectedComponent = id;
+        this.detailsTitle.textContent = component.label;
+        this.detailsText.textContent =
+            this.componentDescriptions[id]
+            || "Component information will be added when the final CPU diagram and descriptions are defined.";
+        this.componentButtons.forEach(button => {
+            button.setAttribute(
+                "aria-pressed",
+                String(button.dataset.diagramComponent === id)
+            );
+        });
+        this._drawDiagram();
+    }
+
+    _disconnectDiagram() {
+        this.resizeObserver?.disconnect();
+        this.resizeObserver = null;
+    }
+
+}
+
+export { UI, MobileUI, ProblemsPanel, Modal, DiagramModal };

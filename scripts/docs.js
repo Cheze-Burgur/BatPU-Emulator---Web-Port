@@ -28,21 +28,25 @@
 /* ===== Main Documentation object and class ===== */
 export class DocumentationManager {
 
-    constructor(modal, documentation) {
+    constructor(modal, documentation, diagramModal = modal) {
 
         this.modal = modal;
         this.documentation = documentation;
+        this.diagramModal = diagramModal;
 
     }
 
     open(page) {
 
+        if (page === "diagram") {
+            this.diagramModal.openDiagram();
+            return;
+        }
+
         if (!this.documentation[page]) return;
 
-        this.modal.open(
-            this.documentation[page].title,
-            this.documentation[page].render()
-        );
+        const documentation = this.documentation[page];
+        this.modal.open(documentation.title, documentation.render());
 
     }
 
@@ -1171,6 +1175,32 @@ RET`
 
 };
 
+export const DiagramComponents = {
+
+    alu: `Performs arithmetic
+    Second line placeholder
+    
+    third line with an extra break in front
+    .
+    .
+    .
+    .
+    .
+    .
+    .
+    .
+    .
+    .
+    .
+    .
+    .
+    .
+    .
+    .
+    more text`
+
+};
+
 const Devices = {
 
     screen: {
@@ -1516,15 +1546,15 @@ ret
 
     },
 
-	fibonacci: {
+    fibonacci: {
 
-		title: "Fibonacci Sequence",
+        title: "Fibonacci Sequence",
 
-		author: "Cheze",
+        author: "Cheze",
 
-		description: "Calculates the fibonacci sequence",
+        description: "Calculates the fibonacci sequence",
 
-		code: `// Fibonacci sequence - By Cheze
+        code: `// Fibonacci sequence - By Cheze
 
 LDI r1 247
 LDI r2 6
@@ -1580,6 +1610,6 @@ STR r6 r3
 HLT
 `
 
-	}
+    }
 
 }

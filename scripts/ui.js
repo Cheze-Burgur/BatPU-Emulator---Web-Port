@@ -568,8 +568,8 @@ class DiagramModal extends Modal {
             { id: "program-counter", label: "Program\nCounter", color: "#ffff00", textColor: "#333333", x: 0, y: 125, width: 100, height: 75 },
             { id: "data-memory", label: "Data\nMemory", color: "#ff0000", textColor: "#333333", x: 725, y: 0, width: 100, height: 200 },
             { id: "stack", label: "Call Stack", color: "#00ff00", textColor: "#333333", x: 0, y: 0, width: 100, height: 100 },
-            { id: "control", label: "Control ROM", color: "#0000ff", textColor: "#cccccc", x: 225, y: 250, width: 300, height: 100 },
-            { id: "clock", label: "Clock", color: "#8f8f8f", textColor: "#333333", x: 575, y: 250, width: 100, height: 100 },
+            { id: "control", label: "Control ROM", color: "#0000ff", textColor: "#cccccc", x: 200, y: 250, width: 300, height: 100 },
+            { id: "clock", label: "Clock", color: "#8f8f8f", textColor: "#333333", x: 600, y: 250, width: 100, height: 100 },
         ];
         this.componentDescriptions = DiagramComponents;
         this.muxes = [
@@ -580,7 +580,16 @@ class DiagramModal extends Modal {
         ];
         this.connections = [
             // (x[0], y[0]) -> (x[1], y[1]) -> (x[2], y[2]) ...
-            { x: [200, 200, 225], y: [200, 300, 300], color: "#006eff" },
+            // Control lines
+            { x: [175, 175, 200], y: [200, 300, 300], color: "#006eff" },
+            { x: [500, 525, 525], y: [300, 300, 275], color: "#006eff" },
+            { x: [637.5, 637.5], y: [225, 175], color: "#006eff" }, // ALU
+
+            // Clock lines
+            { x: [600, 575, 575], y: [300, 300, 275], color: "#af0000" },
+            { x: [50, 50], y: [250, 200], color: "#af0000" }, // PC
+
+            // Main data lines
             { x: [550, 600], y: [62, 62] },
             { x: [550, 575], y: [138, 138] },
             { x: [575, 600], y: [145, 145] },
@@ -596,6 +605,7 @@ class DiagramModal extends Modal {
             { x: [350, 370, 370, 385], y: [75, 75, 137, 137] },
             { x: [385, 400], y: [150, 150] },
             { x: [825, 835, 835, 365, 365, 385], y: [100, 100, 205, 205, 150, 150] },
+            { x: [100, 150], y: [162.5, 162.5] },
         ];
         this.resizeObserver = null;
         this.selectedComponent = null;

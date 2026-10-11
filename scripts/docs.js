@@ -1177,27 +1177,10 @@ RET`
 
 export const DiagramComponents = {
 
-    alu: `Performs arithmetic
-    Second line placeholder
-    
-    third line with an extra break in front
-    .
-    .
-    .
-    .
-    .
-    .
-    .
-    .
-    .
-    .
-    .
-    .
-    .
-    .
-    .
-    .
-    more text`
+    alu: `Preforms arithmetic and logical operations on two 8-bit values. The operands can come either from the register file or the instruction memory in the form of an Add Immediate.
+Outputs an 8-bit result of the operation and two "flags," Zero and Carry, which are used for conditional branching.
+The operation being performed is determined by a 3-bit control signal from the Control ROM, depending on the instructions opcode.
+The ALU is purely combinational, meaning it has no memory and it doesn't require a clock pulse to operate.`,
 
 };
 

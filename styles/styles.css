@@ -1700,13 +1700,15 @@ a:hover {
     overscroll-behavior: contain;
 }
 
-.cpu-diagram-details p {
+#cpu-diagram-details-text p {
     color: var(--muted);
+    margin: 0 0 0.9em;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
 }
 
-#cpu-diagram-details-text {
-    white-space: pre-line;
-    overflow-wrap: anywhere;
+#cpu-diagram-details-text p:last-child {
+    margin-bottom: 0;
 }
 
 @media (max-width: 700px) {

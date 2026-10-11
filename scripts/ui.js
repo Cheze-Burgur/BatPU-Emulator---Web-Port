@@ -646,9 +646,9 @@ class DiagramModal extends Modal {
 
                     <section class="doc-card cpu-diagram-details" aria-live="polite">
                         <h2 id="cpu-diagram-details-title">Select a component</h2>
-                        <p id="cpu-diagram-details-text">
+                        <div id="cpu-diagram-details-text">
                             Click a block in the diagram or choose a component button to learn more.
-                        </p>
+                        </div>
                     </section>
                 </div>
             </div>
@@ -817,9 +817,13 @@ class DiagramModal extends Modal {
 
         this.selectedComponent = id;
         this.detailsTitle.textContent = component.label;
-        this.detailsText.textContent =
-            this.componentDescriptions[id]
+        const description = this.componentDescriptions[id]
             || "Component information will be added when the final CPU diagram and descriptions are defined.";
+        this.detailsText.replaceChildren(...description.split(/\r?\n/).map(line => {
+            const paragraph = document.createElement("p");
+            paragraph.textContent = line;
+            return paragraph;
+        }));
         this.componentButtons.forEach(button => {
             button.setAttribute(
                 "aria-pressed",

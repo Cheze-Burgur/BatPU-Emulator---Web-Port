@@ -568,8 +568,8 @@ class DiagramModal extends Modal {
             { id: "program-counter", label: "Program\nCounter", color: "#ffff00", textColor: "#333333", x: 0, y: 125, width: 100, height: 75 },
             { id: "data-memory", label: "Data\nMemory", color: "#ff0000", textColor: "#333333", x: 725, y: 0, width: 100, height: 200 },
             { id: "stack", label: "Call Stack", color: "#00ff00", textColor: "#333333", x: 0, y: 0, width: 100, height: 100 },
-            { id: "control", label: "Control ROM", color: "#0000ff", textColor: "#cccccc", x: 275, y: 250, width: 300, height: 100 },
-            { id: "clock", label: "Clock", color: "#8f8f8f", textColor: "#333333", x: 625, y: 250, width: 100, height: 100 },
+            { id: "control", label: "Control ROM", color: "#0000ff", textColor: "#cccccc", x: 225, y: 250, width: 300, height: 100 },
+            { id: "clock", label: "Clock", color: "#8f8f8f", textColor: "#333333", x: 575, y: 250, width: 100, height: 100 },
         ];
         this.componentDescriptions = DiagramComponents;
         this.muxes = [
@@ -580,6 +580,7 @@ class DiagramModal extends Modal {
         ];
         this.connections = [
             // (x[0], y[0]) -> (x[1], y[1]) -> (x[2], y[2]) ...
+            { x: [200, 200, 225], y: [200, 300, 300], color: "#006eff" },
             { x: [550, 600], y: [62, 62] },
             { x: [550, 575], y: [138, 138] },
             { x: [575, 600], y: [145, 145] },
@@ -711,18 +712,18 @@ class DiagramModal extends Modal {
 
         this.context.clearRect(0, 0, 850, 450);
         this.context.lineWidth = 3;
-        this.context.beginPath();
         for (const connection of this.connections) {
-            this.context.strokeStyle = connection.color || mutedColor;
             const pointCount = Math.min(connection.x.length, connection.y.length);
             if (pointCount === 0) continue;
 
+            this.context.strokeStyle = connection.color || mutedColor;
+            this.context.beginPath();
             this.context.moveTo(connection.x[0], connection.y[0]);
             for (let i = 1; i < pointCount; i++) {
                 this.context.lineTo(connection.x[i], connection.y[i]);
             }
+            this.context.stroke();
         }
-        this.context.stroke();
 
         for (const connection of this.connections) {
             this.context.fillStyle = connection.color || mutedColor;
@@ -745,7 +746,6 @@ class DiagramModal extends Modal {
 
             if (previousIndex < 0) continue;
 
-            this.context.fillStyle = connection.color || mutedColor;
             const angle = Math.atan2(
                 tip.y - connection.y[previousIndex],
                 tip.x - connection.x[previousIndex]

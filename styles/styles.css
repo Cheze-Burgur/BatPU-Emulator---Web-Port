@@ -519,6 +519,33 @@ a:hover {
     border: 2px solid var(--border);
     border-radius: var(--radius-sm);
     padding: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(128, 128, 128, 0.4) transparent;
+    overscroll-behavior: contain;
+}
+
+#reg-file-display::-webkit-scrollbar,
+#data-memory-display::-webkit-scrollbar {
+    width: 6px;
+}
+
+#reg-file-display::-webkit-scrollbar-track,
+#data-memory-display::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#reg-file-display::-webkit-scrollbar-thumb,
+#data-memory-display::-webkit-scrollbar-thumb {
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: rgba(128, 128, 128, 0.4);
+    background-clip: padding-box;
+}
+
+#reg-file-display::-webkit-scrollbar-thumb:hover,
+#data-memory-display::-webkit-scrollbar-thumb:hover {
+    background: rgba(128, 128, 128, 0.65);
+    background-clip: padding-box;
 }
 
 #reg-file-display {
@@ -703,6 +730,30 @@ a:hover {
     position: relative;
     z-index: 2;
     white-space: pre;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(128, 128, 128, 0.4) transparent;
+    overscroll-behavior: contain;
+}
+
+#code-editor::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+#code-editor::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#code-editor::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: rgba(128, 128, 128, 0.4);
+    background-clip: padding-box;
+}
+
+#code-editor::-webkit-scrollbar-thumb:hover {
+    background: rgba(128, 128, 128, 0.65);
+    background-clip: padding-box;
 }
 
 
@@ -1144,6 +1195,42 @@ a:hover {
     font-size: 15px;
 }
 
+#modal-body,
+#diagram-modal-body,
+.cpu-diagram-layout>.cpu-diagram-details {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(128, 128, 128, 0.45) transparent;
+}
+
+#modal-body::-webkit-scrollbar,
+#diagram-modal-body::-webkit-scrollbar,
+.cpu-diagram-layout>.cpu-diagram-details::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+#modal-body::-webkit-scrollbar-track,
+#diagram-modal-body::-webkit-scrollbar-track,
+.cpu-diagram-layout>.cpu-diagram-details::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#modal-body::-webkit-scrollbar-thumb,
+#diagram-modal-body::-webkit-scrollbar-thumb,
+.cpu-diagram-layout>.cpu-diagram-details::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: rgba(128, 128, 128, 0.45);
+    background-clip: padding-box;
+}
+
+#modal-body::-webkit-scrollbar-thumb:hover,
+#diagram-modal-body::-webkit-scrollbar-thumb:hover,
+.cpu-diagram-layout>.cpu-diagram-details::-webkit-scrollbar-thumb:hover {
+    background: rgba(128, 128, 128, 0.7);
+    background-clip: padding-box;
+}
+
 #diagram-modal-body {
     display: flex;
     flex-direction: column;
@@ -1571,7 +1658,7 @@ a:hover {
     cursor: pointer;
 }
 
-.cpu-diagram-layout > .doc-card {
+.cpu-diagram-layout>.doc-card {
     min-height: 0;
 }
 
@@ -1605,7 +1692,7 @@ a:hover {
     margin: 14px 0 8px;
 }
 
-.cpu-diagram-layout > .cpu-diagram-details {
+.cpu-diagram-layout>.cpu-diagram-details {
     margin-top: 0;
     min-width: 0;
     overflow-x: hidden;
@@ -1644,7 +1731,7 @@ a:hover {
         height: auto;
     }
 
-    .cpu-diagram-layout > .cpu-diagram-details {
+    .cpu-diagram-layout>.cpu-diagram-details {
         flex: none;
         max-height: min(30vh, 220px);
         overflow-y: auto;

@@ -565,7 +565,7 @@ class DiagramModal extends Modal {
             { id: "instr-memory", label: "Instruction\nMemory", color: "#ff00ff", textColor: "#333333", x: 150, y: 0, width: 200, height: 200 },
             { id: "alu", label: "ALU", color: "#ff8800", textColor: "#333333", x: 600, y: 25, width: 75, height: 150 },
             { id: "registers", label: "Register File", color: "#00ffff", textColor: "#333333", x: 400, y: 25, width: 150, height: 150 },
-            { id: "program-counter", label: "Program\nCounter", color: "#ffff00", textColor: "#333333", x: 0, y: 125, width: 100, height: 75 },
+            { id: "program-counter", label: "Program\nCounter", color: "#ffff00", textColor: "#333333", x: 0, y: 225, width: 100, height: 75 },
             { id: "data-memory", label: "Data\nMemory", color: "#ff0000", textColor: "#333333", x: 725, y: 0, width: 100, height: 200 },
             { id: "stack", label: "Call Stack", color: "#00ff00", textColor: "#333333", x: 0, y: 0, width: 100, height: 100 },
             { id: "control", label: "Control ROM", color: "#0000ff", textColor: "#cccccc", x: 200, y: 250, width: 300, height: 100 },
@@ -574,38 +574,56 @@ class DiagramModal extends Modal {
         this.componentDescriptions = DiagramComponents;
         this.muxes = [
             // Starts at (x, y), extends down for length
-            { x: 575, y: 130, length: 30 },
-            { x: 385, y: 100, length: 30 },
-            { x: 385, y: 135, length: 30 },
+            { x: 575, y: 130, length: 30 },                             // ALU B input
+            { x: 385, y: 100, length: 30 },                             // Reg file write input
+            { x: 385, y: 135, length: 30 },                             // Reg file data input
+            { x: 35, y: 200, length: 30, orientation: "horizontal" },   // PC address input
         ];
         this.connections = [
             // (x[0], y[0]) -> (x[1], y[1]) -> (x[2], y[2]) ...
             // Control lines
             { x: [175, 175, 200], y: [200, 300, 300], color: "#006eff" },
             { x: [500, 525, 525], y: [300, 300, 275], color: "#006eff" },
-            { x: [637.5, 637.5], y: [225, 175], color: "#006eff" }, // ALU
+            { x: [637.5, 637.5], y: [225, 175], color: "#006eff" },         // ALU
+            { x: [450, 450], y: [225, 175], color: "#006eff" },             // Register File
+            { x: [758.3, 758.3], y: [250, 200], color: "#006eff" },         // Data Memory
 
             // Clock lines
             { x: [600, 575, 575], y: [300, 300, 275], color: "#af0000" },
-            { x: [50, 50], y: [250, 200], color: "#af0000" }, // PC
+            { x: [500, 500], y: [225, 175], color: "#af0000" },             // Register File
+            { x: [50, 50], y: [350, 300], color: "#af0000" },               // PC
+            { x: [791.7, 791.7], y: [250, 200], color: "#af0000" },         // Data Memory
 
             // Main data lines
-            { x: [550, 600], y: [62, 62] },
-            { x: [550, 575], y: [138, 138] },
-            { x: [575, 600], y: [145, 145] },
-            { x: [675, 725], y: [100, 100] },
-            { x: [675, 700, 700, 370, 370, 385], y: [100, 100, 195, 195, 163, 163] },
-            { x: [550, 555, 555, 725], y: [138, 138, 182, 182] },
-            { x: [350, 370, 370, 400], y: [75, 75, 50, 50] },
-            { x: [350, 400], y: [75, 75] },
-            { x: [350, 370, 370, 385], y: [75, 75, 102, 102] },
-            { x: [350, 370, 370, 385], y: [75, 75, 115, 115] },
-            { x: [350, 370, 370, 385], y: [75, 75, 128, 128] },
-            { x: [385, 400], y: [115, 115] },
-            { x: [350, 370, 370, 385], y: [75, 75, 137, 137] },
-            { x: [385, 400], y: [150, 150] },
-            { x: [825, 835, 835, 365, 365, 385], y: [100, 100, 205, 205, 150, 150] },
-            { x: [100, 150], y: [162.5, 162.5] },
+            // to ALU
+            { x: [550, 600], y: [62, 62] },                                             // RF to ALU A
+            { x: [550, 575], y: [138, 138] },                                           // RF to ALU B
+            { x: [575, 600], y: [145, 145] },                                           // ALU B
+
+            // to Register File
+            { x: [350, 370, 370, 400], y: [75, 75, 50, 50] },                           // IM to RF rA
+            { x: [350, 400], y: [75, 75] },                                             // IM to RF rB
+            { x: [350, 370, 370, 385], y: [75, 75, 102, 102] },                         // IM to RF write
+            { x: [350, 370, 370, 385], y: [75, 75, 115, 115] },                         // |
+            { x: [350, 370, 370, 385], y: [75, 75, 128, 128] },                         // |
+            { x: [385, 400], y: [115, 115] },                                           // RF write
+            { x: [675, 700, 700, 370, 370, 385], y: [100, 100, 195, 195, 163, 163] },   // ALU to RF data
+            { x: [350, 370, 370, 385], y: [75, 75, 137, 137] },                         // IM to RF data
+            { x: [825, 835, 835, 365, 365, 385], y: [100, 100, 205, 205, 150, 150] },   // DM to RF data
+            { x: [385, 400], y: [150, 150] },                                           // RF data
+
+            // to Data Memory
+            { x: [675, 725], y: [100, 100] },                                           // ALU to DM addr
+            { x: [550, 555, 555, 725], y: [138, 138, 182, 182] },                       // RF to DM data
+
+            // to Instruction Memory
+            { x: [100, 125, 125, 150], y: [262.5, 262.5, 162.5, 162.5] },               // PC to IM addr
+
+            // to Program Counter
+            { x: [100, 125, 125, 62, 62], y: [262.5, 262.5, 180, 180, 200] },               // PC to PC addr
+            { x: [50, 50], y: [100, 200] },                                                 // CS to PC addr
+            { x: [350, 360, 360, 115, 115, 42, 42], y: [75, 75, 225, 225, 170, 170, 200] }, // IM to PC addr
+            { x: [50, 50], y: [200, 225] },                                                 // PC addr
         ];
         this.resizeObserver = null;
         this.selectedComponent = null;
@@ -792,7 +810,11 @@ class DiagramModal extends Modal {
             }
 
             this.context.moveTo(mux.x, mux.y);
-            this.context.lineTo(mux.x, mux.y + mux.length);
+            if (mux.orientation === "horizontal") {
+                this.context.lineTo(mux.x + mux.length, mux.y);
+            } else {
+                this.context.lineTo(mux.x, mux.y + mux.length);
+            }
         }
         this.context.stroke();
 

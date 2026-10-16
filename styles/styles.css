@@ -1649,7 +1649,8 @@ a:hover {
     min-height: 0;
 }
 
-#cpu-diagram-svg {
+#cpu-diagram-svg,
+#cpu-diagram-canvas {
     display: block;
     width: 100%;
     aspect-ratio: 850 / 450;
@@ -1658,6 +1659,7 @@ a:hover {
 }
 
 #cpu-diagram-svg[hidden],
+#cpu-diagram-canvas[hidden],
 .cpu-diagram-error[hidden] {
     display: none;
 }
@@ -1758,7 +1760,8 @@ a:hover {
         flex: none;
     }
 
-    #cpu-diagram-svg {
+    #cpu-diagram-svg,
+    #cpu-diagram-canvas {
         flex: none;
         height: auto;
     }

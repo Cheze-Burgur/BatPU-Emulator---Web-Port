@@ -559,8 +559,9 @@ class Modal {
 
 class DiagramModal extends Modal {
 
-    constructor(DiagramComponents) {
+    constructor(DiagramComponents, settings = null) {
         super("diagram-modal");
+        this.settings = settings;
         this.components = [
             { id: "instr-memory", label: "Instruction\nMemory", color: "#ff00ff", textColor: "#333333", x: 150, y: 0, width: 200, height: 200 },
             { id: "alu", label: "ALU", color: "#ff8800", textColor: "#333333", x: 600, y: 25, width: 75, height: 150 },
@@ -627,14 +628,22 @@ class DiagramModal extends Modal {
         ];
         this.selectedComponent = null;
         this.svg = null;
+        this.canvas = null;
         this.context = null;
+        this.hoveredComponent = null;
+        this.renderer = "svg";
         this.detailsTitle = null;
         this.detailsText = null;
         this.componentButtons = [];
+
+        this.settings?.subscribe(() => {
+            if (this.svg?.isConnected) this._drawDiagram();
+        });
     }
 
     openDiagram() {
         this.selectedComponent = null;
+        this.hoveredComponent = null;
         super.open("CPU Diagram", this._renderDiagram());
         this._initializeDiagram();
     }
@@ -659,6 +668,14 @@ class DiagramModal extends Modal {
                             role="alert"
                             hidden
                         ></div>
+                        <canvas
+                            id="cpu-diagram-canvas"
+                            width="850"
+                            height="450"
+                            role="img"
+                            aria-label="Interactive CPU diagram. Select a component to view its information."
+                            hidden
+                        ></canvas>
                         <svg
                             id="cpu-diagram-svg"
                             viewBox="0 0 850 450"
@@ -691,6 +708,7 @@ class DiagramModal extends Modal {
 
     _initializeDiagram() {
         this.svg = this.body.querySelector("#cpu-diagram-svg");
+        this.canvas = this.body.querySelector("#cpu-diagram-canvas");
         this.detailsTitle = this.body.querySelector("#cpu-diagram-details-title");
         this.detailsText = this.body.querySelector("#cpu-diagram-details-text");
         this.componentButtons = [...this.body.querySelectorAll("[data-diagram-component]")];
@@ -701,6 +719,29 @@ class DiagramModal extends Modal {
             const componentId = this._getSvgComponentId(event.target);
 
             if (componentId) this._selectComponent(componentId);
+        });
+
+        this.canvas.addEventListener("click", event => {
+            const component = this._getCanvasComponent(event);
+            if (component) this._selectComponent(component.id);
+        });
+
+        this.canvas.addEventListener("pointermove", event => {
+            const component = this._getCanvasComponent(event);
+            this.canvas.style.cursor = component ? "pointer" : "";
+            const componentId = component?.id || null;
+            if (componentId !== this.hoveredComponent) {
+                this.hoveredComponent = componentId;
+                this._drawDiagram();
+            }
+        });
+
+        this.canvas.addEventListener("pointerleave", () => {
+            this.canvas.style.cursor = "";
+            if (this.hoveredComponent) {
+                this.hoveredComponent = null;
+                this._drawDiagram();
+            }
         });
 
         this.svg.addEventListener("pointerover", event => {
@@ -733,21 +774,30 @@ class DiagramModal extends Modal {
     }
 
     _drawDiagram() {
-        if (typeof window.C2S !== "function") {
-            const error = this.body.querySelector("#cpu-diagram-error");
-            error.textContent =
-                "The CPU diagram could not be rendered because the Canvas2SVG library is unavailable.";
-            error.hidden = false;
-            this.svg.setAttribute("hidden", "");
-            console.error("C2S (Canvas2SVG) library is not loaded. Cannot render the CPU diagram.");
-            return;
-        }
-
+        this.renderer = this.settings?.get("diagramRenderer") || "svg";
         const error = this.body.querySelector("#cpu-diagram-error");
         error.hidden = true;
-        this.svg.removeAttribute("hidden");
 
-        this.context = new window.C2S(850, 450);
+        if (this.renderer === "svg") {
+            if (typeof window.C2S !== "function") {
+                error.textContent =
+                    "The CPU diagram could not be rendered because the Canvas2SVG library is unavailable. You can render the diagram using the Canvas renderer in the settings.";
+                error.hidden = false;
+                this.svg.setAttribute("hidden", "");
+                this.canvas.setAttribute("hidden", "");
+                console.error("C2S (Canvas2SVG) library is not loaded. Cannot render the CPU diagram.");
+                return;
+            }
+
+            this.svg.removeAttribute("hidden");
+            this.canvas.setAttribute("hidden", "");
+            this.context = new window.C2S(850, 450);
+        } else {
+            this.canvas.removeAttribute("hidden");
+            this.svg.setAttribute("hidden", "");
+            this.context = this.canvas.getContext("2d");
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        }
 
         const styles = getComputedStyle(document.documentElement);
         const textColor = styles.getPropertyValue("--text").trim() || "#e8e8e8";
@@ -813,8 +863,12 @@ class DiagramModal extends Modal {
 
         for (const component of this.components) {
             this.context.fillStyle = component.color || "#20252b";
+            this._setCanvasFilter(
+                component.id === this.hoveredComponent ? "brightness(1.2)" : "none"
+            );
             this.context.fillRect(component.x, component.y, component.width, component.height);
             this._tagCurrentSvgElement(component.id);
+            this._setCanvasFilter("none");
         }
 
         this.context.strokeStyle = "#0073ff";
@@ -839,9 +893,19 @@ class DiagramModal extends Modal {
             const isSelected = component.id === this.selectedComponent;
             this.context.strokeStyle = isSelected ? accentColor : borderColor;
             this.context.lineWidth = isSelected ? 5 : 2;
+            this._setCanvasFilter(
+                component.id === this.hoveredComponent
+                    ? `brightness(1.2) drop-shadow(0 0 4px ${accentColor})`
+                    : "none"
+            );
             this.context.strokeRect(component.x, component.y, component.width, component.height);
             this._tagCurrentSvgElement(component.id);
-            this.context.__currentElement.setAttribute("data-component-outline-id", component.id);
+            if (this.renderer === "svg") {
+                this.context.__currentElement.setAttribute("data-component-outline-id", component.id);
+            }
+            this._setCanvasFilter(
+                component.id === this.hoveredComponent ? "brightness(1.2)" : "none"
+            );
             this.context.fillStyle = component.textColor || textColor;
             this.context.font = "bold 20px sans-serif";
             this.context.textAlign = "center";
@@ -852,6 +916,9 @@ class DiagramModal extends Modal {
                 ((labelLines.length - 1) * lineHeight) / 2;
 
             labelLines.forEach((line, index) => {
+                this._setCanvasFilter(
+                    component.id === this.hoveredComponent ? "brightness(1.2)" : "none"
+                );
                 this.context.fillText(
                     line,
                     component.x + component.width / 2,
@@ -860,14 +927,39 @@ class DiagramModal extends Modal {
                 );
                 this._tagCurrentSvgElement(component.id, "data-component-label-id");
             });
+            this._setCanvasFilter("none");
         }
 
-        const renderedSvg = this.context.getSvg();
-        this.svg.replaceChildren(...renderedSvg.childNodes);
+        if (this.renderer === "svg") {
+            const renderedSvg = this.context.getSvg();
+            this.svg.replaceChildren(...renderedSvg.childNodes);
+            if (this.hoveredComponent) {
+                this._setComponentHover(this.hoveredComponent, true);
+            }
+        }
     }
 
     _tagCurrentSvgElement(componentId, attribute = "data-component-id") {
-        this.context.__currentElement.setAttribute(attribute, componentId);
+        if (this.renderer === "svg") {
+            this.context.__currentElement.setAttribute(attribute, componentId);
+        }
+    }
+
+    _setCanvasFilter(filter) {
+        if (this.renderer === "canvas") this.context.filter = filter;
+    }
+
+    _getCanvasComponent(event) {
+        const bounds = this.canvas.getBoundingClientRect();
+        const x = (event.clientX - bounds.left) * this.canvas.width / bounds.width;
+        const y = (event.clientY - bounds.top) * this.canvas.height / bounds.height;
+
+        return [...this.components].reverse().find(component =>
+            x >= component.x &&
+            x <= component.x + component.width &&
+            y >= component.y &&
+            y <= component.y + component.height
+        );
     }
 
     _getSvgComponentId(element) {

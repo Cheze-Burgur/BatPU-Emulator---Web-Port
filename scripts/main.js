@@ -162,9 +162,9 @@ const editorLineMap = [];
 
 const problems = new ProblemsPanel(document.getElementById("problems-list"));
 const modal = new Modal();
-const diagramModal = new DiagramModal(DiagramComponents);
-const docs = new DocumentationManager(modal, Documentation, diagramModal);
 const settings = new SettingsManager(modal);
+const diagramModal = new DiagramModal(DiagramComponents, settings);
+const docs = new DocumentationManager(modal, Documentation, diagramModal);
 const memory = new Memory();
 const cpu = new CPU(memory, problems);
 const screen = new ScreenDevice(memory, pixelGrid);

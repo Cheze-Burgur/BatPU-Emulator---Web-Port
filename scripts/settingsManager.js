@@ -21,6 +21,7 @@ class SettingsManager {
             theme: "default",
             confirmReset: true,
             defaultMobilePanel: "center",
+            diagramRenderer: "svg",
             autosaveInterval: 0,
             syntaxHighlighting: true,
             showLineNumbers: true,
@@ -74,6 +75,10 @@ class SettingsManager {
 
             if (["left", "center", "right"].includes(savedSettings.defaultMobilePanel)) {
                 settings.defaultMobilePanel = savedSettings.defaultMobilePanel;
+            }
+
+            if (["canvas", "svg"].includes(savedSettings.diagramRenderer)) {
+                settings.diagramRenderer = savedSettings.diagramRenderer;
             }
 
             if ([0, 5, 15, 30, 60, 300].includes(savedSettings.autosaveInterval)) {
@@ -257,6 +262,17 @@ class SettingsManager {
                 .join("")}
 						</select>
 					</div>
+
+                    <div class="doc-section settings-section">
+                        <div class="settings-meta">
+                            <label class="settings-label" for="diagram-renderer">CPU diagram renderer</label>
+                            <div class="settings-description">Choose how the interactive CPU diagram is drawn.</div>
+                        </div>
+                        <select id="diagram-renderer" class="settings-select" aria-label="CPU diagram renderer">
+                            <option value="canvas" ${this.settings.diagramRenderer === "canvas" ? "selected" : ""}>Canvas</option>
+                            <option value="svg" ${this.settings.diagramRenderer === "svg" ? "selected" : ""}>SVG</option>
+                        </select>
+                    </div>
 				</div>
 
 				<div class="doc-card">
@@ -375,6 +391,11 @@ class SettingsManager {
         document.getElementById("default-mobile-panel").addEventListener(
             "change",
             event => this.update("defaultMobilePanel", event.target.value)
+        );
+
+        document.getElementById("diagram-renderer").addEventListener(
+            "change",
+            event => this.update("diagramRenderer", event.target.value)
         );
 
         document.getElementById("autosave-interval").addEventListener(

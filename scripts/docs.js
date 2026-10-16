@@ -430,8 +430,8 @@ export const Documentation = {
                     <div class="doc-section">
                         <h3>What is this?</h3>
                         <p>This is a web-based emulator for a digital CPU, designed to go along with
-                        <a href="https://github.com/mattbatwings" target="_blank">MattBatWings'</a>
-                        <a href="https://github.com/mattbatwings/BatPU-2" target="_blank">Redstone CPU</a>.
+                        <a href="https://github.com/mattbatwings" target="_blank" rel="noopener noreferrer">MattBatWings'</a>
+                        <a href="https://github.com/mattbatwings/BatPU-2" target="_blank" rel="noopener noreferrer">Redstone CPU</a>.
                         I made this as a kind of companion project while I was building his in-game CPU
                         design, as a way to better understand how and why everything works in a more technical way
                         than just building the circuits.</p>
@@ -460,12 +460,12 @@ export const Documentation = {
                         <h3>Special Thanks to:</h3>
                         <ul>
                             <li>
-                                <strong><a href="https://github.com/mattbatwings" target="_blank">MattBatWings</a></strong> for
+                                <strong><a href="https://github.com/mattbatwings" target="_blank" rel="noopener noreferrer">MattBatWings</a></strong> for
                                 the original CPU design, Instruction Set, Protocol, and for being an amazing teacher and
                                 great source of inspiration for this project.
                             </li>
                             <li>
-                                <strong><a href="https://github.com/AdoHTQ" target="_blank">AdoHTQ</a></strong> for the 
+                                <strong><a href="https://github.com/AdoHTQ" target="_blank" rel="noopener noreferrer">AdoHTQ</a></strong> for the 
                                 original emulator layout.
                             </li>
                         </ul>
@@ -481,7 +481,7 @@ export const Documentation = {
                         <h3>Special Thanks to:</h3>
                         <ul>
                             <li>
-                                <strong><a href="https://github.com/ArmadilloMike" target="_blank">ArmadilloMike</a></strong> for some
+                                <strong><a href="https://github.com/ArmadilloMike" target="_blank" rel="noopener noreferrer">ArmadilloMike</a></strong> for some
                                 bugfixing/styling help and feedback.
                             </li>
                         </ul>
@@ -677,8 +677,8 @@ export const Documentation = {
                         <ul>
                             <li>Increased the speed at which programs can run</li>
                             <li>Added the options to save and load programs to and from localStorage</li>
-                            <li>Added the options to import/export programs as assembly (.as) files<li>
-                            <li>Added the options to import/export programs as machine code (.mc) files<li>
+                            <li>Added the options to import/export programs as assembly (.as) files</li>
+                            <li>Added the options to import/export programs as machine code (.mc) files</li>
                         </ul>
                     </div>
                 </div>
@@ -698,7 +698,7 @@ export const Documentation = {
                                 <li>
                                     Implemented Site Themes! You can now switch between the default and light
                                     modes, along with a special "machine" theme, which is based off of the original
-                                    <a href="https://github.com/AdoHTQ/Batpu2-VM" target="_blank">virtual machine's color scheme</a>.
+                                    <a href="https://github.com/AdoHTQ/Batpu2-VM" target="_blank" rel="noopener noreferrer">virtual machine's color scheme</a>.
                                     More themes will come soon!
                                 </li>
                             </ul>
@@ -739,7 +739,7 @@ export const Documentation = {
                     <div class="doc-section">
                         <h3>August 17, 2026</h3>
                         <ul>
-                            <li>New "Nord" theme based off <a href="https://www.nordtheme.com" target="_blank">https://www.nordtheme.com</a></li>
+                            <li>New "Nord" theme based off <a href="https://www.nordtheme.com" target="_blank" rel="noopener noreferrer">https://www.nordtheme.com</a></li>
                         </ul>
                     </div>
                 </div>
@@ -841,6 +841,31 @@ export const Documentation = {
                                 Added options to hide the line numbers beside the editor, replace the controller button text with the names of the keys they are mapped to,
                                 and highlight the instruction currently being executed in the editor
                             </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="doc-card">
+                    <div class="doc-card-header">
+                        <h2>Version 2.0</h2>
+                        <span class="doc-badge">NEW FEATURES</span>
+                        <span class="doc-badge">QUALITY OF LIFE</span>
+                    </div>
+                    <div class="doc-section">
+                        <h3>October 16, 2026</h3>
+                        <ul>
+                            <li>Added Fibonacci sequence preset.</li>
+                            <li>Added an interactive diagram of the CPU's layout!</li>
+                            <ul>
+                                <li>Major work in progress, but basic functionality is there.</li>
+                                <li>Users can choose to render the diagram through a basic canvas or as an SVG.</li>
+                                <li>Clicking on a component in the diagram will display information about it.</li>
+                                <li>There are also some separate buttons that function the in same way as clicking on a component (for accessibility).</li>
+                                <li>Diagram layout is based on the diagram used by MattBatWings in his <a href="https://www.youtube.com/watch?v=osFa7nwHHz4&list=PL5LiOvrbVo8nPTtdXAdSmDWzu85zzdgRT" target="_blank" rel="noopener noreferrer">Tutorial Series</a>.</li>
+                            </ul>
+                            <li>You can now click on the value display of the Execution Rate slider to type in a specific value.</li>
+                            <li>Other small changes :)</li>
+                            <li>As always, feel free to <a href="https://github.com/Cheze-Burgur/BatPU-Emulator---Web-Port/discussions" target="_blank" rel="noopener noreferrer">leave suggestions for improvements</a>, or <a href="https://github.com/Cheze-Burgur/BatPU-Emulator---Web-Port/pulls" target="_blank" rel="noopener noreferrer">open a pull request</a> if you find a bug, or if you want to contribute to the project!</li>
                         </ul>
                     </div>
                 </div>
@@ -1585,7 +1610,7 @@ LDI r6 1 // Memory Pointer
     // Update Counters
     ADI r6 1
     ADI r4 255
-    BRH !Z 6
+    BRH !Z 27
 
 // Store final value
 STR r6 r3

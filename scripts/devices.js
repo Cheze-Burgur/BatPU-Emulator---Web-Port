@@ -425,10 +425,11 @@ class ControllerDevice extends Device {
 
         const controllerBindings = () => this.settings?.get("keybindings") || {};
         const isCodeEditorTarget = event => event.target?.id === "code-editor";
+        const isSpeedInputTarget = event => event.target?.id === "speed-value-input";
 
         window.addEventListener("keydown", e => {
 
-            if (isCodeEditorTarget(e)) return;
+            if (isCodeEditorTarget(e) || isSpeedInputTarget(e)) return;
 
             const bindings = controllerBindings();
             const actions = [
@@ -453,7 +454,7 @@ class ControllerDevice extends Device {
 
         window.addEventListener("keyup", e => {
 
-            if (isCodeEditorTarget(e)) return;
+            if (isCodeEditorTarget(e) || isSpeedInputTarget(e)) return;
 
             const bindings = controllerBindings();
             const actions = [

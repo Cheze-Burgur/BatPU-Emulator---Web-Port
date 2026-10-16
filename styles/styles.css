@@ -337,6 +337,31 @@ a:hover {
     color: var(--muted);
 }
 
+#speed-value {
+    cursor: pointer;
+}
+
+#speed-value:hover {
+    text-decoration: underline;
+}
+
+#speed-value:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+#speed-value-input {
+    width: 7ch;
+    padding: 0;
+    border: 0;
+    border-bottom: 1px solid currentColor;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+}
+
 #program-speed-slider {
     width: 100%;
     appearance: none;

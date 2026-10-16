@@ -154,7 +154,7 @@ const pixelGrid = document.getElementById("pixel-grid");
 const textDisplayElement = document.getElementById("text-display");
 const numDisplayElement = document.getElementById("num-display");
 const speedSlider = document.getElementById("program-speed-slider");
-const speedValue = document.getElementById("speed-value");
+let speedValue = document.getElementById("speed-value");
 const editorGutter = document.getElementById("editor-gutter");
 const editorHighlight = document.getElementById("editor-highlight");
 const codeEditor = document.getElementById("code-editor");
@@ -371,9 +371,81 @@ codeEditor.addEventListener("scroll", () => {
     editorHighlight.scrollLeft = codeEditor.scrollLeft;
 });
 
+function updateSpeedDisplay(value) {
+    if (speedValue instanceof HTMLInputElement) {
+        speedValue.value = String(value);
+    } else {
+        updateSpeedText(value, speedValue);
+    }
+}
+
+function editSpeedValue() {
+    if (speedValue instanceof HTMLInputElement) return;
+
+    const input = document.createElement("input");
+    input.id = "speed-value-input";
+    input.type = "number";
+    input.min = speedSlider.min;
+    input.max = speedSlider.max;
+    input.step = speedSlider.step;
+    input.required = true;
+    input.value = speedSlider.value;
+    input.setAttribute("aria-label", "Execution rate in hertz");
+    input.title = `Enter a whole number from ${speedSlider.min} to ${speedSlider.max} Hz`;
+
+    speedValue.replaceWith(input);
+    speedValue = input;
+
+    let canceled = false;
+    input.addEventListener("blur", () => {
+        if (speedValue !== input) return;
+
+        const targetSpeed = Number(input.value);
+        if (!canceled && input.validity.valid && Number.isInteger(targetSpeed)) {
+            speedSlider.value = String(targetSpeed);
+            speedSlider.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+
+        const display = document.createElement("span");
+        display.id = "speed-value";
+        display.setAttribute("role", "button");
+        display.tabIndex = 0;
+        display.setAttribute("aria-label", "Set execution rate");
+        input.replaceWith(display);
+        speedValue = display;
+        updateSpeedDisplay(Number(speedSlider.value));
+    }, { once: true });
+
+    input.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            if (input.reportValidity()) input.blur();
+        } else if (event.key === "Escape") {
+            event.preventDefault();
+            canceled = true;
+            input.blur();
+        }
+    });
+
+    input.focus();
+}
+
+document.getElementById("speed-header").addEventListener("click", event => {
+    if (event.target.id === "speed-value") {
+        editSpeedValue();
+    }
+});
+
+document.getElementById("speed-header").addEventListener("keydown", event => {
+    if (event.target.id === "speed-value" && (event.key === "Enter" || event.key === " ")) {
+        event.preventDefault();
+        editSpeedValue();
+    }
+});
+
 speedSlider.addEventListener("input", () => {
     const targetSpeed = Number(speedSlider.value);
-    updateSpeedText(targetSpeed, speedValue);
+    updateSpeedDisplay(targetSpeed);
 
     if (machine.cpu.running) {
         machine.measuredSpeedHz = targetSpeed;
@@ -381,7 +453,7 @@ speedSlider.addEventListener("input", () => {
     }
 });
 
-updateSpeedText(Number(speedSlider.value), speedValue);
+updateSpeedDisplay(Number(speedSlider.value));
 ui.setDisplayMode(settings.get("registerMemoryFormat"));
 loadProgram();
 ui.render(true);

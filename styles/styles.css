@@ -158,14 +158,16 @@ a:hover {
 #output-row {
     display: flex;
     gap: 12px;
+    width: 100%;
     max-width: 400px;
+    align-self: center;
 }
 
 #text-display,
 #num-display {
     flex: 1;
     height: 40px;
-    color: var(--accent);
+    color: var(--accent-text);
     font-size: 18px;
     display: flex;
     align-items: center;
@@ -175,9 +177,11 @@ a:hover {
 #grid-display {
     aspect-ratio: 1;
     background-color: var(--grid-bg);
+    width: 100%;
     max-height: 375px;
     max-width: 375px;
     overflow: auto;
+    align-self: center;
 }
 
 #pixel-grid {
@@ -203,11 +207,13 @@ a:hover {
     align-items: center;
     margin-top: auto;
     padding: 12px;
+    width: 100%;
     background: var(--input-bg);
     border-radius: var(--radius-xl);
     border: 2px solid var(--border);
     flex-shrink: 0;
     max-width: 400px;
+    align-self: center;
 }
 
 #dpad-wrap {
@@ -498,9 +504,9 @@ a:hover {
 }
 
 .flag-box.active {
-    border-color: var(--accent-amber);
+    border-color: var(--flag-active);
     box-shadow: 0 0 10px var(--flag-active-shadow-color);
-    color: var(--accent-amber);
+    color: var(--flag-active-text);
 }
 
 .flag-box:not(.active) {
@@ -518,7 +524,7 @@ a:hover {
 }
 
 .stack-box {
-    color: var(--accent);
+    color: var(--accent-text);
     font-size: 14px;
     font-weight: bold;
     background: linear-gradient(to bottom, var(--surface), var(--surface-2));
@@ -599,12 +605,12 @@ a:hover {
 }
 
 .reg-cell {
-    color: var(--accent-blue);
+    color: var(--reg-cell-accent);
     font-size: 11px;
 }
 
 .mem-cell {
-    color: var(--accent-red);
+    color: var(--mem-cell-accent);
     font-size: 10px;
 }
 
@@ -1299,7 +1305,7 @@ a:hover {
 #diagram-modal-body h3,
 .doc-card h3 {
     margin: 0 0 8px;
-    color: var(--accent-warning);
+    color: var(--modal-header-text);
     font-size: 15px;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -1327,7 +1333,12 @@ a:hover {
 #diagram-modal-body table,
 .doc-table {
     width: 100%;
-    border-collapse: collapse;
+    border: 1px solid var(--table-border);
+    border-radius: var(--radius-sm);
+    border-spacing: 0;
+    border-collapse: separate;
+    overflow: hidden;
+    color: var(--text);
 }
 
 #modal-body th,
@@ -1336,21 +1347,36 @@ a:hover {
 #diagram-modal-body td,
 .doc-table th,
 .doc-table td {
-    padding: 8px;
+    padding: 10px 12px;
+    vertical-align: top;
 }
 
 #modal-body th,
 #diagram-modal-body th,
 .doc-table th {
     text-align: left;
-    color: var(--accent-warning);
+    color: var(--table-head-color);
     background: var(--table-head-bg);
+    font-weight: 700;
+    border-bottom: 2px solid var(--table-head-color);
 }
 
 #modal-body tr:nth-child(even),
 #diagram-modal-body tr:nth-child(even),
 .doc-table tr:nth-child(even) {
     background: var(--table-row-alt-bg);
+}
+
+#modal-body tr:hover,
+#diagram-modal-body tr:hover,
+.doc-table tr:hover {
+    background: var(--table-row-hover-bg);
+}
+
+#modal-body tr:not(:last-child) > *,
+#diagram-modal-body tr:not(:last-child) > *,
+.doc-table tr:not(:last-child) > * {
+    border-bottom: 1px solid var(--table-border);
 }
 
 .doc-page {
@@ -1383,7 +1409,7 @@ a:hover {
 
 .doc-card h3 {
     margin: 18px 0 8px;
-    color: var(--accent-warning);
+    color: var(--modal-header-text);
 }
 
 .doc-card p {
@@ -1466,30 +1492,13 @@ a:hover {
     border-radius: 999px;
     background: var(--modal-card-tag-bg);
     border: 1px solid var(--modal-card-tag-border);
-    color: var(--accent-warning);
+    color: var(--modal-header-text);
     font-weight: bold;
     font-size: 13px;
 }
 
 .doc-table {
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    overflow: hidden;
     margin-top: 10px;
-}
-
-.doc-table th {
-    background: var(--table-head-bg);
-    color: var(--table-head-color);
-}
-
-.doc-table td,
-.doc-table th {
-    padding: 10px;
-}
-
-.doc-table tr:not(:last-child) {
-    border-bottom: 1px solid var(--border);
 }
 
 .io-access {

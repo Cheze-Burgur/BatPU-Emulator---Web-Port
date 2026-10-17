@@ -623,7 +623,7 @@ class DiagramModal extends Modal {
             // to Program Counter
             { x: [100, 125, 125, 62, 62], y: [262.5, 262.5, 180, 180, 200] },               // PC to PC addr
             { x: [50, 50], y: [100, 200] },                                                 // CS to PC addr
-            { x: [350, 360, 360, 115, 115, 42, 42], y: [75, 75, 225, 225, 170, 170, 200] }, // IM to PC addr
+            { x: [350, 360, 360, 115, 115, 38, 38], y: [75, 75, 225, 225, 170, 170, 200] }, // IM to PC addr
             { x: [50, 50], y: [200, 225] },                                                 // PC addr
         ];
         this.selectedComponent = null;

@@ -159,7 +159,7 @@ a:hover {
     display: flex;
     gap: 12px;
     width: 100%;
-    max-width: 400px;
+    max-width: 450px;
     align-self: center;
 }
 
@@ -178,8 +178,8 @@ a:hover {
     aspect-ratio: 1;
     background-color: var(--grid-bg);
     width: 100%;
-    max-height: 375px;
-    max-width: 375px;
+    max-height: 425px;
+    max-width: 425px;
     overflow: auto;
     align-self: center;
 }
@@ -212,7 +212,7 @@ a:hover {
     border-radius: var(--radius-xl);
     border: 2px solid var(--border);
     flex-shrink: 0;
-    max-width: 400px;
+    max-width: 450px;
     align-self: center;
 }
 
@@ -1373,9 +1373,9 @@ a:hover {
     background: var(--table-row-hover-bg);
 }
 
-#modal-body tr:not(:last-child) > *,
-#diagram-modal-body tr:not(:last-child) > *,
-.doc-table tr:not(:last-child) > * {
+#modal-body tr:not(:last-child)>*,
+#diagram-modal-body tr:not(:last-child)>*,
+.doc-table tr:not(:last-child)>* {
     border-bottom: 1px solid var(--table-border);
 }
 

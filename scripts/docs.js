@@ -869,6 +869,31 @@ export const Documentation = {
                         </ul>
                     </div>
                 </div>
+
+                <div class="doc-card">
+                    <div class="doc-card-header">
+                        <h2>Version 2.01</h2>
+                        <span class="doc-badge">UI & Styling</span>
+                    </div>
+                    <div class="doc-section">
+                        <h3>October 17, 2026</h3>
+                        <ul>
+                            <li>I know I said I would work on the diagram, but there were some styling issues that were annoying me, so I fixed those first.</li>
+                            <ul>
+                                <li>Removed redundant theme variables</li>
+                                <li>Went back and redid color selection for the machine and nord themes to improve text contrast</li>
+                                <li>Replaced repeated calls of accent colors with more semantic variables so accent colors could actually be their respective colors</li>
+                                <li>Improved the styling of tables</li>
+                                <li>Properly centered the I/O devices</li>
+                                <li>Made the I/O devices larger</li>
+                                <li>Fixed a lot of issues with the mobile problems panel</li>
+                                <li>Added slide-in animations for the mobile navigation and problems panel</li>
+                                <li>Disabled text selection on all buttons and diagram components</li>
+                                <li>Added new <a href="https://ethanschoonover.com/solarized/" target="_blank" rel="noopener norefferer">Solarized</a> color themes</li>
+                            </ul>
+                        </ul>
+                    </div>
+                </div>
             </div>
         `;
         }

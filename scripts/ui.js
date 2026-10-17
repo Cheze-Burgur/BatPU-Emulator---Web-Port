@@ -260,26 +260,12 @@ class MobileUI {
     constructor(settings = null) {
 
         this.settings = settings;
-        this.app = document.getElementById("app");
         this.mobileNav = document.getElementById("mobile-nav");
         this.mobilePanelButtons = [...document.querySelectorAll(".mobile-nav-panel-button")];
         this.mobileProblemsButton = document.getElementById("mobile-problems-button");
         this.workspacePanels = [...document.querySelectorAll("#workspace .panel")];
 
         this.init();
-
-    }
-
-    updateLayoutState() {
-
-        if (!this.app) return;
-
-        const navOpen = !!this.mobileNav && this.mobileNav.classList.contains("open");
-        const problemsPanel = document.getElementById("bottom-panel");
-        const problemsOpen = !!problemsPanel && problemsPanel.classList.contains("open");
-
-        this.app.classList.toggle("mobile-sheet-open", navOpen || problemsOpen);
-        this.app.classList.toggle("mobile-problems-open", problemsOpen);
 
     }
 
@@ -324,8 +310,6 @@ class MobileUI {
             navHandle.setAttribute("aria-expanded", String(shouldOpen));
         }
 
-        this.updateLayoutState();
-
     }
 
     init() {
@@ -349,7 +333,6 @@ class MobileUI {
         });
         window.addEventListener("resize", () => {
             this.updateProblemsButtonVisibility();
-            this.updateLayoutState();
         });
 
         document.getElementById("mobile-nav-handle").addEventListener("click", () => this.toggleNav());
@@ -372,9 +355,6 @@ class MobileUI {
             document.getElementById("problems-toggle")?.click();
         });
 
-        document.addEventListener("mobile-layout-update", () => this.updateLayoutState());
-        this.updateLayoutState();
-
     }
 
 }
@@ -395,7 +375,7 @@ class ProblemsPanel {
     open() {
 
         this.panel.classList.add("open");
-        document.dispatchEvent(new Event("mobile-layout-update"));
+        document.getElementById("app").classList.add("mobile-problems-open");
 
         if (window.innerWidth <= 920) {
             document.dispatchEvent(new CustomEvent("mobile-open-panel", { detail: { panel: "right" } }));
@@ -406,7 +386,7 @@ class ProblemsPanel {
     close() {
 
         this.panel.classList.remove("open");
-        document.dispatchEvent(new Event("mobile-layout-update"));
+        document.getElementById("app").classList.remove("mobile-problems-open");
 
     }
 
@@ -440,7 +420,10 @@ class ProblemsPanel {
 
         this.toggle.addEventListener("click", () => {
             this.panel.classList.toggle("open");
-            document.dispatchEvent(new Event("mobile-layout-update"));
+            document.getElementById("app").classList.toggle(
+                "mobile-problems-open",
+                this.panel.classList.contains("open")
+            );
         });
 
     }

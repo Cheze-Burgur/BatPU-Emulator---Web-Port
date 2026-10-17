@@ -26,6 +26,10 @@ button {
     cursor: pointer;
     box-shadow: var(--button-shadow), var(--button-inner-shadow);
     transition: transform 0.05s, background 0.1s;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 button:hover {
@@ -952,7 +956,7 @@ a:hover {
         left: 10px;
         right: 10px;
         bottom: 10px;
-        z-index: 1000;
+        z-index: 1200;
         display: block;
         pointer-events: auto;
         overflow: hidden;
@@ -969,20 +973,23 @@ a:hover {
     }
 
     #mobile-nav-content {
-        display: none;
+        display: block;
+        visibility: hidden;
         background: linear-gradient(to bottom, var(--bg-2), var(--bg-1));
         border: 1px solid var(--panel-border);
         border-radius: 18px 18px 12px 12px;
         overflow: hidden;
         box-shadow: 0 -10px 28px rgba(0, 0, 0, 0.28);
+        transform: translateY(100%);
+        opacity: 0;
+        transition: transform 0.24s ease, opacity 0.18s ease, visibility 0s linear 0.24s;
     }
 
     #mobile-nav.open #mobile-nav-content {
-        display: block;
-    }
-
-    #mobile-nav.closed #mobile-nav-content {
-        display: none;
+        visibility: visible;
+        transform: translateY(0);
+        opacity: 1;
+        transition-delay: 0s;
     }
 
     #mobile-nav-handle {
@@ -1081,22 +1088,31 @@ a:hover {
     }
 
     #bottom-panel {
-        display: none;
-        background: transparent;
-        border-top: none;
-        box-shadow: none;
-    }
-
-    #bottom-panel.open {
         display: flex;
         position: fixed;
         left: 12px;
         right: 12px;
         bottom: 20px;
         z-index: 1100;
+        background: transparent;
+        border-top: none;
+        box-shadow: none;
+        border: 1px solid var(--panel-border);
         border-radius: 16px;
         overflow: hidden;
-        border: 1px solid var(--panel-border);
+        visibility: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(calc(100% + 24px));
+        transition: transform 0.24s ease, opacity 0.18s ease, visibility 0s linear 0.24s;
+    }
+
+    #bottom-panel.open {
+        visibility: visible;
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+        transition-delay: 0s;
         box-shadow: 0 -12px 28px rgba(0, 0, 0, 0.22);
         background: var(--bg-1);
     }
@@ -1109,7 +1125,6 @@ a:hover {
 
     #right {
         position: relative;
-        transition: transform 0.2s ease;
     }
 
     #right.active .editor-shell,
@@ -1119,24 +1134,24 @@ a:hover {
         height: clamp(360px, 62vh, 600px);
     }
 
-    #app.mobile-sheet-open #right.active,
-    #app.mobile-problems-open #right.active {
-        transform: translateY(calc(-1 * min(24vh, 170px)));
-    }
-
-    #app.mobile-sheet-open #right.active .editor-shell,
-    #app.mobile-sheet-open #right.active .editor-text-area,
-    #app.mobile-sheet-open #right.active #code-editor,
-    #app.mobile-problems-open #right.active .editor-shell,
-    #app.mobile-problems-open #right.active .editor-text-area,
-    #app.mobile-problems-open #right.active #code-editor {
-        min-height: clamp(360px, 72vh, 700px);
-        height: clamp(360px, 72vh, 700px);
-    }
-
     #mobile-problems-button,
     .mobile-editor-problems-button {
         display: inline-flex;
+    }
+
+    #mobile-problems-button {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        bottom: 58px;
+        z-index: 1101;
+        width: auto;
+        margin: 0;
+        transition: bottom 0.24s ease;
+    }
+
+    #app.mobile-problems-open #mobile-problems-button {
+        bottom: calc(20px + 170px + 10px);
     }
 
     #bottom-toolbar {
@@ -1167,6 +1182,14 @@ a:hover {
     #problems-panel {
         height: 170px;
         border-top: 1px solid var(--border);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+        #mobile-nav-content,
+        #bottom-panel {
+            transition: none;
+        }
     }
 }
 
@@ -1690,6 +1713,10 @@ a:hover {
     aspect-ratio: 850 / 450;
     flex: 1;
     min-height: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 #cpu-diagram-svg[hidden],

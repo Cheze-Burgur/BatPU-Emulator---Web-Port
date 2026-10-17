@@ -13,6 +13,8 @@ class SettingsManager {
             light: "Light",
             "high-contrast": "High Contrast (Dark)",
             "high-contrast-light": "High Contrast (Light)",
+            solarized: "Solarized",
+            "solarized-light": "Solarized (Light)",
             machine: "Machine",
             nord: "Nord",
         };

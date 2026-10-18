@@ -1227,10 +1227,24 @@ RET`
 
 export const DiagramComponents = {
 
+    "instr-memory": `Stores the program to be executed as an array of 1024 16-bit values`,
+
     alu: `Preforms arithmetic and logical operations on two 8-bit values. The operands can come either from the register file or the instruction memory in the form of an Add Immediate.
 Outputs an 8-bit result of the operation and two "flags," Zero and Carry, which are used for conditional branching.
 The operation being performed is determined by a 3-bit control signal from the Control ROM, depending on the instructions opcode.
 The ALU is purely combinational, meaning it has no memory and it doesn't require a clock pulse to operate.`,
+
+    registers: `Stores the values used by the ALU to preform computation`,
+
+    "program-counter": `Stores the current instruction index`,
+
+    "data-memory": `Serves as extra memory for the cpu`,
+
+    stack: `stores up to 16 instruction addresses`,
+
+    control: `decodes the 4-bit operation code (OPCODE) for each instruction and activates the neccessary components`,
+
+    clock: `pulses`
 
 };
 

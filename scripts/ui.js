@@ -544,6 +544,19 @@ class DiagramModal extends Modal {
 
     constructor(DiagramComponents, settings = null) {
         super("diagram-modal");
+        this.keydownHandler = event => {
+            if (event.key === "Escape") {
+                this.close();
+            } else if (
+                event.ctrlKey &&
+                !event.altKey &&
+                !event.shiftKey &&
+                event.key.toLowerCase() === "d"
+            ) {
+                event.preventDefault();
+                this._downloadDiagram();
+            }
+        };
         this.settings = settings;
         this.components = [
             { id: "instr-memory", label: "Instruction\nMemory", color: "#ff00ff", textColor: "#333333", x: 150, y: 0, width: 200, height: 200 },
@@ -762,8 +775,8 @@ class DiagramModal extends Modal {
         this._drawDiagram();
     }
 
-    _drawDiagram() {
-        this.renderer = this.settings?.get("diagramRenderer") || "svg";
+    _drawDiagram(renderer = null) {
+        this.renderer = renderer || this.settings?.get("diagramRenderer") || "svg";
         const error = this.body.querySelector("#cpu-diagram-error");
         error.hidden = true;
 
@@ -926,6 +939,46 @@ class DiagramModal extends Modal {
                 this._setComponentHover(this.hoveredComponent, true);
             }
         }
+    }
+
+    _downloadDiagram() {
+        const renderer = this.settings?.get("diagramRenderer") || "svg";
+
+        if (typeof window.C2S !== "function") {
+            const error = this.body.querySelector("#cpu-diagram-error");
+            error.textContent =
+                "The diagram cannot be downloaded as SVG because the Canvas2SVG library is unavailable.";
+            error.hidden = false;
+            console.error("C2S (Canvas2SVG) library is not loaded. Cannot export the CPU diagram.");
+            return;
+        }
+
+        let svg;
+        if (renderer === "canvas") {
+            this._drawDiagram("svg");
+            try {
+                svg = this.svg.cloneNode(true);
+            } finally {
+                this._drawDiagram();
+            }
+        } else {
+            svg = this.svg.cloneNode(true);
+        }
+
+        svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        svg.setAttribute("width", "850");
+        svg.setAttribute("height", "450");
+
+        const blob = new Blob(
+            [new XMLSerializer().serializeToString(svg)],
+            { type: "image/svg+xml;charset=utf-8" }
+        );
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "cpu-diagram.svg";
+        link.click();
+        window.setTimeout(() => URL.revokeObjectURL(url), 0);
     }
 
     _tagCurrentSvgElement(componentId, attribute = "data-component-id") {

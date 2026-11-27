@@ -144,6 +144,7 @@ Current examples include:
 
 * Hello World
 * DVD Logo
+* Fibonacci Sequence Generator
 
 More example programs will be added as the emulator continues to develop.
 
@@ -156,6 +157,8 @@ You can customize the look of the emulator in the settings.
 Site Themes:
 * Default (Dark)
 * Light
+* Light/Dark High Contrast
+* Light/Dark Solarized
 * Machine
 * Nord
 
@@ -174,6 +177,7 @@ Site Themes:
 * Hardware devices
 * Syntax highlighting
 * Error reporting
+* Editor Breakpoints
 * Documentation
 * Preset programs
 * Save and load projects

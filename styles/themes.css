@@ -61,6 +61,8 @@
     --editor-gutter-line-number: #959595;
     --editor-gutter-instruction-number: #d1d1d1;
     --code-text: #ff88ff;
+    --breakpoint-color: var(--accent-red);
+    --breakpoint-inactive-color: var(--button-bg);
     --syntax-opcode: var(--accent-blue);
     --syntax-register: var(--accent-text);
     --syntax-number: var(--accent-warning);
@@ -129,6 +131,7 @@
     --accent: #00aa44;
     --accent-blue: #0077cc;
     --accent-red: #cc3333;
+    --breakpoint-color: var(--accent-red);
     --accent-warning: #cc8800;
     --accent-amber: #cc7700;
     --danger: #cc3333;
@@ -230,6 +233,7 @@
     --accent: #00ff66;
     --accent-blue: #80dfff;
     --accent-red: #ff7777;
+    --breakpoint-color: var(--accent-red);
     --accent-warning: #ffd166;
     --accent-amber: #ffd166;
     --danger: #ff7777;
@@ -287,6 +291,7 @@
     --accent: #00a83b;
     --accent-blue: #004c99;
     --accent-red: #990000;
+    --breakpoint-color: var(--accent-red);
     --accent-warning: #ffbf00;
     --accent-amber: #ff9800;
     --danger: #990000;
@@ -351,6 +356,7 @@
     --accent: #859900;
     --accent-blue: #268bd2;
     --accent-red: #dc322f;
+    --breakpoint-color: var(--accent-red);
     --accent-warning: #b58900;
     --accent-amber: #cb4b16;
     --danger: #dc322f;
@@ -459,6 +465,7 @@
     --accent: #859900;
     --accent-blue: #268bd2;
     --accent-red: #dc322f;
+    --breakpoint-color: var(--accent-red);
     --accent-warning: #b58900;
     --accent-amber: #cb4b16;
     --danger: #dc322f;
@@ -567,6 +574,7 @@
     --accent: #00ff66;
     --accent-blue: #00bbff;
     --accent-red: #ff5555;
+    --breakpoint-color: var(--accent-red);
     --accent-warning: #ffbf55;
     --accent-amber: #ff9900;
     --danger: var(--accent-red);
@@ -667,6 +675,7 @@
     --accent: #a3be8c;
     --accent-blue: #88c0d0;
     --accent-red: #bf616a;
+    --breakpoint-color: var(--accent-red);
     --accent-warning: #ebcb8b;
     --accent-amber: #d08770;
     --danger: var(--accent-red);

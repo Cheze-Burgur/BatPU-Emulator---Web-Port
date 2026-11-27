@@ -32,11 +32,14 @@ import {
 
 class Machine {
 
-    constructor(cpu, memory, ui) {
+    constructor(cpu, memory, ui, breakpoints) {
 
         this.cpu = cpu;
         this.memory = memory;
         this.ui = ui;
+        this.breakpoints = breakpoints;
+        this.breakpointPaused = false;
+        this.skipBreakpointOnce = false;
 
         this.interval = null;
         this.animationFrameId = null;
@@ -49,7 +52,22 @@ class Machine {
 
     }
 
-    tick() {
+    tick(ignoreBreakpoint = false) {
+
+        const instruction = this.cpu.program[this.cpu.pc];
+        if (
+            !ignoreBreakpoint &&
+            !this.skipBreakpointOnce &&
+            instruction &&
+            this.breakpoints.has(instruction.line)
+        ) {
+            this.breakpointPaused = true;
+            this.stop();
+            return false;
+        }
+
+        this.skipBreakpointOnce = false;
+        this.breakpointPaused = false;
 
         this.memory.tick();
         this.cpu.step();
@@ -76,6 +94,11 @@ class Machine {
     start() {
 
         if (this.cpu.running) return;
+
+        if (this.breakpointPaused) {
+            this.skipBreakpointOnce = true;
+            this.breakpointPaused = false;
+        }
 
         this.cpu.running = true;
 
@@ -145,6 +168,8 @@ class Machine {
         this.memory.reset();
         this.cpu.stack = [];
         this.ui.render(true);
+        this.breakpointPaused = false;
+        this.skipBreakpointOnce = false;
 
     }
 
@@ -159,6 +184,7 @@ const editorGutter = document.getElementById("editor-gutter");
 const editorHighlight = document.getElementById("editor-highlight");
 const codeEditor = document.getElementById("code-editor");
 const editorLineMap = [];
+const breakpoints = new Set();
 
 const problems = new ProblemsPanel(document.getElementById("problems-list"));
 const modal = new Modal();
@@ -175,7 +201,7 @@ const ui = new UI(cpu, memory, screen, textDisplayElement, numDisplayElement);
 const mobileUI = new MobileUI(settings);
 const controller = new ControllerDevice(memory, null, settings);
 
-const machine = new Machine(cpu, memory, ui);
+const machine = new Machine(cpu, memory, ui, breakpoints);
 const saveManager = new SaveManager(codeEditor, problems, cpu, machine, loadProgram, settings);
 
 function applyEditorHighlighting() {
@@ -208,7 +234,7 @@ function loadProgram() {
         ...problem,
         line: problem.line
     })));
-    updateEditorGutter(source, codeEditor, editorGutter, editorLineMap, Assembler);
+    updateEditorGutter(source, codeEditor, editorGutter, editorLineMap, Assembler, breakpoints);
     applyEditorHighlighting();
     editorHighlight.scrollTop = codeEditor.scrollTop;
     editorHighlight.scrollLeft = codeEditor.scrollLeft;
@@ -244,7 +270,7 @@ async function loadPreset(name) {
     codeEditor.value = preset.code;
     loadProgram();
     resetRuntimeState();
-    updateEditorGutter(codeEditor.value, codeEditor, editorGutter, editorLineMap, Assembler);
+    updateEditorGutter(codeEditor.value, codeEditor, editorGutter, editorLineMap, Assembler, breakpoints);
     modal.close();
 }
 
@@ -291,7 +317,7 @@ document.getElementById("clock-toggle").onclick = () => {
 document.getElementById("line-step").onclick = () => {
     if (cpu.program.length === 0) loadProgram();
     if (problems.items.length > 0) return;
-    machine.tick();
+    machine.tick(true);
     applyEditorHighlighting();
     ui.render(true);
 };
@@ -370,6 +396,17 @@ codeEditor.addEventListener("scroll", () => {
     editorHighlight.scrollTop = codeEditor.scrollTop;
     editorHighlight.scrollLeft = codeEditor.scrollLeft;
 });
+
+editorGutter.addEventListener("click", event => {
+    const button = event.target.closest(".breakpoint-toggle");
+    if (!button || button.disabled) return;
+
+    const lineNumber = Number(button.dataset.line);
+    if (breakpoints.has(lineNumber)) breakpoints.delete(lineNumber);
+    else breakpoints.add(lineNumber);
+
+    button.setAttribute("aria-pressed", String(breakpoints.has(lineNumber)));
+})
 
 function updateSpeedDisplay(value) {
     if (speedValue instanceof HTMLInputElement) {

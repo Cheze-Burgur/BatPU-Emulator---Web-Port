@@ -51,7 +51,7 @@ function keyBindingLabel(binding) {
         .join(" + ");
 }
 
-function updateEditorGutter(source, codeEditor, editorGutter, editorLineMap, Assembler) {
+function updateEditorGutter(source, codeEditor, editorGutter, editorLineMap, Assembler, breakpoints) {
     const assembly = Assembler.assembleWithDiagnostics(source);
     const programLineMap = new Map(
         assembly.program.map((instruction, index) => [instruction.line, index])
@@ -59,16 +59,26 @@ function updateEditorGutter(source, codeEditor, editorGutter, editorLineMap, Ass
 
     editorLineMap.length = 0;
     const gutterLines = source.split("\n").map((rawLine, index) => {
-        const lineText = rawLine.split(";")[0].trim();
+        const lineNumber = index + 1;
+        const programIndex = programLineMap.get(lineNumber);
+        const hasInstruction = programIndex !== undefined;
 
-        if (!lineText) {
-            editorLineMap.push(null);
-            return `<div class="editor-gutter-line"><span class="gutter-line-number">${index + 1}</span><span class="gutter-instruction-number"></span></div>`;
-        }
+        if (!hasInstruction) breakpoints.delete(lineNumber);
+        editorLineMap.push(hasInstruction ? programIndex : null);
 
-        const programIndex = programLineMap.get(index + 1);
-        editorLineMap.push(programIndex === undefined ? null : programIndex);
-        return `<div class="editor-gutter-line"><span class="gutter-line-number">${index + 1}</span><span class="gutter-instruction-number">${programIndex === undefined ? "" : String(programIndex)}</span></div>`;
+        const label = hasInstruction
+            ? `Set breakpoint on line ${lineNumber}`
+            : "";
+
+        return `<div class="editor-gutter-line">
+            <button type="button" class="breakpoint-toggle"
+                data-line="${lineNumber}"
+                aria-label="${label}"
+                aria-pressed="${breakpoints.has(lineNumber)}"
+                ${hasInstruction ? "" : "disabled"}></button>
+            <span class="gutter-line-number" aria-hidden="true">${lineNumber}</span>
+            <span class="gutter-instruction-number" aria-hidden="true">${hasInstruction ? programIndex : ""}</span>
+        </div>`;
     });
 
     editorGutter.innerHTML = gutterLines.join("");

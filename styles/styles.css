@@ -666,7 +666,7 @@ a:hover {
 
 .editor-gutter-line {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 14px 1fr 1fr;
     gap: 3px;
     align-items: center;
     height: 1.6em;
@@ -687,6 +687,49 @@ a:hover {
 .editor-gutter-line .gutter-instruction-number {
     color: var(--editor-gutter-instruction-number);
     padding-left: 2px;
+}
+
+.editor-gutter-line .breakpoint-toggle {
+    width: 14px;
+    height: 1.6em;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+.editor-gutter-line .breakpoint-toggle::before {
+    content: "";
+    display: block;
+    width: 8px;
+    height: 8px;
+    margin: auto;
+    border-radius: 50%;
+}
+
+.editor-gutter-line .breakpoint-toggle:not(:disabled)::before {
+    background: var(--breakpoint-inactive-color);
+    opacity: 0.35;
+}
+
+.editor-gutter-line .breakpoint-toggle[aria-pressed="true"]::before {
+    background: var(--breakpoint-color);
+    opacity: 1;
+}
+
+.editor-gutter-line .breakpoint-toggle:disabled::before {
+    display: none;
+}
+
+.editor-gutter-line .breakpoint-toggle:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+}
+
+.editor-gutter-line .breakpoint-toggle:disabled {
+    cursor: default;
 }
 
 .editor-gutter.hide-line-numbers {

@@ -50,6 +50,10 @@ class Machine {
         this.intervalMode = "timer";
         this.accumulator = 0;
 
+        this.history = [];
+        this.historyLimit = 5000;
+        this.stepBackButton = document.getElementById("step-back");
+
     }
 
     tick(ignoreBreakpoint = false) {
@@ -69,10 +73,77 @@ class Machine {
         this.skipBreakpointOnce = false;
         this.breakpointPaused = false;
 
+        this.recordHistory();
         this.memory.tick();
         this.cpu.step();
 
         this.ticksSinceLastSpeedSample++;
+
+    }
+
+    captureState() {
+
+        return {
+            pc: this.cpu.pc,
+            flags: { ...this.cpu.flags },
+            registers: this.cpu.registers.slice(),
+            memory: this.memory.data.slice(),
+            stack: [...this.cpu.stack],
+            lastExecutedLine: this.cpu.lastExecutedLine,
+            devices: this.memory.devices.map(device => device.snapshot()),
+            problems: this.cpu.problems.items.map(problem => ({ ...problem }))
+        };
+
+    }
+
+    restoreState(state) {
+
+        this.cpu.pc = state.pc;
+        this.cpu.flags = { ...state.flags };
+        this.cpu.registers = state.registers.slice();
+        this.memory.data = state.memory.slice();
+        this.cpu.stack = [...state.stack];
+        this.cpu.lastExecutedLine = state.lastExecutedLine;
+        this.memory.devices.forEach((device, index) => {
+            if (state.devices[index]) {
+                device.restore(state.devices[index]);
+            }
+        });
+        this.cpu.problems.items = state.problems.map(problem => ({ ...problem }));
+
+        this.cpu.running = false;
+        this.breakpointPaused = false;
+        this.skipBreakpointOnce = false;
+        this.accumulator = 0;
+        this.cpu.problems.set(state.problems);
+        this.ui.render(true);
+
+    }
+
+    recordHistory() {
+        this.history.push(this.captureState());
+
+        if (this.history.length > this.historyLimit) {
+            this.history.shift();
+        }
+
+        this.stepBackButton.disabled = this.history.length === 0;
+    }
+
+    clearHistory() {
+        this.history = [];
+        this.stepBackButton.disabled = true;
+    }
+
+    stepBack() {
+
+        if (this.history.length === 0) return;
+
+        this.stop();
+        const previousState = this.history.pop();
+        this.restoreState(previousState);
+        this.stepBackButton.disabled = this.history.length === 0;
+        applyEditorHighlighting();
 
     }
 
@@ -170,6 +241,7 @@ class Machine {
         this.ui.render(true);
         this.breakpointPaused = false;
         this.skipBreakpointOnce = false;
+        this.clearHistory();
 
     }
 
@@ -238,6 +310,7 @@ function loadProgram() {
     applyEditorHighlighting();
     editorHighlight.scrollTop = codeEditor.scrollTop;
     editorHighlight.scrollLeft = codeEditor.scrollLeft;
+    machine.clearHistory();
     ui.render(true);
 }
 
@@ -321,6 +394,8 @@ document.getElementById("line-step").onclick = () => {
     applyEditorHighlighting();
     ui.render(true);
 };
+
+document.getElementById("step-back").addEventListener("click", () => machine.stepBack());
 
 async function resetProgram() {
 

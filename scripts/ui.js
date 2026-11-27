@@ -36,6 +36,8 @@ class UI {
     cacheElements() {
 
         this.cpuStatusText = document.getElementById("cpu-status-text");
+        this.clockToggle = document.getElementById("clock-toggle");
+        this.clockToggleLabel = document.getElementById("clock-toggle-label");
         this.pcText = document.querySelector("#cpu-status-bar div:nth-child(2)");
         this.zeroFlag = document.getElementById("flag-zero");
         this.carryFlag = document.getElementById("flag-carry");
@@ -120,6 +122,10 @@ class UI {
     }
 
     setStatus(running) {
+
+        this.clockToggleLabel.textContent = running ? "Pause" : "Run";
+        this.clockToggle.setAttribute("aria-label", running ? "Pause program" : "Run program");
+        this.clockToggle.setAttribute("aria-pressed", String(running));
 
         if (this.lastStatus === running) return;
         this.lastStatus = running;

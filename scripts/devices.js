@@ -25,6 +25,10 @@ class Device {
 
     tick() { }
 
+    snapshot() { }
+
+    restore(snapshot) { }
+
     reset() { }
 
 }
@@ -95,6 +99,26 @@ class ScreenDevice extends Device {
 
     }
 
+    snapshot() {
+
+        return {
+            buffer: this.buffer.slice(),
+            frontBuffer: this.frontBuffer.slice(),
+            px: this.px,
+            py: this.py
+        };
+
+    }
+
+    restore(snapshot) {
+
+        this.buffer.set(snapshot.buffer);
+        this.frontBuffer.set(snapshot.frontBuffer);
+        this.px = snapshot.px;
+        this.py = snapshot.py;
+
+    }
+
 }
 
 class CharacterDevice extends Device {
@@ -161,6 +185,23 @@ class CharacterDevice extends Device {
 
         this.clearCharsBuffer();
         this.flushChars();
+
+    }
+
+    snapshot() {
+
+        return {
+            buffer: [...this.buffer],
+            front: this.front
+        };
+
+    }
+
+    restore(snapshot) {
+
+        this.buffer = [...snapshot.buffer];
+        this.front = snapshot.front;
+        this.updateCharsDisplay();
 
     }
 
@@ -235,6 +276,25 @@ class NumberDevice extends Device {
     reset() {
 
         this.clearNumber()
+
+    }
+
+    snapshot() {
+
+        return {
+            displayNumber: this.displayNumber,
+            showNumber: this.showNumber,
+            numberMode: this.numberMode
+        }
+
+    }
+
+    restore(snapshot) {
+
+        this.displayNumber = snapshot.displayNumber;
+        this.showNumber = snapshot.showNumber;
+        this.numberMode = snapshot.numberMode;
+        this.updateNumberDisplay();
 
     }
 
@@ -484,6 +544,23 @@ class ControllerDevice extends Device {
             });
 
         });
+
+    }
+
+    snapshot() {
+
+        return {
+            liveState: { ...this.liveState },
+            latchedState: { ...this.latchedState }
+        };
+
+    }
+
+    restore(snapshot) {
+
+        this.liveState = { ...snapshot.liveState };
+        this.latchedState = { ...snapshot.latchedState };
+        this.syncMemory();
 
     }
 

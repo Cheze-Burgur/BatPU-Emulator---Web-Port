@@ -302,8 +302,8 @@ a:hover {
 #control-wrap {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    padding: 14px;
+    gap: 10px;
+    padding: 12px;
     background: linear-gradient(to bottom, var(--control-bg-start), var(--control-bg-end));
     border: 2px solid var(--border);
     border-radius: var(--radius-lg);
@@ -312,26 +312,51 @@ a:hover {
 }
 
 #control-buttons {
-    display: flex;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
 }
 
 #control-buttons button {
-    flex: 1;
+    width: 100%;
+    min-width: 0;
     min-height: 0;
-    height: 46px;
-    font-size: 14px;
-    letter-spacing: 0.5px;
+    height: 34px;
+    padding: 0 6px;
+    font-size: 13px;
+    letter-spacing: 0.25px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.35rem;
+    gap: 4px;
 }
 
 #control-buttons .material-symbols-outlined {
     display: block;
-    font-size: 1.1em;
+    flex: 0 0 auto;
+    font-size: 16px;
     line-height: 1;
+}
+
+#control-buttons .control-button-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#control-buttons button:focus-visible {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+}
+
+#control-buttons button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+#control-buttons button:disabled:hover {
+    background: var(--button-bg);
 }
 
 #speed-control {

@@ -16,7 +16,7 @@
     <link rel="manifest" href="./site.webmanifest">
     <!-- Google Fonts Symbol Library -->
     <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0&icon_names=play_pause,replay,download,upload" />
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0&icon_names=skip_previous,play_pause,skip_next,replay,download,upload" />
 </head>
 
 <body>
@@ -119,14 +119,32 @@
                     <div class="section-header">CONTROL</div>
                     <div id="control-wrap">
                         <div id="control-buttons">
-                            <button id="clock-toggle"><span
-                                    class="material-symbols-outlined">play_pause</span>Run</button>
-                            <button id="line-step">Step Inst</button>
-                            <button id="reset-program"><span
-                                    class="material-symbols-outlined">replay</span>Reset</button>
-                            <button id="save-program"><span
-                                    class="material-symbols-outlined">download</span>Save</button>
-                            <button id="load-program"><span class="material-symbols-outlined">upload</span>Load</button>
+                            <button id="step-back" type="button" aria-label="Step backward"
+                                title="Step backward one instruction" disabled>
+                                <span class="material-symbols-outlined" aria-hidden="true">skip_previous</span>
+                                <span class="control-button-label">Back</span>
+                            </button>
+                            <button id="clock-toggle" type="button" aria-label="Run program" aria-pressed="false">
+                                <span class="material-symbols-outlined" aria-hidden="true">play_pause</span>
+                                <span id="clock-toggle-label" class="control-button-label">Run</span>
+                            </button>
+                            <button id="line-step" type="button" aria-label="Step instruction"
+                                title="Step forward one instruction">
+                                <span class="material-symbols-outlined" aria-hidden="true">skip_next</span>
+                                <span class="control-button-label">Step</span>
+                            </button>
+                            <button id="reset-program" type="button">
+                                <span class="material-symbols-outlined" aria-hidden="true">replay</span>
+                                <span class="control-button-label">Reset</span>
+                            </button>
+                            <button id="save-program" type="button">
+                                <span class="material-symbols-outlined" aria-hidden="true">download</span>
+                                <span class="control-button-label">Save</span>
+                            </button>
+                            <button id="load-program" type="button">
+                                <span class="material-symbols-outlined" aria-hidden="true">upload</span>
+                                <span class="control-button-label">Load</span>
+                            </button>
                         </div>
 
                         <div id="speed-control">

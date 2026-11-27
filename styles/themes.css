@@ -50,7 +50,6 @@
     --status-bar-bg: var(--surface);
     --status-running: #00ff88;
     --flag-inactive-text: #8a8a8a;
-    --memory-panel-bg: #181818;
     --cell-bg-end: #0a0a0a;
     --reg-cell-accent: #00bbff;
     --mem-cell-accent: #ff5555;
@@ -167,7 +166,6 @@
     --status-bar-bg: var(--surface);
     --status-running: #007a3d;
     --flag-inactive-text: #444;
-    --memory-panel-bg: #f2f2f2;
     --cell-bg-end: #f7f7f7;
     --reg-cell-accent: #006bb3;
     --mem-cell-accent: #b52b2b;
@@ -233,6 +231,8 @@
     --accent: #00ff66;
     --accent-blue: #80dfff;
     --accent-red: #ff7777;
+    --reg-cell-accent: var(--accent-blue);
+    --mem-cell-accent: var(--accent-red);
     --breakpoint-color: var(--accent-red);
     --accent-warning: #ffd166;
     --accent-amber: #ffd166;
@@ -246,7 +246,6 @@
     --panel-border: #aaa;
     --section-header-text: #ddd;
     --input-bg: #050505;
-    --memory-panel-bg: #050505;
     --editor-bg: #000;
     --editor-gutter-bg: #050505;
     --editor-gutter-text: #ddd;
@@ -291,6 +290,8 @@
     --accent: #00a83b;
     --accent-blue: #004c99;
     --accent-red: #990000;
+    --reg-cell-accent: var(--accent-blue);
+    --mem-cell-accent: var(--accent-red);
     --breakpoint-color: var(--accent-red);
     --accent-warning: #ffbf00;
     --accent-amber: #ff9800;
@@ -307,7 +308,6 @@
     --panel-border: #000;
     --section-header-text: #333;
     --input-bg: #fff;
-    --memory-panel-bg: #fff;
     --editor-bg: #fff;
     --editor-gutter-bg: #eee;
     --editor-gutter-text: #333;
@@ -395,7 +395,6 @@
     --status-bar-bg: var(--surface);
     --status-running: #859900;
     --flag-inactive-text: #839496;
-    --memory-panel-bg: #062f3a;
     --cell-bg-end: #002630;
     --reg-cell-accent: var(--accent-blue);
     --mem-cell-accent: var(--accent-red);
@@ -504,7 +503,6 @@
     --status-bar-bg: var(--surface);
     --status-running: #859900;
     --flag-inactive-text: #657b83;
-    --memory-panel-bg: #eee8d5;
     --cell-bg-end: #fdf6e3;
     --reg-cell-accent: #268bd2;
     --mem-cell-accent: #dc322f;
@@ -574,6 +572,8 @@
     --accent: #00ff66;
     --accent-blue: #00bbff;
     --accent-red: #ff5555;
+    --reg-cell-accent: var(--accent-blue);
+    --mem-cell-accent: var(--accent-red);
     --breakpoint-color: var(--accent-red);
     --accent-warning: #ffbf55;
     --accent-amber: #ff9900;
@@ -610,7 +610,6 @@
     --status-bar-bg: var(--surface);
     --status-running: #00ff88;
     --flag-inactive-text: var(--muted);
-    --memory-panel-bg: #181818;
     --cell-bg-end: #0a0a0a;
     --editor-bg: #0f0f0f;
     --editor-shadow-color: rgba(0, 0, 0, 0.8);
@@ -675,6 +674,8 @@
     --accent: #a3be8c;
     --accent-blue: #88c0d0;
     --accent-red: #bf616a;
+    --reg-cell-accent: var(--accent-blue);
+    --mem-cell-accent: var(--accent-red);
     --breakpoint-color: var(--accent-red);
     --accent-warning: #ebcb8b;
     --accent-amber: #d08770;
@@ -711,7 +712,6 @@
     --status-bar-bg: var(--surface);
     --status-running: #a3be8c;
     --flag-inactive-text: var(--muted);
-    --memory-panel-bg: #3b4252;
     --cell-bg-end: #1e222a;
     --editor-bg: #242933;
     --editor-shadow-color: rgba(0, 0, 0, 0.8);

@@ -575,7 +575,7 @@ a:hover {
     min-height: 0;
     overflow-y: auto;
     max-height: 300px;
-    background: var(--memory-panel-bg);
+    background: linear-gradient(to bottom, var(--surface), var(--surface-2));
     border: 2px solid var(--border);
     border-radius: var(--radius-sm);
     padding: 10px;

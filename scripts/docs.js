@@ -1227,24 +1227,28 @@ RET`
 
 export const DiagramComponents = {
 
-    "instr-memory": `Stores the program to be executed as an array of 1024 16-bit values`,
+    "instr-memory": `Stores the assembled program as a sequence of instructions, indexed from 0 to 1023. The Program Counter selects the next instruction to execute.
+    Instructions can contain immediate values used by instructions such as LDI and ADI, conditions for branching, or the addresses of other instructions.`,
 
     alu: `Preforms arithmetic and logical operations on two 8-bit values. The operands can come either from the register file or the instruction memory in the form of an Add Immediate.
 Outputs an 8-bit result of the operation and two "flags," Zero and Carry, which are used for conditional branching.
 The operation being performed is determined by a 3-bit control signal from the Control ROM, depending on the instructions opcode.
 The ALU is purely combinational, meaning it has no memory and it doesn't require a clock pulse to operate.`,
 
-    registers: `Stores the values used by the ALU to preform computation`,
+    registers: `Holds sixteen 8-bit values that are used by instructions and the ALU. Arithmetic and logic instructions read their operands from registers and write their results back to a register.
+    Each register is identified by a 4-bit address, 0 to 15, with Register r0 fixed at zero; writes to it are ignored.`,
 
-    "program-counter": `Stores the current instruction index`,
+    "program-counter": `Tracks the index of the next instruction in the program. It advances after each instruction, or changes to a different address when an instruction jumps or branches.`,
 
-    "data-memory": `Serves as extra memory for the cpu`,
+    "data-memory": `Provides 256 single-byte addresses for values that programs can read from and write to (with the LOD and STR instructions, respectively).
+    The last 16 addresses are reserved for interacting with I/O devices, with special functions depending on the device.`,
 
-    stack: `stores up to 16 instruction addresses`,
+    stack: `Holds up to 16 return addresses for subroutine calls. CAL pushes the address to resume at before jumping to a subroutine, and RET pops that address to continue execution.
+    A call on a full stack or a return on an empty stack reports an error.`,
 
-    control: `decodes the 4-bit operation code (OPCODE) for each instruction and activates the neccessary components`,
+    control: `Uses each instruction's opcode to select the operation to execute and activate the CPU components it requires.`,
 
-    clock: `pulses`
+    clock: `Each tick from the Clock executes one instruction; the execution rate can be adjusted, or an instruction can be advanced manually with Step Inst.`
 
 };
 

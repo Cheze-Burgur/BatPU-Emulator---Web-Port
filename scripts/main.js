@@ -27,7 +27,8 @@ import {
     updateEditorGutter,
     highlightAssembly,
     escapeHtml,
-    updateSpeedText
+    updateSpeedText,
+    showToast,
 } from "./utils.js";
 
 class Machine {
@@ -431,6 +432,8 @@ window.addEventListener("beforeunload", event => {
 
 window.addEventListener("keydown", event => {
 
+    if (event.target?.classList?.contains("cell-value-editor")) return;
+
     const keybindings = settings.get("keybindings");
 
     if (matchesKeyBinding(event, keybindings.closeModal)) {
@@ -563,6 +566,108 @@ speedSlider.addEventListener("input", () => {
         machine.measuredSpeedHz = targetSpeed;
         machine.restart();
     }
+});
+
+let activeCellEditor = null;
+
+function editCellValue(valueElement, currentValue, writeValue) {
+    if (activeCellEditor) return;
+    if (cpu.running) machine.stop();
+
+    const input = document.createElement("input");
+    input.type = "number";
+    input.min = "0";
+    input.max = "255";
+    input.step = "1";
+    input.value = String(currentValue);
+    input.className = "cell-value-editor";
+    input.setAttribute("aria-label", valueElement.getAttribute("aria-label") || "Edit value");
+    document.body.appendChild(input);
+
+    activeCellEditor = input;
+
+    const positionEditor = () => {
+        const rect = valueElement.getBoundingClientRect();
+        const left = Math.min(
+            Math.max(8, rect.left + (rect.width - input.offsetWidth) / 2),
+            window.innerWidth - input.offsetWidth - 8
+        );
+        const top = Math.min(
+            Math.max(8, rect.top + (rect.height - input.offsetHeight) / 2),
+            window.innerHeight - input.offsetHeight - 8
+        );
+        input.style.left = `${left}px`;
+        input.style.top = `${top}px`;
+    };
+
+    positionEditor();
+    window.addEventListener("scroll", positionEditor, true);
+    window.addEventListener("resize", positionEditor);
+    input.focus();
+    input.select();
+
+    let finished = false;
+    const finish = commit => {
+        if (finished) return;
+
+        let value;
+        if (commit) {
+            value = input.valueAsNumber;
+            if (!Number.isInteger(value) || value < 0 || value > 255) {
+                showToast("Enter an integer between 0 and 255", "error");
+                commit = false;
+            }
+        }
+
+        finished = true;
+        input.remove();
+        activeCellEditor = null;
+        window.removeEventListener("scroll", positionEditor, true);
+        window.removeEventListener("resize", positionEditor);
+
+        if (commit) {
+            writeValue(value);
+            machine.clearHistory();
+        }
+
+        ui.render(true);
+    };
+
+    input.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            finish(true);
+        } else if (event.key === "Escape") {
+            event.preventDefault();
+            finish(false);
+        }
+    });
+
+    input.addEventListener("blur", () => finish(true));
+}
+
+document.querySelectorAll(".reg-dec").forEach(cell => {
+    cell.addEventListener("click", () => {
+        if (activeCellEditor) return;
+
+        const regIndex = Number(cell.closest(".reg-cell").dataset.register);
+        editCellValue(cell, machine.cpu.registers[regIndex], value => {
+            machine.cpu.writeRegister(regIndex, value);
+        });
+    });
+});
+
+document.querySelectorAll(".mem-dec").forEach(cell => {
+    cell.addEventListener("click", () => {
+        if (activeCellEditor) return;
+
+        const address = Number(cell.closest(".mem-cell").dataset.address);
+        if (address >= 254) return;
+
+        editCellValue(cell, machine.memory.data[address], value => {
+            machine.memory.write(address, value);
+        });
+    });
 });
 
 updateSpeedDisplay(Number(speedSlider.value));

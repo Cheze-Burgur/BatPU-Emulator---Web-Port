@@ -643,6 +643,65 @@ a:hover {
     font-size: 10px;
 }
 
+.reg-dec.cell-edit-trigger,
+.mem-dec.cell-edit-trigger {
+    appearance: none;
+    display: block;
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    line-height: inherit;
+    text-align: center;
+    box-shadow: none;
+    transition: none;
+    cursor: pointer;
+    user-select: text;
+    -webkit-user-select: text;
+}
+
+.reg-dec.cell-edit-trigger:hover,
+.mem-dec.cell-edit-trigger:hover {
+    background: transparent;
+}
+
+.reg-dec.cell-edit-trigger:active,
+.mem-dec.cell-edit-trigger:active {
+    transform: none;
+    box-shadow: none;
+}
+
+.reg-dec.cell-edit-trigger:hover,
+.mem-dec.cell-edit-trigger:hover,
+.reg-dec.cell-edit-trigger:focus-visible,
+.mem-dec.cell-edit-trigger:focus-visible {
+    outline: 1px solid var(--accent-blue);
+    outline-offset: 1px;
+}
+
+.cell-value-editor {
+    position: fixed;
+    z-index: 10000;
+    width: 7ch;
+    max-width: calc(100vw - 16px);
+    height: 26px;
+    padding: 4px 4px;
+    border: 2px solid var(--accent-blue);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    font: 14px monospace;
+    text-align: center;
+}
+
 .reg-bin,
 .mem-bin {
     display: flex;

@@ -67,9 +67,11 @@ class UI {
         for (let i = 1; i < 16; i++) {
             const cell = document.createElement("div");
             cell.className = "reg-cell";
+            cell.dataset.register = String(i);
             cell.innerHTML = `
                 <div>r${i}</div>
-                <div class="reg-dec">0</div>
+                <button type="button" class="reg-dec cell-edit-trigger"
+                    aria-label="Edit register ${i}">0</button>
                 <div class="reg-bin">
                     <div class="bin-top">0000</div>
                     <div class="bin-bottom">0000</div>
@@ -89,10 +91,16 @@ class UI {
         this.memCells = [];
         for (let i = 0; i < 256; i++) {
             const cell = document.createElement("div");
+            const valueElement = i < 254
+                ? `<button type="button" class="mem-dec cell-edit-trigger"
+                    aria-label="Edit memory at address ${i}">0</button>`
+                : `<div class="mem-dec"
+                    aria-label="Address ${i} is mapped to an I/O device and cannot be edited">0</div>`;
             cell.className = "mem-cell";
+            cell.dataset.address = String(i);
             cell.innerHTML = `
                 <div>${String(i).padStart(3, "0")}</div>
-                <div class="mem-dec">0</div>
+                ${valueElement}
                 <div class="mem-bin">
                     <div class="bin-top">0000</div>
                     <div class="bin-bottom">0000</div>

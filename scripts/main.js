@@ -575,10 +575,11 @@ function editCellValue(valueElement, currentValue, writeValue) {
     if (cpu.running) machine.stop();
 
     const input = document.createElement("input");
-    input.type = "number";
-    input.min = "0";
-    input.max = "255";
-    input.step = "1";
+    input.type = "text";
+    input.inputMode = "text";
+    input.autocomplete = "off";
+    input.spellcheck = false;
+    input.placeholder = "e.g. 0x2A";
     input.value = String(currentValue);
     input.className = "cell-value-editor";
     input.setAttribute("aria-label", valueElement.getAttribute("aria-label") || "Edit value");
@@ -600,9 +601,16 @@ function editCellValue(valueElement, currentValue, writeValue) {
         input.style.top = `${top}px`;
     };
 
-    positionEditor();
+    const resizeEditor = () => {
+        const width = Math.min(12, Math.max(7, input.value.length + 2));
+        input.style.width = `${width}ch`;
+        positionEditor();
+    };
+
+    resizeEditor();
     window.addEventListener("scroll", positionEditor, true);
     window.addEventListener("resize", positionEditor);
+    input.addEventListener("input", resizeEditor);
     input.focus();
     input.select();
 
@@ -612,9 +620,13 @@ function editCellValue(valueElement, currentValue, writeValue) {
 
         let value;
         if (commit) {
-            value = input.valueAsNumber;
+            const normalizedValue = input.value.trim().replace(
+                /^0([bBxX])/,
+                (_, radix) => `0${radix.toLowerCase()}`
+            );
+            value = Assembler.parseImmediate(normalizedValue);
             if (!Number.isInteger(value) || value < 0 || value > 255) {
-                showToast("Enter an integer between 0 and 255", "error");
+                showToast("Enter a value from 0 to 255 in decimal, 0x hex, or 0b binary", "error");
                 commit = false;
             }
         }

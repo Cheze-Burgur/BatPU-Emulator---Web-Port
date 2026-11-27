@@ -505,7 +505,7 @@ export const Documentation = {
 
                 <div class="doc-card">
                     <div class="doc-card-header">
-                        <h2>Version 1.0</h2>
+                        <h2>Version 1.0.0</h2>
                         <span class="doc-badge">INITIAL RELEASE</span>
                     </div>
                     <div class="doc-section">
@@ -521,7 +521,7 @@ export const Documentation = {
 
                 <div class="doc-card">
                     <div class="doc-card-header">
-                        <h2>Version 1.1</h2>
+                        <h2>Version 1.1.0</h2>
                         <span class="doc-badge">BUGFIXING</span>
                         <span class="doc-badge">UI & STYLING</span>
                         <span class="doc-badge">QUALITY OF LIFE</span>
@@ -544,7 +544,7 @@ export const Documentation = {
 
                 <div class="doc-card">
                     <div class="doc-card-header">
-                        <h2>Version 1.2</h2>
+                        <h2>Version 1.2.0</h2>
                         <span class="doc-badge">NEW FEATURES</span>
                         <span class="doc-badge">UI & STYLING</span>
                         <span class="doc-badge">BUGFIXING</span>
@@ -572,7 +572,7 @@ export const Documentation = {
 
                 <div class="doc-card">
                     <div class="doc-card-header">
-                        <h2>Version 1.21</h2>
+                        <h2>Version 1.2.1</h2>
                         <span class="doc-badge">UI & STYLING</span>
                         <span class="doc-badge">QUALITY OF LIFE</span>
                     </div>
@@ -595,7 +595,7 @@ export const Documentation = {
 
                 <div class="doc-card">
                     <div class="doc-card-header">
-                        <h2>Version 1.3</h2>
+                        <h2>Version 1.3.0</h2>
                         <span class="doc-badge">NEW FEATURES</span>
                         <span class="doc-badge">QUALITY OF LIFE</span>
                     </div>
@@ -621,7 +621,7 @@ export const Documentation = {
 
                 <div class="doc-card">
                     <div class="doc-card-header">
-                        <h2>Version 1.31</h2>
+                        <h2>Version 1.3.1</h2>
                         <span class="doc-badge">BUGFIXING</span>
                     </div>
                     <div class="doc-section">
@@ -637,7 +637,7 @@ export const Documentation = {
 
                 <div class="doc-card">
                     <div class="doc-card-header">
-                        <h2>Version 1.4</h2>
+                        <h2>Version 1.4.0</h2>
                         <span class="doc-badge">BUGFIXING</span>
                         <span class="doc-badge">QUALITY OF LIFE</span>
                     </div>
@@ -654,7 +654,7 @@ export const Documentation = {
 
                 <div class="doc-card">
                     <div class="doc-card-header">
-                        <h2>Version 1.41</h2>
+                        <h2>Version 1.4.1</h2>
                         <span class="doc-badge">BUGFIXING</span>
                     </div>
                     <div class="doc-section">
@@ -668,7 +668,7 @@ export const Documentation = {
 
                 <div class="doc-card">
                     <div class="doc-card-header">
-                        <h2>Version 1.5</h2>
+                        <h2>Version 1.5.0</h2>
                         <span class="doc-badge">NEW FEATURES</span>
                         <span class="doc-badge">QUALITY OF LIFE</span>
                     </div>
@@ -685,7 +685,7 @@ export const Documentation = {
 
                 <div class="doc-card">
                     <div class="doc-card-header">
-                        <h2>Version 1.6</h2>
+                        <h2>Version 1.6.0</h2>
                         <span class="doc-badge">UI & STYLING</span>
                     </div>
                     <div class="doc-section">
@@ -713,7 +713,7 @@ export const Documentation = {
 
 				<div class="doc-card">
                     <div class="doc-card-header">
-                        <h2>Version 1.61</h2>
+                        <h2>Version 1.6.1</h2>
                         <span class="doc-badge">BUGFIXING</span>
                     </div>
                     <div class="doc-section">
@@ -733,7 +733,7 @@ export const Documentation = {
 
 				<div class="doc-card">
                     <div class="doc-card-header">
-                        <h2>Version 1.62</h2>
+                        <h2>Version 1.6.2</h2>
                         <span class="doc-badge">UI & STYLING</span>
                     </div>
                     <div class="doc-section">
@@ -746,7 +746,7 @@ export const Documentation = {
 
 				<div class="doc-card">
                     <div class="doc-card-header">
-                        <h2>Version 1.7</h2>
+                        <h2>Version 1.7.0</h2>
                         <span class="doc-badge">QUALITY OF LIFE</span>
                     </div>
                     <div class="doc-section">
@@ -771,7 +771,7 @@ export const Documentation = {
 
 				<div class="doc-card">
                     <div class="doc-card-header">
-                        <h2>Version 1.8</h2>
+                        <h2>Version 1.8.0</h2>
                         <span class="doc-badge">QUALITY OF LIFE</span>
 						<span class="doc-badge">UI & STYLING</span>
                     </div>
@@ -785,7 +785,7 @@ export const Documentation = {
 
                 <div class="doc-card">
                     <div class="doc-card-header">
-                        <h2>Version 1.9</h2>
+                        <h2>Version 1.9.0</h2>
                         <span class="doc-badge">QUALITY OF LIFE</span>
                         <span class="doc-badge">NEW FEATURES</span>
                     </div>
@@ -811,7 +811,7 @@ export const Documentation = {
 
                 <div class="doc-card">
                     <div class="doc-card-header">
-                        <h2>Version 1.91</h2>
+                        <h2>Version 1.9.1</h2>
                         <span class="doc-badge">QUALITY OF LIFE</span>
                         <span class="doc-badge">ACCESSIBILITY</span>
                     </div>
@@ -830,7 +830,7 @@ export const Documentation = {
 
                 <div class="doc-card">
                     <div class="doc-card-header">
-                        <h2>Version 1.92</h2>
+                        <h2>Version 1.9.2</h2>
                         <span class="doc-badge">QUALITY OF LIFE</span>
                     </div>
                     <div class="doc-section">
@@ -847,7 +847,7 @@ export const Documentation = {
 
                 <div class="doc-card">
                     <div class="doc-card-header">
-                        <h2>Version 2.0</h2>
+                        <h2>Version 1.10.0</h2>
                         <span class="doc-badge">NEW FEATURES</span>
                         <span class="doc-badge">QUALITY OF LIFE</span>
                     </div>
@@ -872,7 +872,7 @@ export const Documentation = {
 
                 <div class="doc-card">
                     <div class="doc-card-header">
-                        <h2>Version 2.01</h2>
+                        <h2>Version 1.10.1</h2>
                         <span class="doc-badge">UI & Styling</span>
                     </div>
                     <div class="doc-section">
@@ -891,6 +891,37 @@ export const Documentation = {
                                 <li>Disabled text selection on all buttons and diagram components</li>
                                 <li>Added new <a href="https://ethanschoonover.com/solarized/" target="_blank" rel="noopener norefferer">Solarized</a> color themes</li>
                             </ul>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="doc-card">
+                    <div class="doc-card-header">
+                        <h2>Version 1.11.0</h2>
+                        <span class="doc-badge">NEW FEATURES</span>
+                        <span class="doc-badge">QUALITY OF LIFE</span>
+                    </div>
+                    <div class="doc-section">
+                        <h3>November 27, 2026</h3>
+                        <ul>
+                            <li>After a long break, I've finally finished the diagram!</li>
+                            <ul>
+                                <li>The diagram is fully functional, displaying a map of the CPU layout</li>
+                                <li>Clicking a component in the diagram will display information about it</li>
+                            </ul>
+                            <li><span class="code">README.md</span> has been updated to reflect latest updates</li>
+                            <li>Added breakpoints to the editor</li>
+                            <ul>
+                                <li>Clicking the buttons to the side of the line numbers will toggle a breakpoint on that line</li>
+                                <li>Breakpoints will be highlighted in red</li>
+                                <li>When the CPU is running, it will pause when it reaches a breakpoint</li>
+                            </ul>
+                            <li>You can now step backwards through the program execution</li>
+                            <li>You can now directly edit the values of registers and memory cells via the new inputs that appear on click</li>
+                            <ul>
+                                <li>You can enter decimal values, or you can enter binary/hex values by using the <span class="code">0b</span> or <span class="code">0x</span> prefixes</li>
+                            </ul>
+                            <li>Updated changelog to better use semantic versioning instead of what I was doing before</li>
                         </ul>
                     </div>
                 </div>

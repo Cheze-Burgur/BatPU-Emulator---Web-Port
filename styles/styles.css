@@ -1081,6 +1081,19 @@ input.cell-value-editor[aria-invalid="true"]:focus {
     color: var(--problem-warning-text);
 }
 
+#problems-list.is-empty {
+    min-height: 100%;
+    display: grid;
+    place-items: center;
+}
+
+.problems-empty {
+    margin: 0;
+    padding: 12px;
+    color: var(--problems-text);
+    text-align: center;
+}
+
 #bottom-panel.open #problems-panel {
     display: block;
 }

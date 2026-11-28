@@ -449,14 +449,14 @@ class ProblemsPanel {
 
         if (this.items.length === 0) {
 
-            this.element.innerHTML =
-                "<div>No problems.</div>";
-
+            this.element.classList.add("is-empty");
+            this.element.innerHTML = '<p class="problems-empty">No problems.</p>';
             this.close();
             return;
 
         }
 
+        this.element.classList.remove("is-empty");
         this.open();
 
         this.element.innerHTML =

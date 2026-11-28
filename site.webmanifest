@@ -1,14 +1,14 @@
 {
-    "name": "BatPU Emulator - Web Port",
+    "name": "BatPU Emulator",
     "short_name": "BPU Emulator",
     "description": "Web remake of the redstone CPU emulator by MattBatWings and AdoHTQ",
     "lang": "en-US",
     "categories": ["computer science", "computer architecture", "simulation"],
-    "start_url": "/BatPU-Emulator---Web-Port/",
+    "start_url": "/BatPU-Emulator/",
     "display": "standalone",
     "background_color": "#111111",
     "theme_color": "#1b1b1b",
-    "scope": "/BatPU-Emulator---Web-Port/",
+    "scope": "/BatPU-Emulator/",
     "icons": [
         {
             "src": "./images/icons/android-chrome-192x192.png",

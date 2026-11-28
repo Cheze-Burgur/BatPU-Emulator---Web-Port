@@ -394,7 +394,7 @@ export const Documentation = {
 
                 if (preset.imageName) {
                     html += `
-                                <img src="https://raw.githubusercontent.com/Cheze-Burgur/BatPU-Emulator---Web-Port/refs/heads/main/images/${preset.imageName}.png">
+                                <img src="https://raw.githubusercontent.com/Cheze-Burgur/BatPU-Emulator---Web-Port/refs/heads/main/images/presets/${preset.imageName}.png">
                     `
                 }
 

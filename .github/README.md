@@ -1,4 +1,4 @@
-# BatPU Emulator - Web Port
+# BatPU Emulator
 
 *A browser-based emulator for the BatPU.*
 
@@ -229,7 +229,7 @@ Read the [contributing guidelines](CONTRIBUTING.md) and the [code of conduct](CO
 
 GitHub:
 
-https://github.com/Cheze-Burgur/BatPU-Emulator---Web-Port
+https://github.com/Cheze-Burgur/BatPU-Emulator/
 
 ---
 

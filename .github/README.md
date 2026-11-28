@@ -14,6 +14,10 @@ Run programs, interact with virtual hardware devices in real time, and learn low
 
 ![Assembly Editor](../images/readme/readme-editor.png)
 
+## Error Reporting
+
+![Problems](../images/readme/readme-problems.png)
+
 ## Built-in ISA Documentation
 
 ![ISA Documentation](../images/readme/readme-isa.png)
@@ -25,6 +29,10 @@ Run programs, interact with virtual hardware devices in real time, and learn low
 ## Preset Programs
 
 ![Preset Browser](../images/readme/readme-presets.png)
+
+## Site Settings
+
+![Settings Menu](../images/readme/readme-settings.png)
 
 ---
 

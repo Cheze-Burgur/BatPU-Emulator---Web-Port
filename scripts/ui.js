@@ -459,21 +459,20 @@ class ProblemsPanel {
         this.element.classList.remove("is-empty");
         this.open();
 
-        this.element.innerHTML =
-            this.items.map(item => `
+        const fragment = document.createDocumentFragment();
 
-                <div class="problem ${item.type}">
+        for (const item of this.items) {
+            const row = document.createElement("div");
+            const severity = item.type === "warning" ? "warning" : "error";
+            row.classList.add("problem", severity);
 
-                    ${item.line !== null
-                    ? `Line ${item.line}: `
-                    : ""
-                }
+            const location = item.line === null ? "" : `Line ${item.line}: `;
+            row.textContent = `${location}${item.message}`;
 
-                    ${item.message}
+            fragment.append(row)
+        }
 
-                </div>
-
-            `).join("");
+        this.element.replaceChildren(fragment);
 
     }
 

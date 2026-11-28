@@ -1,4 +1,4 @@
-# Contributing to BatPU Emulator - Web Port
+# Contributing to BatPU Emulator
 
 Thanks for your interest in contributing to this project!
 
@@ -307,4 +307,4 @@ Contributors will be added to the [README.md](../README.md) under the Contributo
 
 ---
 
-Thank you for helping improve the BatPU Emulator - Web Port!
+Thank you for helping improve the BatPU Emulator!

@@ -2,7 +2,7 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in the BatPU Emulator – Web Port, please **do not open a public GitHub issue** containing details that could allow the vulnerability to be exploited.
+If you discover a security vulnerability in the BatPU Emulator, please **do not open a public GitHub issue** containing details that could allow the vulnerability to be exploited.
 
 Instead, report the vulnerability privately through the repository owner's preferred private contact method.
 
@@ -23,7 +23,7 @@ Please avoid publicly disclosing the vulnerability until it has been reviewed an
 
 Security fixes are generally applied to the latest version of the project available from the `main` branch.
 
-Because the BatPU Emulator – Web Port is an actively developed browser-based project, older versions may not receive security updates.
+Because the BatPU Emulator is an actively developed browser-based project, older versions may not receive security updates.
 
 | Version                    | Supported |
 | -------------------------- | --------- |
@@ -34,7 +34,7 @@ Because the BatPU Emulator – Web Port is an actively developed browser-based p
 
 ## Scope
 
-The BatPU Emulator – Web Port is a client-side, browser-based emulator. Security reports may include issues involving:
+The BatPU Emulator is a client-side, browser-based emulator. Security reports may include issues involving:
 
 * Assembly source parsing
 * Program loading or importing
@@ -97,7 +97,7 @@ Response and resolution times may vary depending on the severity and complexity 
 
 ## Dependency Security
 
-If the project uses third-party dependencies, security vulnerabilities affecting those dependencies may also be reported under this policy when they affect the BatPU Emulator – Web Port.
+If the project uses third-party dependencies, security vulnerabilities affecting those dependencies may also be reported under this policy when they affect the BatPU Emulator.
 
 Contributors should avoid adding unnecessary dependencies and should prefer well-maintained packages when external libraries are required.
 
@@ -105,4 +105,4 @@ Contributors should avoid adding unnecessary dependencies and should prefer well
 
 ## Thank You
 
-Responsible security research and vulnerability reports help make the BatPU Emulator – Web Port safer for everyone. Thank you for helping improve the security of the project.
+Responsible security research and vulnerability reports help make the BatPU Emulator safer for everyone. Thank you for helping improve the security of the project.

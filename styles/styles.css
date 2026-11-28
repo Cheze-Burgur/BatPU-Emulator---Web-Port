@@ -1059,16 +1059,58 @@ input.cell-value-editor[aria-invalid="true"]:focus {
     background: var(--problems-panel-bg);
 }
 
-#problems-toggle.has-problems {
+#problems-toggle.has-errors,
+#mobile-problems-button.has-errors {
     color: var(--problems-toggle-text);
     border-color: var(--problem-error-border);
 }
 
+#problems-toggle.has-warnings-only,
+#mobile-problems-button.has-warnings-only {
+    color: var(--problem-warning-text);
+    border-color: var(--problem-warning-border);
+}
+
+.problem-count-error {
+    color: var(--problem-error-text);
+}
+
+.problem-count-warning {
+    color: var(--problem-warning-text);
+}
+
 .problem {
+    display: block;
+    width: 100%;
+    height: auto;
     padding: 8px 10px;
+    border: 0;
     border-left: 3px solid transparent;
-    color: var(--problems-text);
     border-bottom: 1px solid var(--problems-border);
+    border-radius: 0;
+    background: transparent;
+    color: var(--problems-text);
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.4;
+    text-align: left;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    box-shadow: none;
+}
+
+.problem:hover {
+    background: var(--button-hover-bg);
+}
+
+.problem:active {
+    transform: none;
+    box-shadow: none;
+}
+
+.problem:focus-visible {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: -2px;
 }
 
 .problem.error {

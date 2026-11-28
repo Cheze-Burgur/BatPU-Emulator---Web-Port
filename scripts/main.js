@@ -259,7 +259,11 @@ const codeEditor = document.getElementById("code-editor");
 const editorLineMap = [];
 const breakpoints = new Set();
 
-const problems = new ProblemsPanel(document.getElementById("problems-list"));
+const problems = new ProblemsPanel(
+    document.getElementById("problems-list"),
+    item => focusEditorLine(item.line)
+);
+
 const modal = new Modal();
 const settings = new SettingsManager(modal);
 const diagramModal = new DiagramModal(DiagramComponents, settings);
@@ -302,7 +306,7 @@ function loadProgram() {
     cpu.program = assembly.program;
     cpu.pc = 0;
     cpu.lastExecutedLine = null;
-    cpu.loaded = assembly.problems.length === 0;
+    cpu.loaded = !assembly.problems.some(problem => problem.type === "error");
     problems.set(assembly.problems.map(problem => ({
         ...problem,
         line: problem.line
@@ -349,6 +353,28 @@ async function loadPreset(name) {
 }
 
 window.loadPreset = loadPreset;
+
+function focusEditorLine(line) {
+    if (!Number.isInteger(line) || line < 1) return;
+
+    const lines = codeEditor.value.split("\n");
+    const lineIndex = line - 1;
+    if (lineIndex >= lines.length) return;
+
+    const start = lines
+        .slice(0, lineIndex)
+        .reduce((offset, sourceLine) => offset + sourceLine.length + 1, 0);
+    const end = start + lines[lineIndex].length;
+
+    if (window.innerWidth <= 920) {
+        document.dispatchEvent(
+            new CustomEvent("mobile-open-panel", { detail: { panel: "right" } })
+        );
+    }
+
+    codeEditor.focus();
+    codeEditor.setSelectionRange(start, end);
+}
 
 const docButtons = {
     isa: document.getElementById("isa-button"),

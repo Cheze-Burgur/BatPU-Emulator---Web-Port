@@ -1,3 +1,5 @@
+const MAX_PROGRAM_INSTRUCTIONS = 1024
+
 export default class Assembler {
 
     static assemble(source) {
@@ -26,6 +28,12 @@ export default class Assembler {
 
                 program.push(instruction);
             });
+
+        const hasAssemblyErrors = problems.some(problem => problem.type === "error");
+
+        if (!hasAssemblyErrors) {
+            problems.push(...this.validateProgram(program));
+        }
 
         return { program, problems };
     }
@@ -67,7 +75,7 @@ export default class Assembler {
             case "HLT":
                 if (args.length !== 0) {
                     problems.push({
-                        type: "error",
+                        type: "warning",
                         message: `${op} does not take operands`,
                         line
                     });
@@ -240,6 +248,41 @@ export default class Assembler {
         return problems;
     }
 
+    static validateProgram(program) {
+
+        const problems = [];
+
+        if (program.length > MAX_PROGRAM_INSTRUCTIONS) {
+            problems.push({
+                type: "error",
+                message: `Program exceeds the ${MAX_PROGRAM_INSTRUCTIONS}-instruction limit`,
+                line: program[MAX_PROGRAM_INSTRUCTIONS].line
+            });
+
+            return problems;
+        }
+
+        for (const instruction of program) {
+            let targetArgumentIndex;
+            if (instruction.op === "JMP" || instruction.op === "CAL") targetArgumentIndex = 0;
+            else if (instruction.op === "BRH") targetArgumentIndex = 1;
+            else continue;
+
+            const target = this.parseImmediate(instruction.args[targetArgumentIndex]);
+            if (target >= program.length) {
+                problems.push({
+                    type: "warning",
+                    message: `${instruction.op} target ${target} is outside the program`,
+                    line: instruction.line
+                });
+            }
+        }
+
+        problems.push(...this.findUnreachableInstructions(program));
+        return problems;
+
+    }
+
     static isValidOpcode(op) {
 
         return [
@@ -294,6 +337,64 @@ export default class Assembler {
 
         const numeric = Number(value);
         return Number.isFinite(numeric) ? numeric : NaN;
+
+    }
+
+    static findUnreachableInstructions(program) {
+
+        const reachable = new Set();
+        const pending = program.length > 0 ? [0] : [];
+        const enqueue = index => {
+            if (
+                Number.isInteger(index) &&
+                index >= 0 &&
+                index < program.length &&
+                !reachable.has(index)
+            ) pending.push(index);
+        };
+
+        while (pending.length > 0) {
+            const index = pending.pop();
+            if (reachable.has(index)) continue;
+            reachable.add(index);
+
+            const instruction = program[index];
+            const next = index + 1;
+
+            switch (instruction.op) {
+                case "HLT":
+                case "RET":
+                    break;
+
+                case "JMP":
+                    enqueue(this.parseImmediate(instruction.args[0]));
+                    break;
+
+                case "BRH":
+                    enqueue(this.parseImmediate(instruction.args[1]));
+                    enqueue(next);
+                    break;
+
+                case "CAL":
+                    enqueue(this.parseImmediate(instruction.args[0]));
+                    enqueue(next);
+                    break;
+
+                default:
+                    enqueue(next);
+                    break;
+            }
+        }
+
+        return program.flatMap((instruction, index) =>
+            reachable.has(index)
+                ? []
+                : [{
+                    type: "warning",
+                    message: "Instruction is unreachable from the program entry",
+                    line: instruction.line
+                }]
+        );
 
     }
 

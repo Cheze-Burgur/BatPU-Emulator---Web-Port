@@ -214,7 +214,7 @@ export default class SaveManager {
             const assembly =
                 Assembler.assembleWithDiagnostics(source);
 
-            if (assembly.problems.length > 0) {
+            if (problems.items.some(problem => problem.type === "error")) {
 
                 this.problems.set(
                     assembly.problems
@@ -253,7 +253,7 @@ export default class SaveManager {
                 this.codeEditor.value
             );
 
-        if (assembly.problems.length > 0) {
+        if (problems.items.some(problem => problem.type === "error")) {
 
             this.problems.set(
                 assembly.problems

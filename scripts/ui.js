@@ -375,12 +375,13 @@ class MobileUI {
 
 class ProblemsPanel {
 
-    constructor(element) {
+    constructor(element, onSelect = () => { }) {
 
         this.panel = document.getElementById("bottom-panel");
         this.element = element;
         this.toggle = document.getElementById("problems-toggle");
         this.items = [];
+        this.onSelect = onSelect;
 
         this.initToggle();
 
@@ -444,8 +445,17 @@ class ProblemsPanel {
 
     render() {
 
-        this.toggle.textContent = `Problems (${this.items.length})`;
-        this.toggle.classList.toggle("has-problems", this.items.length > 0);
+        const warningCount = this.items.filter(
+            item => item.type === "warning"
+        ).length;
+        const errorCount = this.items.length - warningCount;
+
+        this.updateButton(this.toggle, errorCount, warningCount);
+
+        const mobileToggle = document.getElementById("mobile-problems-button");
+        if (mobileToggle) {
+            this.updateButton(mobileToggle, errorCount, warningCount);
+        }
 
         if (this.items.length === 0) {
 
@@ -462,18 +472,49 @@ class ProblemsPanel {
         const fragment = document.createDocumentFragment();
 
         for (const item of this.items) {
-            const row = document.createElement("div");
+            const row = document.createElement("button");
+            row.type = "button";
             const severity = item.type === "warning" ? "warning" : "error";
             row.classList.add("problem", severity);
 
-            const location = item.line === null ? "" : `Line ${item.line}: `;
+            const location = item.line == null ? "" : `Line ${item.line}: `;
             row.textContent = `${location}${item.message}`;
+            row.addEventListener("click", () => {
+                this.onSelect(item);
+            });
 
-            fragment.append(row)
+            fragment.append(row);
         }
 
         this.element.replaceChildren(fragment);
 
+    }
+
+    updateButton(button, errorCount, warningCount) {
+        button.replaceChildren(document.createTextNode("Problems"));
+
+        const addCount = (count, suffix, className) => {
+            if (count === 0) return;
+
+            button.append(document.createTextNode(" "));
+
+            const badge = document.createElement("span");
+            badge.className = className;
+            badge.textContent = `${count}${suffix}`;
+            badge.setAttribute("aria-hidden", "true");
+            button.append(badge);
+        };
+
+        addCount(errorCount, "E", "problem-count-error");
+        addCount(warningCount, "W", "problem-count-warning");
+
+        const errorLabel = errorCount === 1 ? "error" : "errors";
+        const warningLabel = warningCount === 1 ? "warning" : "warnings";
+
+        button.setAttribute(
+            "aria-label",
+            `Problems: ${errorCount} ${errorLabel}, ${warningCount} ${warningLabel}`
+        );
     }
 
 }

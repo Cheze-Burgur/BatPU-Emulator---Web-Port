@@ -925,6 +925,26 @@ export const Documentation = {
                         </ul>
                     </div>
                 </div>
+
+                <div class="doc-card">
+                    <div class="doc-card-header">
+                        <h2>Version 1.12.0</h2>
+                        <span class="doc-badge">QUALITY OF LIFE</span>
+                        <span class="doc-badge">UI & STYLING</span>
+                    </div>
+                    <div class="doc-section">
+                        <h3>November 28, 2026</h3>
+                        <ul>
+                            <li>Added deterministic randomness to the RNG</li>
+                            <ul>
+                                <li>You can enable or disable the set seed in the settings</li>
+                                <li>You can also set the value of the seed in the settings</li>
+                            </ul>
+                            <li>Updated styling for most input fields</li>
+                            <li>Made invalid input reporting consistent across fields</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         `;
         }

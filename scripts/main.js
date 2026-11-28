@@ -269,7 +269,7 @@ const cpu = new CPU(memory, problems);
 const screen = new ScreenDevice(memory, pixelGrid);
 const charsDisplay = new CharacterDevice(memory, textDisplayElement);
 const numDisplay = new NumberDevice(memory, numDisplayElement);
-const randNum = new RandomNumberDevice(memory);
+const randNum = new RandomNumberDevice(memory, settings);
 const ui = new UI(cpu, memory, screen, textDisplayElement, numDisplayElement);
 const mobileUI = new MobileUI(settings);
 const controller = new ControllerDevice(memory, null, settings);
@@ -506,17 +506,45 @@ function editSpeedValue() {
     input.required = true;
     input.value = speedSlider.value;
     input.setAttribute("aria-label", "Execution rate in hertz");
+    input.setAttribute("aria-invalid", "false");
     input.title = `Enter a whole number from ${speedSlider.min} to ${speedSlider.max} Hz`;
 
     speedValue.replaceWith(input);
     speedValue = input;
 
     let canceled = false;
+    let invalidSpeedToastShown = false;
+    const getValidSpeed = () => {
+        const targetSpeed = input.valueAsNumber;
+        const isValid = input.validity.valid && Number.isInteger(targetSpeed);
+        input.setAttribute("aria-invalid", String(!isValid));
+
+        if (!isValid) {
+            if (!invalidSpeedToastShown) {
+                showToast(
+                    `Enter a whole number from ${speedSlider.min} to ${speedSlider.max} Hz.`,
+                    "error"
+                );
+                invalidSpeedToastShown = true;
+            }
+            return null;
+        }
+
+        invalidSpeedToastShown = false;
+        return targetSpeed;
+    };
+
+    input.addEventListener("input", () => {
+        invalidSpeedToastShown = false;
+        const isValid = input.validity.valid && Number.isInteger(input.valueAsNumber);
+        input.setAttribute("aria-invalid", String(!isValid));
+    });
+
     input.addEventListener("blur", () => {
         if (speedValue !== input) return;
 
-        const targetSpeed = Number(input.value);
-        if (!canceled && input.validity.valid && Number.isInteger(targetSpeed)) {
+        const targetSpeed = canceled ? null : getValidSpeed();
+        if (targetSpeed !== null) {
             speedSlider.value = String(targetSpeed);
             speedSlider.dispatchEvent(new Event("input", { bubbles: true }));
         }
@@ -534,7 +562,7 @@ function editSpeedValue() {
     input.addEventListener("keydown", event => {
         if (event.key === "Enter") {
             event.preventDefault();
-            if (input.reportValidity()) input.blur();
+            if (getValidSpeed() !== null) input.blur();
         } else if (event.key === "Escape") {
             event.preventDefault();
             canceled = true;
@@ -583,6 +611,7 @@ function editCellValue(valueElement, currentValue, writeValue) {
     input.value = String(currentValue);
     input.className = "cell-value-editor";
     input.setAttribute("aria-label", valueElement.getAttribute("aria-label") || "Edit value");
+    input.setAttribute("aria-invalid", "false");
     document.body.appendChild(input);
 
     activeCellEditor = input;
@@ -607,10 +636,23 @@ function editCellValue(valueElement, currentValue, writeValue) {
         positionEditor();
     };
 
+    const parseCellValue = () => {
+        const normalizedValue = input.value.trim().replace(
+            /^0([bBxX])/,
+            (_, radix) => `0${radix.toLowerCase()}`
+        );
+        return Assembler.parseImmediate(normalizedValue);
+    };
+    const isValidCellValue = value =>
+        Number.isInteger(value) && value >= 0 && value <= 255;
+
     resizeEditor();
     window.addEventListener("scroll", positionEditor, true);
     window.addEventListener("resize", positionEditor);
-    input.addEventListener("input", resizeEditor);
+    input.addEventListener("input", () => {
+        resizeEditor();
+        input.setAttribute("aria-invalid", String(!isValidCellValue(parseCellValue())));
+    });
     input.focus();
     input.select();
 
@@ -620,15 +662,16 @@ function editCellValue(valueElement, currentValue, writeValue) {
 
         let value;
         if (commit) {
-            const normalizedValue = input.value.trim().replace(
-                /^0([bBxX])/,
-                (_, radix) => `0${radix.toLowerCase()}`
-            );
-            value = Assembler.parseImmediate(normalizedValue);
-            if (!Number.isInteger(value) || value < 0 || value > 255) {
+            value = parseCellValue();
+            if (!isValidCellValue(value)) {
+                input.setAttribute("aria-invalid", "true");
                 showToast("Enter a value from 0 to 255 in decimal, 0x hex, or 0b binary", "error");
-                commit = false;
+                input.focus();
+                input.select();
+                return;
             }
+
+            input.setAttribute("aria-invalid", "false");
         }
 
         finished = true;

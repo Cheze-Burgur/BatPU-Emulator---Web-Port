@@ -1,4 +1,4 @@
-import { keyBindingLabel, keyEventToBinding } from "./utils.js";
+import { keyBindingLabel, keyEventToBinding, showToast } from "./utils.js";
 
 class SettingsManager {
 
@@ -30,6 +30,10 @@ class SettingsManager {
             highlightCurrentLine: false,
             registerMemoryFormat: "binary",
             controllerDisplaysKeys: false,
+            randomSeed: {
+                active: false,
+                value: 0
+            },
             keybindings: {
                 run: "Ctrl+Enter",
                 step: "F10",
@@ -105,6 +109,21 @@ class SettingsManager {
 
             if (typeof savedSettings.controllerDisplaysKeys === "boolean") {
                 settings.controllerDisplaysKeys = savedSettings.controllerDisplaysKeys;
+            }
+
+            const savedRandomSeed = savedSettings.randomSeed;
+            if (savedRandomSeed && typeof savedRandomSeed === "object") {
+                if (typeof savedRandomSeed.active === "boolean") {
+                    settings.randomSeed.active = savedRandomSeed.active;
+                }
+
+                if (
+                    Number.isInteger(savedRandomSeed.value) &&
+                    savedRandomSeed.value >= 0 &&
+                    savedRandomSeed.value <= 0xffffffff
+                ) {
+                    settings.randomSeed.value = savedRandomSeed.value;
+                }
             }
 
             if (savedSettings.keybindings && typeof savedSettings.keybindings === "object") {
@@ -356,6 +375,15 @@ class SettingsManager {
 							<option value="hex" ${this.settings.registerMemoryFormat === "hex" ? "selected" : ""}>Hexadecimal</option>
 						</select>
 					</div>
+
+                    <div class="doc-section settings-section">
+                        <div class="settings-meta">
+                            <label class="settings-label" for="random-seed-toggle">Random Seed</label>
+                            <div class="settings-description">Determine the seed for random actions.</div>
+                        </div>
+                        <input id="random-seed-toggle" class="settings-checkbox" type="checkbox" ${this.settings.randomSeed.active ? "checked" : ""} aria-label="Choose the random seed">
+                        <input id="random-seed-value" class="settings-number" type="number" min="0" max="4294967295" step="1" value="${this.settings.randomSeed.value}" ${this.settings.randomSeed.active ? "" : "disabled"} aria-label="Random seed value" aria-invalid="false" required>
+                    </div>
 				</div>
 
 				<div class="doc-card">
@@ -429,6 +457,34 @@ class SettingsManager {
             "change",
             event => this.update("registerMemoryFormat", event.target.value)
         );
+
+        const randomSeedToggle = document.getElementById("random-seed-toggle");
+        const randomSeedInput = document.getElementById("random-seed-value");
+        randomSeedToggle.addEventListener("change", () => {
+            randomSeedInput.disabled = !randomSeedToggle.checked;
+
+            this.update("randomSeed", {
+                ...this.settings.randomSeed,
+                active: randomSeedToggle.checked
+            });
+        });
+
+        randomSeedInput.addEventListener("change", () => {
+            const value = randomSeedInput.valueAsNumber;
+
+            if (!Number.isInteger(value) || value < 0 || value > 0xffffffff) {
+                randomSeedInput.setAttribute("aria-invalid", "true");
+                showToast("Enter a whole number from 0 to 4294967295 for the random seed.", "error");
+                return;
+            }
+
+            randomSeedInput.setAttribute("aria-invalid", "false");
+
+            this.update("randomSeed", {
+                ...this.settings.randomSeed,
+                value
+            });
+        });
 
         document.getElementById("reset-keybindings").addEventListener(
             "click",

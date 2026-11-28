@@ -57,6 +57,35 @@ a:hover {
     text-decoration: underline;
 }
 
+input[type="number"] {
+    width: 150px;
+    min-width: 120px;
+    max-width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    font-family: monospace;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+input[type="number"]:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(0, 187, 255, 0.14);
+}
+
+input[type="number"]:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+input[type="number"][aria-invalid="true"] {
+    border-color: var(--danger);
+}
+
 .code {
     font-family: monospace;
     font-size: 13px;
@@ -387,7 +416,8 @@ a:hover {
 
 #speed-value-input {
     width: 7ch;
-    padding: 0;
+    min-width: 0;
+    padding: 4px 6px;
     border: 0;
     border-bottom: 1px solid currentColor;
     border-radius: 0;
@@ -395,6 +425,10 @@ a:hover {
     color: inherit;
     font: inherit;
     text-align: left;
+}
+
+#speed-value-input[aria-invalid="true"] {
+    border: 1px solid var(--danger) !important;
 }
 
 #program-speed-slider {
@@ -700,6 +734,15 @@ a:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
     font: 14px monospace;
     text-align: center;
+}
+
+input.cell-value-editor[aria-invalid="true"] {
+    border-color: var(--danger) !important;
+}
+
+input.cell-value-editor[aria-invalid="true"]:focus {
+    outline: 2px solid var(--danger);
+    outline-offset: 1px;
 }
 
 .reg-bin,

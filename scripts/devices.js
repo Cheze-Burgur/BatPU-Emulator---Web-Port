@@ -302,16 +302,56 @@ class NumberDevice extends Device {
 
 class RandomNumberDevice extends Device {
 
-    constructor(memory) {
+    constructor(memory, settings) {
 
         super(254);
         memory.register(this);
+
+        this.settings = settings;
+        this.randomState = 0;
+        this.deterministic = false;
+        this.reset();
+
+    }
+
+    nextByte() {
+
+        this.randomState = (Math.imul(this.randomState, 16653627) + 1023805324) >>> 0;
+        return this.randomState >>> 24;
 
     }
 
     read(addr) {
 
-        if (addr === 254) return Math.floor(Math.random() * 256);
+        if (addr !== 254) return null;
+
+        return this.deterministic
+            ? this.nextByte()
+            : Math.floor(Math.random() * 256);
+
+    }
+
+    reset() {
+
+        const randomSeed = this.settings.get("randomSeed");
+        this.deterministic = randomSeed.active;
+        this.randomState = randomSeed.value >>> 0;
+
+    }
+
+    snapshot() {
+
+        return {
+            randomState: this.randomState,
+            deterministic: this.deterministic
+        };
+
+    }
+
+    restore(snapshot) {
+
+        this.randomState = snapshot.randomState >>> 0;
+        this.deterministic = snapshot.deterministic;
 
     }
 
@@ -489,10 +529,21 @@ class ControllerDevice extends Device {
         const isCellEditorTarget = event =>
             event.target?.classList?.contains("cell-value-editor")
             || event.target?.classList?.contains("cell-edit-trigger");
+        const isTextInputTarget = event => {
+            const target = event.target;
+            return target instanceof Element && Boolean(target.closest(
+                'input:not([type]), input[type="text"], input[type="number"], input[type="password"], input[type="search"], input[type="email"], input[type="url"], input[type="tel"], textarea, [contenteditable]:not([contenteditable="false"])'
+            ));
+        };
+        const shouldIgnoreControllerKey = event =>
+            isCodeEditorTarget(event)
+            || isSpeedInputTarget(event)
+            || isCellEditorTarget(event)
+            || isTextInputTarget(event);
 
         window.addEventListener("keydown", e => {
 
-            if (isCodeEditorTarget(e) || isSpeedInputTarget(e) || isCellEditorTarget(e)) return;
+            if (shouldIgnoreControllerKey(e)) return;
 
             const bindings = controllerBindings();
             const actions = [
@@ -517,7 +568,7 @@ class ControllerDevice extends Device {
 
         window.addEventListener("keyup", e => {
 
-            if (isCodeEditorTarget(e) || isSpeedInputTarget(e) || isCellEditorTarget(e)) return;
+            const shouldIgnoreKey = shouldIgnoreControllerKey(e);
 
             const bindings = controllerBindings();
             const actions = [
@@ -533,7 +584,7 @@ class ControllerDevice extends Device {
 
             actions.forEach(([action, key]) => {
                 if (matchesKeyBinding(e, bindings[action])) {
-                    e.preventDefault();
+                    if (!shouldIgnoreKey) e.preventDefault();
                     this.updateState(key, 0);
                 }
             });
